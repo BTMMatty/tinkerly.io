@@ -1,0 +1,31 @@
+# Dependencies
+/node_modules
+
+# Next.js
+/.next/
+/out/
+
+# Environment variables - NEVER COMMIT!
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE
+.vscode
+
+# OS
+.DS_Store
+
+# Backend files
+../backend/.env
+../backend/
+../*.md
+../*.sh

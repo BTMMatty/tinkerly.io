@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Code, DollarSign, Book, CheckCircle, ArrowRight, Brain, Shield, Heart, Zap, Users, Target, Calculator, Play, Download, FileText, Video, Award } from 'lucide-react';
 import AuthHeader from './AuthHeader';
-import Logo from './Logo';
+import Logo from './logo';
 
 const TinkerPlatform = () => {
   const [currentView, setCurrentView] = useState('landing');

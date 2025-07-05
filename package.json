@@ -1,0 +1,24 @@
+{
+  "name": "tink-io-platform",
+  "version": "1.0.0",
+  "description": "Revolutionary Ethical Automated Software Development Platform",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "^7.4.0",
+    "@supabase/supabase-js": "^2.50.3",
+    "stripe": "^18.3.0"
+  }
+}

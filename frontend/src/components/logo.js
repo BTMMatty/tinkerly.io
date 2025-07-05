@@ -17,7 +17,7 @@ export default function Logo() {
   return (
     <img 
       src="/tinker-logo.png" 
-      alt="Tinker.io" 
+      alt="Tinkerly" 
       className="w-10 h-10 rounded-lg"
       onError={() => setImageError(true)}
     />

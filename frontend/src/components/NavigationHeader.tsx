@@ -20,7 +20,7 @@ const NavigationHeader: React.FC = () => {
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              Tinker.io Studio
+              Tinkerly Studio
             </div>
           </Link>
 

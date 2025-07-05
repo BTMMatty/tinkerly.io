@@ -1,20 +1,17 @@
-import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import TinkioPlatform from '../components/TinkioPlatform';
+'use client';
 
-export default async function HomePage() {
-  const user = await currentUser();
+import { redirect } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import TinkerlyPlatform from '@/src/components/TinkerlyPlatform';
+
+export default function HomePage() {
+  const { isSignedIn } = useUser();
   
-  // If user is signed in, redirect to dashboard
-  if (user) {
-    redirect('/dashboard');
+  // Show landing page for non-authenticated users
+  if (!isSignedIn) {
+    return <TinkerlyPlatform />;
   }
   
-  // If not signed in, show the landing page
-  return <TinkioPlatform />;
+  // Redirect authenticated users to dashboard
+  redirect('/dashboard');
 }
-
-export const metadata = {
-  title: 'Tinkerly.io - AI-Powered Development Platform',
-  description: 'Transform your ideas into reality with AI-powered project scoping and transparent pricing.',
-};

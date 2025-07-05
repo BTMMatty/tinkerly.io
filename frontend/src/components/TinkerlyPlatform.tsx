@@ -8,7 +8,7 @@ import AuthHeader from './AuthHeader';
 import Footer from './Footer';
 import { userService, analyticsService, testConnection, checkUserCredits } from '@/lib/supabase';
 
-const TinkerPlatform = () => {
+const TinkerlyPlatform = () => {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
   const [userCredits, setUserCredits] = useState({ hasCredits: false, creditsRemaining: 0, subscriptionTier: 'free' });
@@ -18,7 +18,7 @@ const TinkerPlatform = () => {
     const initializeSupabase = async () => {
       const isConnected = await testConnection();
       if (isConnected) {
-        console.log('🚀 Supabase ready for Tinker.io with new schema!');
+        console.log('🚀 Supabase ready for Tinkerly.io!');
       }
     };
     initializeSupabase();
@@ -110,7 +110,7 @@ const TinkerPlatform = () => {
           <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed">
             Get AI-powered project scoping, transparent pricing, and 50% faster delivery. 
             <br className="hidden md:block" />
-            From idea to launch, Tinker.io makes development magical. ✨
+            From idea to launch, Tinkerly makes development magical. ✨
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -171,10 +171,10 @@ const TinkerPlatform = () => {
         </div>
       </div>
 
-      {/* How Tinker.io Works */}
+      {/* How Tinkerly Works */}
       <div className="relative z-10 container mx-auto px-6 py-12">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How does Tinker.io work?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">How does Tinkerly work?</h2>
           <p className="text-gray-400 text-lg">Simple, transparent, and magical ✨</p>
         </div>
 
@@ -236,7 +236,7 @@ const TinkerPlatform = () => {
       <div className="relative z-10 container mx-auto px-6 py-20">
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-12 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to build something amazing?</h2>
-          <p className="text-emerald-100 text-lg mb-8">Join hundreds of founders who trust Tinker.io with their vision</p>
+          <p className="text-emerald-100 text-lg mb-8">Join hundreds of founders who trust Tinkerly with their vision</p>
           
           {isSignedIn ? (
             <button
@@ -261,4 +261,4 @@ const TinkerPlatform = () => {
   );
 };
 
-export default TinkerPlatform;
+export default TinkerlyPlatform;

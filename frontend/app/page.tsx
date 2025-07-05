@@ -1,6 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import TinkerPlatform from '../components/TinkioPlatform';
+import TinkioPlatform from '../components/TinkioPlatform';
 
 export default async function HomePage() {
   const user = await currentUser();
@@ -11,7 +11,7 @@ export default async function HomePage() {
   }
   
   // If not signed in, show the landing page
-  return <TinkerPlatform />;
+  return <TinkioPlatform />;
 }
 
 export const metadata = {

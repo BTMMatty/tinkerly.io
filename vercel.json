@@ -1,0 +1,36 @@
+
+{
+  "version": 2,
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "NODE_OPTIONS": "--max-old-space-size=4096",
+      "NEXT_PRIVATE_SKIP_STATIC_GENERATION_TRACE": "1"
+    }
+  },
+  "buildCommand": "cd frontend && npm install && next telemetry disable && npm run build",
+  "outputDirectory": "frontend/.next",
+  "installCommand": "npm install",
+  "functions": {
+    "frontend/app/api/analyze-project/route.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/frontend/app/api/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

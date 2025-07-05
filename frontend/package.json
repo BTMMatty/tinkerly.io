@@ -7,10 +7,13 @@
     "npm": "10.x"
   },
   "scripts": {
+    "prebuild": "next telemetry disable",
     "dev": "next dev",
-    "build": "next build",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:vercel": "next telemetry disable && NODE_OPTIONS=\"--max-old-space-size=4096\" next build",
+    "postbuild": "echo 'Build completed successfully! 🎉'"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.23.3",

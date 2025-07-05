@@ -194,7 +194,7 @@ export default function DeveloperStudioDashboard() {
     if (!user?.id) return;
     
     // Simulate loading
-    setTimeout(() => {
+    // setTimeout(() => {
       setLoading(false);
       setUserProfile({
         id: user.id,
@@ -203,7 +203,7 @@ export default function DeveloperStudioDashboard() {
         credits_remaining: 3,
         subscription_tier: 'free'
       });
-    }, 1000);
+    // }, 1000);
   }, [user]);
 
   const analyzeProject = async () => {

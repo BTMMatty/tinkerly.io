@@ -81,7 +81,7 @@ export default function MagicPricingPage() {
     }
   ];
 
-  const getCurrentPrice = (tier) => {
+const getCurrentPrice = (tier: any) => {
     return billingPeriod === 'annual' ? tier.annualPrice : tier.monthlyPrice;
   };
 

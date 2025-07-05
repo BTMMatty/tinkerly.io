@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import TinkerlyPlatform from '@/src/components/TinkerlyPlatform';
+import TinkerlyPlatform from '../src/components/TinkerlyPlatform';
 
 export default function HomePage() {
   const { isSignedIn } = useUser();

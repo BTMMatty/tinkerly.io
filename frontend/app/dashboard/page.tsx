@@ -1,9 +1,9 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
 // Dynamically import with SSR disabled
-const DeveloperStudioDashboard = dynamic(
+const DeveloperStudioDashboard = dynamicImport(
   () => import('../../src/components/DeveloperStudioDashboard'),
   { ssr: false }
 );

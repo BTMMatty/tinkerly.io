@@ -1,4 +1,3 @@
-
 {
   "version": 2,
   "build": {
@@ -8,18 +7,18 @@
       "NEXT_PRIVATE_SKIP_STATIC_GENERATION_TRACE": "1"
     }
   },
-  "buildCommand": "cd frontend && npm install && next telemetry disable && npm run build",
-  "outputDirectory": "frontend/.next",
+  "buildCommand": "next telemetry disable && npm run build",
+  "outputDirectory": ".next",
   "installCommand": "npm install",
   "functions": {
-    "frontend/app/api/analyze-project/route.js": {
+    "app/api/analyze-project/route.js": {
       "maxDuration": 30
     }
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/frontend/app/api/$1"
+      "destination": "/app/api/$1"
     }
   ],
   "headers": [

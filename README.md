@@ -32,15 +32,6 @@ AI: Claude 3.5 Sonnet API
 Payments: Stripe with Escrow
 Deployment: Vercel + Railway + Supabase
 
-🔑 Environment Variables
-See .env.example files in frontend and backend directories.
-📖 Documentation
-
-Deployment Guide
-API Documentation
-Contributing
-
-
 Built with ❤️ for ethical software development
 
 # Docker

@@ -85,7 +85,7 @@ const getCurrentPrice = (tier: any) => {
     return billingPeriod === 'annual' ? tier.annualPrice : tier.monthlyPrice;
   };
 
-  const getSavings = (tier) => {
+  const getSavings = (tier: any) => {
     if (billingPeriod === 'annual') {
       const monthlyCost = tier.monthlyPrice * 12;
       const savings = monthlyCost - tier.annualPrice;

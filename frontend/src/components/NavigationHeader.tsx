@@ -1,10 +1,11 @@
 'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { useUser, UserButton } from '@clerk/nextjs';
 import { Sparkles, Zap, Plus } from 'lucide-react';
 
-const NavigationHeader = () => {
+const NavigationHeader: React.FC = () => {
   const { isSignedIn, user } = useUser();
 
   if (!isSignedIn) return null;
@@ -54,7 +55,7 @@ const NavigationHeader = () => {
             <div className="hidden sm:flex items-center space-x-3">
               <Zap className="w-5 h-5 text-emerald-500" />
               <span className="text-sm text-gray-600">
-                Hey, <span className="font-semibold text-emerald-600">{user?.firstName}!</span>
+                Hey, <span className="font-semibold text-emerald-600">{user?.firstName || 'there'}!</span>
               </span>
             </div>
             <UserButton 

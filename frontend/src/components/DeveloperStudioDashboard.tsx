@@ -4,10 +4,67 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Upload, Github, ExternalLink, Star, MessageSquare, Share2, Camera, Twitter, Linkedin, Globe, Settings, Sparkles, Zap, Heart, Plus, Lightbulb, Brain, DollarSign, Clock, Code, Loader, CreditCard } from 'lucide-react';
 
-// Import your existing services - update these paths if needed
-// import { userService, projectService, analyticsService, checkUserCredits } from '@/lib/supabase';
+// Define proper TypeScript interfaces
+interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  credits_remaining: number;
+  subscription_tier: string;
+}
 
-// For now, let's create the NavigationHeader inline to ensure it works
+interface UserCredits {
+  hasCredits: boolean;
+  creditsRemaining: number;
+  subscriptionTier: string;
+}
+
+interface ProjectForm {
+  title: string;
+  description: string;
+  category: string;
+  requirements: string;
+}
+
+interface ProjectScope {
+  complexity: string;
+  complexity_score: number;
+  estimated_hours: number;
+  hourly_rate: number;
+  total_cost: number;
+  pricing: {
+    recommended: string;
+    total_range: string;
+    hourly_rate: string;
+    estimated_hours: string;
+  };
+  timeline: {
+    industry_standard: string;
+    accelerated: string;
+    compression_factor: string;
+  };
+  techStack: {
+    frontend: string[];
+    backend: string[];
+    database: string;
+    deployment: string;
+  };
+  phases: Array<{
+    name: string;
+    duration: string;
+    description: string;
+    deliverables: string[];
+  }>;
+  keyFeatures: string[];
+  risks: Array<{
+    risk: string;
+    mitigation: string;
+    impact: string;
+  }>;
+  whyRecommended: string;
+}
+
+// NavigationHeader component
 const NavigationHeader = () => {
   const { isSignedIn, user } = useUser();
 
@@ -68,7 +125,7 @@ const NavigationHeader = () => {
   );
 };
 
-// Simple Footer component
+// Footer component
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800 mt-20">
@@ -100,15 +157,19 @@ export default function DeveloperStudioDashboard() {
   const [feedback, setFeedback] = useState('');
   const [requestType, setRequestType] = useState('project');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [projectScope, setProjectScope] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-  const [projects, setProjects] = useState([]);
+  const [projectScope, setProjectScope] = useState<ProjectScope | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [userCredits, setUserCredits] = useState({ hasCredits: true, creditsRemaining: 3, subscriptionTier: 'free' });
+  const [error, setError] = useState<string | null>(null);
+  const [userCredits, setUserCredits] = useState<UserCredits>({ 
+    hasCredits: true, 
+    creditsRemaining: 3, 
+    subscriptionTier: 'free' 
+  });
   
   // Project form state
-  const [projectForm, setProjectForm] = useState({
+  const [projectForm, setProjectForm] = useState<ProjectForm>({
     title: '',
     description: '',
     category: '',
@@ -128,15 +189,17 @@ export default function DeveloperStudioDashboard() {
     'Enterprise Solution'
   ];
 
-  // Mock data for now - replace with your actual data loading
+  // Mock data loading - properly typed
   useEffect(() => {
+    if (!user?.id) return;
+    
     // Simulate loading
     setTimeout(() => {
       setLoading(false);
       setUserProfile({
-        id: user?.id,
-        email: user?.emailAddresses?.[0]?.emailAddress,
-        full_name: user?.fullName,
+        id: user.id,
+        email: user.emailAddresses?.[0]?.emailAddress || '',
+        full_name: user.fullName || '',
         credits_remaining: 3,
         subscription_tier: 'free'
       });
@@ -152,10 +215,10 @@ export default function DeveloperStudioDashboard() {
     setIsAnalyzing(true);
     
     try {
-      // Simulate AI analysis for now
+      // Simulate AI analysis
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const mockAnalysis = {
+      const mockAnalysis: ProjectScope = {
         complexity: "Moderate",
         complexity_score: 6,
         estimated_hours: 120,

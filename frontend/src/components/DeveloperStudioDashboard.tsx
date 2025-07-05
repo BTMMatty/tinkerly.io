@@ -3,72 +3,112 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Upload, Github, ExternalLink, Star, MessageSquare, Share2, Camera, Twitter, Linkedin, Globe, Settings, Sparkles, Zap, Heart, Plus, Lightbulb, Brain, DollarSign, Clock, Code, Loader, CreditCard } from 'lucide-react';
-import NavigationHeader from './NavigationHeader';
-import Footer from './Footer';
 
-// Define proper TypeScript interfaces
-interface UserProfile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  created_at: string;
-  credits_remaining: number;
-  subscription_tier: 'free' | 'pro' | 'enterprise';
-}
+// Import your existing services - update these paths if needed
+// import { userService, projectService, analyticsService, checkUserCredits } from '@/lib/supabase';
 
-interface UserCredits {
-  hasCredits: boolean;
-  creditsRemaining: number;
-  subscriptionTier: 'free' | 'pro' | 'enterprise';
-}
+// For now, let's create the NavigationHeader inline to ensure it works
+const NavigationHeader = () => {
+  const { isSignedIn, user } = useUser();
 
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: string;
-  githubUrl: string;
-  startDate: string;
-  lastUpdate: string;
-  progress: number;
-  tags: string[];
-  clientFeedback?: string;
-  pricing: string;
-  timeline: string;
-  category: string;
-  complexity: string;
-  analysis: any;
-  payment_status: string;
-  amount_paid: number;
-}
+  if (!isSignedIn) return null;
 
-interface ProjectForm {
-  title: string;
-  description: string;
-  category: string;
-  requirements: string;
-}
+  return (
+    <header className="bg-white shadow-sm border-b border-emerald-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              Tinkerly Studio
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-6">
+            <a 
+              href="/dashboard" 
+              className="text-gray-600 hover:text-emerald-600 transition-colors"
+            >
+              Dashboard
+            </a>
+            <a 
+              href="/create" 
+              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New Project</span>
+            </a>
+            <a 
+              href="/pricing" 
+              className="text-gray-600 hover:text-emerald-600 transition-colors"
+            >
+              Pricing
+            </a>
+          </div>
+
+          {/* User Info */}
+          <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-3">
+              <Zap className="w-5 h-5 text-emerald-500" />
+              <span className="text-sm text-gray-600">
+                Hey, <span className="font-semibold text-emerald-600">{user?.firstName}!</span>
+              </span>
+            </div>
+            <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold">
+              {user?.firstName?.[0] || 'U'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// Simple Footer component
+const Footer = () => {
+  return (
+    <footer className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800 mt-20">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="text-center">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              Tinkerly Studio
+            </div>
+          </div>
+          <p className="text-gray-300 mb-4 max-w-md mx-auto">
+            Transform your dreams into reality with AI-powered development. 
+            50% faster delivery, transparent pricing, and magical results. ✨
+          </p>
+          <div className="text-gray-300 text-sm">
+            © 2025 Tinkerly Studio. Made with <Heart className="w-4 h-4 inline text-emerald-400" /> for builders worldwide.
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 export default function DeveloperStudioDashboard() {
   const { user } = useUser();
-  const [feedback, setFeedback] = useState<string>('');
-  const [requestType, setRequestType] = useState<'project' | 'feedback'>('project');
-  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-  const [projectScope, setProjectScope] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [userCredits, setUserCredits] = useState<UserCredits>({ 
-    hasCredits: false, 
-    creditsRemaining: 0, 
-    subscriptionTier: 'free' 
-  });
+  const [feedback, setFeedback] = useState('');
+  const [requestType, setRequestType] = useState('project');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [projectScope, setProjectScope] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [userCredits, setUserCredits] = useState({ hasCredits: true, creditsRemaining: 3, subscriptionTier: 'free' });
   
-  // Project form state with proper typing
-  const [projectForm, setProjectForm] = useState<ProjectForm>({
+  // Project form state
+  const [projectForm, setProjectForm] = useState({
     title: '',
     description: '',
     category: '',
@@ -88,173 +128,55 @@ export default function DeveloperStudioDashboard() {
     'Enterprise Solution'
   ];
 
-  // Load user profile and projects on mount - BULLETPROOF VERSION
+  // Mock data for now - replace with your actual data loading
   useEffect(() => {
-    let cancelled = false;
-    
-    const initializeDashboard = async () => {
-      if (!user?.id) {
-        console.log('⏳ Waiting for user to load...');
-        return;
-      }
-      
-      try {
-        console.log('🔄 Initializing dashboard for user:', user.id);
-        setLoading(true);
-        setError(null);
-        
-        console.log('👤 Loading user profile...');
-        
-        // ✅ TEMPORARY FIX: Skip userService.syncUser due to RLS issue
-        // Just use Clerk user data directly for now
-        const profile: UserProfile = {
-          id: user.id,
-          email: user.emailAddresses?.[0]?.emailAddress || '',
-          full_name: user.fullName,
-          first_name: user.firstName,
-          last_name: user.lastName,
-          created_at: new Date().toISOString(),
-          credits_remaining: 3,
-          subscription_tier: 'free'
-        };
-        
-        console.log('✅ Using Clerk user data directly:', profile);
-        
-        if (cancelled) return;
-        
-        setUserProfile(profile);
-        console.log('✅ User profile loaded:', profile);
-        
-        // ✅ More robust credit checking - BYPASS DATABASE FOR NOW
-        try {
-          // Skip checkUserCredits call due to RLS issue - use defaults
-          const credits: UserCredits = {
-            hasCredits: true,
-            creditsRemaining: 3,
-            subscriptionTier: 'free'
-          };
-          
-          if (cancelled) return;
-          
-          setUserCredits(credits);
-          console.log('✅ Using default credits for new user:', credits);
-        } catch (creditError) {
-          console.error('⚠️ Credit check failed:', creditError);
-          // Don't fail the entire dashboard for credits
-          setUserCredits({ hasCredits: true, creditsRemaining: 3, subscriptionTier: 'free' });
-        }
-        
-        // ✅ Track dashboard visit (non-blocking)
-        try {
-          // await analyticsService.trackEvent({
-          //   user_id: user.id,
-          //   event_type: 'dashboard_visit',
-          //   event_data: { timestamp: new Date().toISOString() }
-          // });
-        } catch (analyticsError) {
-          console.warn('⚠️ Analytics tracking failed:', analyticsError);
-          // Don't fail dashboard for analytics
-        }
-
-        // ✅ Load projects (non-blocking)
-        try {
-          await loadUserProjects(user.id);
-        } catch (projectError) {
-          console.error('⚠️ Project loading failed:', projectError);
-          // Don't fail dashboard for projects
-        }
-        
-        console.log('✅ Dashboard initialized successfully');
-        
-      } catch (error) {
-        if (!cancelled) {
-          console.error('❌ Dashboard initialization error:', error);
-          setError(`Dashboard error: ${error}`);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    if (user?.id) {
-      initializeDashboard();
-    } else {
+    // Simulate loading
+    setTimeout(() => {
       setLoading(false);
-    }
-    
-    return () => {
-      cancelled = true;
-    };
-  }, [user?.id]);
+      setUserProfile({
+        id: user?.id,
+        email: user?.emailAddresses?.[0]?.emailAddress,
+        full_name: user?.fullName,
+        credits_remaining: 3,
+        subscription_tier: 'free'
+      });
+    }, 1000);
+  }, [user]);
 
-  // Load user's projects from database
-  const loadUserProjects = async (userId: string): Promise<void> => {
-    try {
-      console.log('📊 Loading user projects...');
-      // Mock projects for now since we're bypassing database
-      const mockProjects: Project[] = [
-        {
-          id: '1',
-          name: 'E-commerce Platform',
-          description: 'Modern e-commerce solution with AI recommendations',
-          status: 'In Progress',
-          githubUrl: 'https://github.com/tinker-io/ecommerce-platform',
-          startDate: '2024-06-01',
-          lastUpdate: '2024-07-05',
-          progress: 75,
-          tags: ['React', 'Node.js', 'PostgreSQL'],
-          pricing: '$25,000',
-          timeline: '4 weeks',
-          category: 'E-commerce Platform',
-          complexity: 'Complex',
-          analysis: null,
-          payment_status: 'paid',
-          amount_paid: 25000
-        }
-      ];
-      
-      setProjects(mockProjects);
-      console.log('✅ Loaded projects:', mockProjects.length);
-      
-    } catch (error) {
-      console.error('Failed to load projects:', error);
-    }
-  };
-
-  const analyzeProject = async (): Promise<void> => {
+  const analyzeProject = async () => {
     if (!projectForm.title || !projectForm.description || !projectForm.category || !projectForm.requirements) {
       alert('Please fill in all required fields before analysis');
       return;
     }
 
-    if (!user) {
-      alert('User not loaded. Please refresh the page.');
-      return;
-    }
-
     setIsAnalyzing(true);
-
+    
     try {
-      console.log('💾 Creating project in database...');
+      // Simulate AI analysis for now
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Mock analysis for now
       const mockAnalysis = {
         complexity: "Moderate",
         complexity_score: 6,
         estimated_hours: 120,
         hourly_rate: 100,
         total_cost: 12000,
+        pricing: {
+          recommended: "$12,000",
+          total_range: "$10,000 - $15,000",
+          hourly_rate: "$100/hour",
+          estimated_hours: "120 hours"
+        },
+        timeline: {
+          industry_standard: "8 weeks",
+          accelerated: "4 weeks",
+          compression_factor: "50%"
+        },
         techStack: {
           frontend: ["React", "Next.js", "TypeScript"],
           backend: ["Node.js", "Express"],
           database: "PostgreSQL",
           deployment: "Vercel"
-        },
-        timeline: {
-          industry_standard: "8 weeks",
-          accelerated: "4 weeks"
         },
         phases: [
           {
@@ -262,6 +184,18 @@ export default function DeveloperStudioDashboard() {
             duration: "1 week",
             description: "Project setup and core architecture",
             deliverables: ["Project structure", "Authentication", "Database schema"]
+          },
+          {
+            name: "Core Development", 
+            duration: "2 weeks",
+            description: "Main features and functionality",
+            deliverables: ["Core features", "API endpoints", "User interface"]
+          },
+          {
+            name: "Polish & Deploy",
+            duration: "1 week", 
+            description: "Testing, optimization, and deployment",
+            deliverables: ["Testing suite", "Performance optimization", "Production deployment"]
           }
         ],
         keyFeatures: ["User Authentication", "Real-time Updates", "Analytics Dashboard"],
@@ -272,45 +206,38 @@ export default function DeveloperStudioDashboard() {
             impact: "Medium"
           }
         ],
-        whyRecommended: "This approach balances modern technology with proven reliability."
+        whyRecommended: "This approach balances modern technology with proven reliability, ensuring fast development without sacrificing quality."
       };
       
       setProjectScope(mockAnalysis);
-      console.log('✅ Analysis complete!');
       
     } catch (error) {
-      console.error('Analysis failed:', error);
-      alert('Analysis failed. Please check your connection and try again.');
+      console.error('Analysis error:', error);
+      alert('Analysis failed. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  const handleSubmitProject = async (): Promise<void> => {
+  const handleSubmitProject = async () => {
     if (!projectScope) {
       alert('Please analyze the project first to get accurate scoping and pricing.');
       return;
     }
 
-    if (!user) {
-      alert('User not loaded. Please refresh the page.');
-      return;
-    }
+    alert(`🚀 Project "${projectForm.title}" submitted successfully!
 
-    try {
-      alert(`🚀 Project "${projectForm.title}" submitted successfully!\n\nEstimated Price: ${projectScope.total_cost?.toLocaleString()}\nTimeline: ${projectScope.timeline?.accelerated}\n\nTink will review the AI analysis and contact you within 24 hours to finalize details and process payment.`);
-      
-      // Reset form
-      setProjectForm({ title: '', description: '', category: '', requirements: '' });
-      setProjectScope(null);
-      
-    } catch (error) {
-      console.error('Failed to submit project:', error);
-      alert('Failed to submit project. Please try again.');
-    }
+Estimated Price: ${projectScope.pricing.recommended}
+Timeline: ${projectScope.timeline.accelerated}
+
+Tinkerly will review the AI analysis and contact you within 24 hours to finalize details and process payment.`);
+    
+    // Reset form
+    setProjectForm({ title: '', description: '', category: '', requirements: '' });
+    setProjectScope(null);
   };
 
-  const handleFeedbackSubmit = async (): Promise<void> => {
+  const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) return;
     
     console.log('Feedback submitted:', feedback);
@@ -321,6 +248,7 @@ export default function DeveloperStudioDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+        <NavigationHeader />
         <div className="text-center">
           <Loader className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading your dashboard...</p>
@@ -332,6 +260,7 @@ export default function DeveloperStudioDashboard() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+        <NavigationHeader />
         <div className="text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-red-600 text-2xl">⚠️</span>
@@ -398,15 +327,13 @@ export default function DeveloperStudioDashboard() {
                 AI Analysis Power
               </h4>
               <div className="space-y-4">
-                {userCredits.subscriptionTier === 'free' && (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <CreditCard className="w-5 h-5 text-emerald-500 mr-2" />
-                      <span className="text-sm text-gray-700">Credits Remaining</span>
-                    </div>
-                    <span className="font-bold text-emerald-600">{userCredits.creditsRemaining}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <CreditCard className="w-5 h-5 text-emerald-500 mr-2" />
+                    <span className="text-sm text-gray-700">Credits Remaining</span>
                   </div>
-                )}
+                  <span className="font-bold text-emerald-600">{userCredits.creditsRemaining}</span>
+                </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Zap className="w-5 h-5 text-emerald-500 mr-2" />
@@ -457,6 +384,12 @@ export default function DeveloperStudioDashboard() {
                   </div>
                   <h2 className="text-2xl font-bold mb-2">🤖 AI-Powered Project Scoping</h2>
                   <p className="text-emerald-100">Get instant intelligent analysis, pricing, and timeline estimates</p>
+                  <div className="mt-3">
+                    <span className="inline-flex items-center bg-white bg-opacity-20 rounded-full px-3 py-1 text-sm">
+                      <Zap className="w-4 h-4 mr-1" />
+                      {userCredits.creditsRemaining} credits remaining
+                    </span>
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -568,73 +501,57 @@ export default function DeveloperStudioDashboard() {
               </div>
             )}
 
-            {/* Projects Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-emerald-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Your Projects with Tink</h3>
-                <span className="text-sm text-gray-600">{projects.length} total projects</span>
-              </div>
-
-              {projects.length === 0 ? (
-                <div className="text-center py-8">
-                  <Brain className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h4 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h4>
-                  <p className="text-gray-600 mb-4">Start by creating your first AI-analyzed project above!</p>
+            {/* AI Analysis Results */}
+            {projectScope && (
+              <div className="bg-white rounded-xl shadow-lg border border-emerald-100 p-6">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mr-4">
+                    <Brain className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">AI Analysis Complete</h3>
+                    <p className="text-gray-600">Intelligent scoping for "{projectForm.title}"</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {projects.map((project) => (
-                    <div key={project.id} className="border border-emerald-100 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-semibold text-gray-900">{project.name}</h4>
-                            <div className="flex items-center space-x-4 text-sm">
-                              <span className="font-medium text-emerald-600">{project.pricing}</span>
-                              <span className="text-gray-600">{project.timeline}</span>
-                            </div>
-                          </div>
-                          
-                          <p className="text-gray-600 text-sm mb-3">{project.description}</p>
-                          
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {project.tags.map((tag, index) => (
-                              <span
-                                key={index}
-                                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
 
-                          <div className="mb-3">
-                            <div className="flex justify-between text-sm mb-1">
-                              <span className="text-gray-600">Progress</span>
-                              <span className="text-emerald-600 font-semibold">{project.progress}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${project.progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ml-4 ${
-                          project.status === 'Completed' ? 'bg-green-100 text-green-700' :
-                          project.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
-                          'bg-yellow-100 text-yellow-700'
-                        }`}>
-                          {project.status}
-                        </span>
-                      </div>
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-emerald-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-emerald-800 mb-3 flex items-center">
+                      <DollarSign className="w-5 h-5 mr-2" />
+                      Pricing Analysis
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <p><span className="font-medium">Recommended:</span> {projectScope.pricing.recommended}</p>
+                      <p><span className="font-medium">Range:</span> {projectScope.pricing.total_range}</p>
+                      <p><span className="font-medium">Rate:</span> {projectScope.pricing.hourly_rate}</p>
+                      <p><span className="font-medium">Est. Hours:</span> {projectScope.pricing.estimated_hours}</p>
                     </div>
-                  ))}
+                  </div>
+
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+                      <Clock className="w-5 h-5 mr-2" />
+                      Timeline Analysis
+                    </h4>
+                    <div className="space-y-2 text-sm">
+                      <p><span className="font-medium">Industry Standard:</span> {projectScope.timeline.industry_standard}</p>
+                      <p><span className="font-medium">Our Delivery:</span> {projectScope.timeline.accelerated}</p>
+                      <p><span className="font-medium">Time Saved:</span> {projectScope.timeline.compression_factor}</p>
+                      <p><span className="font-medium">Complexity:</span> {projectScope.complexity}</p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
+
+                <div className="text-center">
+                  <button
+                    onClick={handleSubmitProject}
+                    className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                  >
+                    🚀 Submit Project Request
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

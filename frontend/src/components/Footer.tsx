@@ -16,7 +16,7 @@ const Footer = () => {
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                Tinker.io Studio
+                Tinkerly Studio
               </div>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
@@ -62,12 +62,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="mailto:support@tinker.io" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <a href="mailto:support@tinkerly.io" className="text-gray-300 hover:text-emerald-200 transition-colors">
                   Contact Support
                 </a>
               </li>
               <li>
-                <a href="mailto:privacy@tinker.io" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <a href="mailto:privacy@tinkerly.io" className="text-gray-300 hover:text-emerald-200 transition-colors">
                   Privacy Requests
                 </a>
               </li>
@@ -79,7 +79,7 @@ const Footer = () => {
         <div className="border-t border-emerald-800 pt-6 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-300 text-sm mb-4 md:mb-0">
-              © 2025 Tinker.io Studio. Made with <Heart className="w-4 h-4 inline text-emerald-400" /> for builders worldwide.
+              © 2025 Tinkerly.io Studio. Made with <Heart className="w-4 h-4 inline text-emerald-400" /> for builders worldwide.
             </div>
             <div className="text-gray-300 text-sm">
               🧚‍♀️ Powered by Code Pixies & AI Magic ✨

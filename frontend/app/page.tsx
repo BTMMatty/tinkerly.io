@@ -5,7 +5,6 @@ import { useUser, SignInButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Clock, Code, DollarSign, Brain, Shield, Heart, Zap, Users, Calculator, ArrowRight, Sparkles } from 'lucide-react';
 import AuthHeader from '@/components/AuthHeader';
-import Footer from '@/components/Footer';
 
 const TinkerPlatform = () => {
   const { user, isSignedIn } = useUser();
@@ -149,34 +148,29 @@ const TinkerPlatform = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[
-            {
-              icon: <Brain className="w-8 h-8" />,
-              title: "AI Analysis",
-              description: "Describe your project and get instant AI-powered scoping, pricing, and timeline estimation.",
-              color: "emerald"
-            },
-            {
-              icon: <Code className="w-8 h-8" />,
-              title: "Expert Development", 
-              description: "Our skilled developers bring your vision to life with clean code and modern best practices.",
-              color: "teal"
-            },
-            {
-              icon: <Zap className="w-8 h-8" />,
-              title: "Fast Delivery",
-              description: "Get your project delivered 50% faster than industry standard with regular updates.",
-              color: "cyan"
-            }
-          ].map((step, index) => (
-            <div key={index} className="text-center group">
-              <div className={`w-16 h-16 bg-gradient-to-br from-${step.color}-500 to-${step.color}-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110`}>
-                {step.icon}
-              </div>
-              <h3 className="text-xl font-bold mb-4">{step.title}</h3>
-              <p className="text-gray-400 leading-relaxed">{step.description}</p>
+          <div className="text-center group">
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110">
+              <Brain className="w-8 h-8" />
             </div>
-          ))}
+            <h3 className="text-xl font-bold mb-4">AI Analysis</h3>
+            <p className="text-gray-400 leading-relaxed">Describe your project and get instant AI-powered scoping, pricing, and timeline estimation.</p>
+          </div>
+          
+          <div className="text-center group">
+            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110">
+              <Code className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Expert Development</h3>
+            <p className="text-gray-400 leading-relaxed">Our skilled developers bring your vision to life with clean code and modern best practices.</p>
+          </div>
+          
+          <div className="text-center group">
+            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110">
+              <Zap className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Fast Delivery</h3>
+            <p className="text-gray-400 leading-relaxed">Get your project delivered 50% faster than industry standard with regular updates.</p>
+          </div>
         </div>
       </div>
 
@@ -280,9 +274,6 @@ const TinkerPlatform = () => {
           )}
         </div>
       </div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

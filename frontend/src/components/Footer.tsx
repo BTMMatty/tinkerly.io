@@ -6,7 +6,7 @@ import { Sparkles, Heart, MessageCircle, Users, Github, Twitter, Mail, ExternalL
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800 mt-20">
+    <footer className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -45,6 +45,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/blog" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                  The Pixie Post
+                </Link>
+              </li>
+              <li>
                 <a 
                   href="https://soon.tinkerly.io" 
                   className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center"
@@ -64,7 +69,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <a 
-                  href="https://discord.gg/YOUR_DISCORD_INVITE" 
+                  href="https://discord.gg/AGvXAn9yxJ" 
                   className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center group"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -76,25 +81,13 @@ const Footer = () => {
               </li>
               <li>
                 <a 
-                  href="https://github.com/tinkerly-io" 
+                  href="https://github.com/BTMMatty/tinkerly.io" 
                   className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center group"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Github className="w-4 h-4 mr-2 text-gray-400 group-hover:text-white" />
                   GitHub
-                  <ExternalLink className="w-3 h-3 ml-1" />
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://twitter.com/tinkerly_io" 
-                  className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center group"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Twitter className="w-4 h-4 mr-2 text-blue-400 group-hover:text-blue-300" />
-                  Twitter
                   <ExternalLink className="w-3 h-3 ml-1" />
                 </a>
               </li>
@@ -113,6 +106,11 @@ const Footer = () => {
               <li>
                 <Link href="/terms" className="text-gray-300 hover:text-emerald-200 transition-colors">
                   Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/press" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                  Press Kit
                 </Link>
               </li>
               <li>
@@ -150,7 +148,7 @@ const Footer = () => {
                 </div>
               </div>
               <a 
-                href="https://discord.gg/YOUR_DISCORD_INVITE"
+                href="https://discord.gg/AGvXAn9yxJ"
                 className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center space-x-2 transform hover:scale-105"
                 target="_blank"
                 rel="noopener noreferrer"

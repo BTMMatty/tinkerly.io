@@ -13,7 +13,7 @@ const TinkerPlatform = () => {
 
   // Test connection on mount
   useEffect(() => {
-    console.log('🚀 Tink.io Platform Loading...');
+    console.log('🚀 Tinkerly.io Platform Loading...');
   }, []);
 
   // Sync user when they sign in
@@ -51,7 +51,7 @@ const TinkerPlatform = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative">
       <AuthHeader />
       
       {/* Animated background elements */}
@@ -79,7 +79,7 @@ const TinkerPlatform = () => {
           <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed">
             Get AI-powered project scoping, transparent pricing, and 50% faster delivery. 
             <br className="hidden md:block" />
-            From idea to launch, Tinker.io makes development magical. ✨
+            From idea to launch, Tinkerly.io makes development magical. ✨
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -140,10 +140,10 @@ const TinkerPlatform = () => {
         </div>
       </div>
 
-      {/* How Tinker.io Works */}
+      {/* How Tinkerly.io Works */}
       <div className="relative z-10 container mx-auto px-6 py-12">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How does Tinker.io work?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">How does Tinkerly.io work?</h2>
           <p className="text-gray-400 text-lg">Simple, transparent, and magical ✨</p>
         </div>
 
@@ -201,13 +201,13 @@ const TinkerPlatform = () => {
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-5xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-              Tinker.io Origin Story
+              Tinkerly.io Origin Story
             </h2>
             
             <div className="text-xl text-emerald-100 space-y-6 leading-relaxed">
               <p>
                 <strong className="text-emerald-300">Born from frustration with exploitative development practices</strong>, 
-                Tinker.io emerged when traditional agencies quoted outrageous prices for simple automation tasks.
+                Tinkerly.io emerged when traditional agencies quoted outrageous prices for simple automation tasks.
               </p>
               
               <p>
@@ -252,11 +252,11 @@ const TinkerPlatform = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - PROPER SPACING */}
       <div className="relative z-10 container mx-auto px-6 py-20">
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-12 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to build something amazing?</h2>
-          <p className="text-emerald-100 text-lg mb-8">Join hundreds of founders who trust Tinker.io with their vision</p>
+          <p className="text-emerald-100 text-lg mb-8">Join hundreds of founders who trust Tinkerly.io with their vision</p>
           
           {isSignedIn ? (
             <button

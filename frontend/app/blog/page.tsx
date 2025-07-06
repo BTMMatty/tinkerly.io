@@ -1,4 +1,4 @@
-// src/app/blog/page.tsx
+// app/blog/page.tsx
 // The Pixie Post - Tinkerly.io's Magical Blog 🧚‍♀️
 
 'use client';
@@ -105,7 +105,7 @@ export default function BlogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Loader className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading magical content...</p>
@@ -115,7 +115,7 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-white">
       <NavigationHeader />
       
       {/* Hero Section */}
@@ -126,18 +126,18 @@ export default function BlogPage() {
           <div className="absolute bottom-20 right-20 w-48 h-48 bg-teal-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
         </div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <div className="inline-flex items-center bg-white bg-opacity-20 rounded-full px-6 py-2 mb-6">
+            <div className="inline-flex items-center bg-white bg-opacity-20 rounded-full px-6 py-2 mb-8">
               <Sparkles className="w-4 h-4 mr-2" />
               <span className="text-emerald-100">The Official Tinkerly.io Blog</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6">
               The Pixie Post 🧚‍♀️
             </h1>
             
-            <p className="text-xl md:text-2xl text-emerald-100 max-w-3xl mx-auto mb-8">
+            <p className="text-xl md:text-2xl text-emerald-100 max-w-3xl mx-auto mb-12">
               Magical insights on AI development, ethical automation, and building the future of software with pixie dust
             </p>
 
@@ -201,7 +201,7 @@ export default function BlogPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Featured Post */}
         {featuredPost && (
           <div className="mb-16">
@@ -210,7 +210,7 @@ export default function BlogPage() {
               <h2 className="text-2xl font-bold text-gray-900">Featured Story</h2>
             </div>
             
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow border border-emerald-100">
               <div className="md:flex">
                 {featuredPost.cover_image && (
                   <div className="md:w-1/2">
@@ -279,7 +279,7 @@ export default function BlogPage() {
           {posts.map((post) => (
             <article
               key={post.id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group border border-emerald-100"
             >
               {post.cover_image && (
                 <div className="h-48 overflow-hidden">
@@ -357,7 +357,7 @@ export default function BlogPage() {
         )}
 
         {/* Newsletter Signup */}
-        <div className="mt-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-8 text-white text-center">
+        <div className="mt-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-8 text-white text-center shadow-xl">
           <div className="max-w-2xl mx-auto">
             <Mail className="w-12 h-12 mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-4">
@@ -391,6 +391,8 @@ export default function BlogPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

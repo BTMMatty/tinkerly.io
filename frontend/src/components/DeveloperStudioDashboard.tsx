@@ -1,69 +1,74 @@
-// Key changes to fix the dashboard SSR issues
-// In DeveloperStudioDashboard.tsx, wrap all window/client-side code:
+'use client';
 
-const analyzeProject = async () => {
-  // ... validation code ...
+import React, { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
-  setIsAnalyzing(true);
+export default function DeveloperStudioDashboard() {
+  const { user, isSignedIn, isLoaded } = useUser();
+  const router = useRouter();
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  try {
-    console.log('🧠 Running AI analysis...');
-    
-    const analysisPrompt = `...`; // your existing prompt
-
-    // FIX: Check if we're in browser before using window.claude
-    if (typeof window !== 'undefined' && window.claude?.complete) {
-      const response = await window.claude.complete(analysisPrompt);
-      
-      try {
-        const scopeData = JSON.parse(response);
-        // ... rest of your code
-      } catch (parseError) {
-        console.error('Failed to parse AI response:', parseError);
-        // Use fallback API instead
-        await analyzeWithAPI(analysisPrompt);
-      }
-    } else {
-      // Server-side or no claude available - use API
-      await analyzeWithAPI(analysisPrompt);
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in');
     }
-  } catch (error) {
-    console.error('Analysis failed:', error);
-  } finally {
-    setIsAnalyzing(false);
+  }, [isSignedIn, isLoaded, router]);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Loading Dashboard...</h1>
+        </div>
+      </div>
+    );
   }
-};
 
-// Add this new function for API-based analysis
-const analyzeWithAPI = async (prompt: string) => {
-  try {
-    const response = await fetch('/api/analyze-project', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        projectData: projectForm
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Analysis API error: ${response.status}`);
-    }
-
-    const analysisResult = await response.json();
-    setProjectScope(analysisResult);
-    
-    // Save to database
-    if (savedProject?.id) {
-      await projectService.saveAnalysis(savedProject.id, analysisResult);
-    }
-    
-    await loadUserProjects(user.id);
-  } catch (error) {
-    console.error('API analysis error:', error);
-    // Use mock data as last resort
-    useMockAnalysis();
+  if (!isSignedIn) {
+    return null;
   }
-};
+
+  const analyzeProject = async () => {
+    setIsAnalyzing(true);
+    
+    try {
+      console.log('🧠 Running AI analysis...');
+      // Simulate AI analysis
+      setTimeout(() => {
+        setIsAnalyzing(false);
+        alert('🧚‍♀️ AI Analysis complete! This is a demo - full functionality coming soon!');
+      }, 2000);
+    } catch (error) {
+      console.error('Analysis error:', error);
+      setIsAnalyzing(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome to Your Studio, {user?.firstName}!
+          </h1>
+          <p className="text-lg text-gray-600">
+            Your AI-powered workspace for intelligent project development
+          </p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-emerald-100 p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">🚀 Create Your First Project</h2>
+          
+          <button
+            onClick={analyzeProject}
+            disabled={isAnalyzing}
+            className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+          >
+            {isAnalyzing ? 'Analyzing...' : '🧠 Try AI Analysis (Demo)'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

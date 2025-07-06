@@ -1,78 +1,67 @@
-// app/create/page.tsx - Minimal version that will build
-import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+'use client';
 
-export default async function Create() {
-  const user = await currentUser();
-  
-  if (!user) {
-    redirect('/sign-in');
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function CreatePage() {
+  const { user, isSignedIn, isLoaded } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in');
+    }
+  }, [isSignedIn, isLoaded, router]);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null; // Will redirect
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+      <div className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Create Your Project ✨
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Get AI-powered project scoping and development estimates.
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Create Project</h1>
+          <p className="text-xl text-gray-600">AI-powered project analysis coming soon!</p>
         </div>
-
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-2xl p-8 text-white">
-          <h2 className="text-2xl font-bold mb-6">Tell Tink What You Think!</h2>
+        
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-2xl">🧚‍♀️</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Project Creation Portal</h2>
+          <p className="text-gray-600 mb-8">
+            The AI-powered project scoping engine is being fine-tuned by our code pixies!
+            Get ready for intelligent analysis, transparent pricing, and lightning-fast development.
+          </p>
           
-          <form className="space-y-6">
-            <div>
-              <label className="block text-white text-sm font-semibold mb-2">
-                Project Title
-              </label>
-              <input
-                type="text"
-                placeholder="E.g., AI-Powered Customer Support System"
-                className="w-full p-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-70"
-              />
-            </div>
-
-            <div>
-              <label className="block text-white text-sm font-semibold mb-2">
-                Project Description
-              </label>
-              <textarea
-                placeholder="Describe what you want to build..."
-                className="w-full p-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-white placeholder-opacity-70 resize-none"
-                rows={4}
-              />
-            </div>
-
-            <div>
-              <label className="block text-white text-sm font-semibold mb-2">
-                Category
-              </label>
-              <select className="w-full p-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white">
-                <option value="" className="text-gray-800">Select category</option>
-                <option value="web" className="text-gray-800">Web Application</option>
-                <option value="mobile" className="text-gray-800">Mobile App</option>
-                <option value="api" className="text-gray-800">API Development</option>
-              </select>
-            </div>
-
-            <button
-              type="button"
-              className="w-full bg-white text-emerald-600 py-3 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-all"
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href="/dashboard" 
+              className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
             >
-              🧚‍♀️ Analyze with AI ✨
-            </button>
-          </form>
+              Back to Dashboard
+            </a>
+            <a 
+              href="/pricing" 
+              className="border border-emerald-600 text-emerald-600 px-6 py-3 rounded-lg hover:bg-emerald-50 transition-colors"
+            >
+              View Pricing
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-export const metadata = {
-  title: 'Create Project - Tinkerly.io',
-  description: 'Start your AI-powered project analysis',
-};

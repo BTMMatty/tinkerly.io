@@ -1,6 +1,6 @@
+import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
-import Footer from '@/components/Footer';  // ← Use existing Footer.tsx
 import CookieConsent from '@/components/CookieConsent';
 
 export const metadata = {
@@ -18,7 +18,6 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <main>{children}</main>
-          <Footer />
           <CookieConsent />
         </body>
       </html>

@@ -56,7 +56,22 @@ export default function DeveloperStudioDashboard() {
             Your AI-powered workspace for intelligent project development
           </p>
         </div>
-
+        <div className="bg-purple-100 border border-purple-300 rounded-xl p-6 mb-8 max-w-2xl mx-auto">
+        <h3 className="text-purple-800 font-bold mb-2 text-xl">
+          🎉 Welcome to the Tinkerly.io Beta!
+        </h3>
+        <p className="text-purple-700">
+          You're among the first to experience our AI-powered project scoping platform. While we're putting the finishing touches on full development services, you can:
+        </p>
+        <ul className="mt-3 space-y-2 text-purple-700">
+          <li>✨ Explore the AI project analyzer (coming soon)</li>
+          <li>📖 Read our origin story on the Pixie Post blog</li>
+          <li>🧚‍♀️ Be part of the revolution in ethical software development</li>
+        </ul>
+        <p className="text-purple-700 mt-3 font-semibold">
+          Full platform launching soon. Thanks for being an early believer!
+        </p>
+      </div>
         <div className="bg-white rounded-xl shadow-sm border border-emerald-100 p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">🚀 Create Your First Project</h2>
           

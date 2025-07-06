@@ -391,8 +391,6 @@ export default function BlogPage() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

@@ -162,7 +162,7 @@ export default function BlogPage() {
       </div>
 
       {/* Category Filter - Fixed z-index */}
-      <div className="sticky top-[64px] z-30 bg-white shadow-sm border-b border-emerald-100">
+      <div className="sticky top-[0px] z-30 bg-white shadow-sm border-b border-emerald-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-6 py-4 overflow-x-auto">
             <button

@@ -1,6 +1,3 @@
-// app/blog/page.tsx
-// The Pixie Post - Tinkerly.io's Magical Blog 🧚‍♀️
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -130,7 +127,7 @@ export default function BlogPage() {
           <div className="text-center">
             <div className="inline-flex items-center bg-white bg-opacity-20 rounded-full px-6 py-2 mb-8">
               <Sparkles className="w-4 h-4 mr-2" />
-              <span className="text-emerald-100">The Official Tinkerly.io Blog</span>
+              <span className="text-emerald-800 font-semibold">The Official Tinkerly.io Blog</span>
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
@@ -144,17 +141,17 @@ export default function BlogPage() {
             {/* Search Bar */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-600 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 z-10" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for magical content..."
-                  className="w-full pl-12 pr-4 py-4 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                  className="w-full pl-12 pr-32 py-4 rounded-full bg-white text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-4 focus:ring-emerald-300 shadow-lg"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-emerald-600 text-white px-6 py-2 rounded-full hover:bg-emerald-700 transition-colors"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-emerald-600 text-white px-6 py-2 rounded-full hover:bg-emerald-700 transition-colors shadow-md"
                 >
                   Search
                 </button>
@@ -164,8 +161,8 @@ export default function BlogPage() {
         </div>
       </div>
 
-      {/* Category Filter */}
-      <div className="sticky top-16 z-40 bg-white shadow-sm border-b border-emerald-100">
+      {/* Category Filter - Fixed z-index */}
+      <div className="sticky top-[64px] z-30 bg-white shadow-sm border-b border-emerald-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-6 py-4 overflow-x-auto">
             <button
@@ -374,12 +371,12 @@ export default function BlogPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
                 required
-                className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
+                className="flex-1 px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
               />
               <button
                 type="submit"
                 disabled={subscribeLoading}
-                className="bg-white text-emerald-600 px-6 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-white text-emerald-600 px-6 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
                 {subscribeLoading ? (
                   <Loader className="w-5 h-5 animate-spin mx-auto" />
@@ -391,6 +388,8 @@ export default function BlogPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

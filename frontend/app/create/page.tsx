@@ -36,9 +36,49 @@ interface ProjectFormData {
   complexity: string;
 }
 
+// ✅ FIXED: Proper TypeScript interfaces for analysis results
+interface TechStack {
+  frontend: string[];
+  backend: string[];
+  database: string;
+  deployment: string;
+}
+
+interface Timeline {
+  industry_standard: string;
+  accelerated: string;
+}
+
+interface Phase {
+  name: string;
+  duration: string;
+  description: string;
+  deliverables: string[];
+}
+
+interface Risk {
+  risk: string;
+  mitigation: string;
+  impact: 'Low' | 'Medium' | 'High';
+}
+
+interface AnalysisResult {
+  complexity: string;
+  complexity_score: number;
+  estimated_hours: number;
+  hourly_rate: number;
+  total_cost: number;
+  techStack: TechStack;
+  timeline: Timeline;
+  phases: Phase[];
+  keyFeatures: string[];
+  risks: Risk[];
+  whyRecommended: string;
+}
+
 // ✅ FIXED: Proper component definition with interface
 interface MagicalAnalysisResultsProps {
-  analysis: any;
+  analysis: AnalysisResult;
   projectTitle: string;
   creditsRemaining: number;
   onProceedToPayment: () => void;
@@ -100,15 +140,15 @@ function MagicalAnalysisResults({
             <span className="text-emerald-600 font-bold text-sm">PRICING</span>
           </div>
           <div className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">${analysis.total_cost?.toLocaleString() || '12,000'}</div>
+            <div className="text-3xl font-bold text-gray-900">${analysis.total_cost.toLocaleString()}</div>
             <div className="text-gray-600 space-y-1">
               <div className="flex justify-between text-sm">
                 <span>Rate:</span>
-                <span className="font-semibold">${analysis.hourly_rate || 100}/hr</span>
+                <span className="font-semibold">${analysis.hourly_rate}/hr</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Hours:</span>
-                <span className="font-semibold">{analysis.estimated_hours || 120}h</span>
+                <span className="font-semibold">{analysis.estimated_hours}h</span>
               </div>
             </div>
           </div>
@@ -122,11 +162,11 @@ function MagicalAnalysisResults({
             <span className="text-blue-600 font-bold text-sm">TIMELINE</span>
           </div>
           <div className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{analysis.timeline?.accelerated || '4 weeks'}</div>
+            <div className="text-3xl font-bold text-gray-900">{analysis.timeline.accelerated}</div>
             <div className="text-gray-600 space-y-1">
               <div className="flex justify-between text-sm">
                 <span>Industry Std:</span>
-                <span className="font-semibold">{analysis.timeline?.industry_standard || '8 weeks'}</span>
+                <span className="font-semibold">{analysis.timeline.industry_standard}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Time Saved:</span>
@@ -144,16 +184,16 @@ function MagicalAnalysisResults({
             <span className="text-purple-600 font-bold text-sm">COMPLEXITY</span>
           </div>
           <div className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{analysis.complexity || 'Moderate'}</div>
+            <div className="text-3xl font-bold text-gray-900">{analysis.complexity}</div>
             <div className="text-gray-600 space-y-1">
               <div className="flex justify-between text-sm">
                 <span>Score:</span>
-                <span className="font-semibold">{analysis.complexity_score || 6}/10</span>
+                <span className="font-semibold">{analysis.complexity_score}/10</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
                   className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-1000"
-                  style={{ width: `${(analysis.complexity_score || 6) * 10}%` }}
+                  style={{ width: `${analysis.complexity_score * 10}%` }}
                 ></div>
               </div>
             </div>
@@ -174,7 +214,7 @@ function MagicalAnalysisResults({
               Frontend
             </h4>
             <div className="flex flex-wrap gap-2">
-              {(analysis.techStack?.frontend || ['React', 'Next.js', 'TypeScript']).map((tech: string, i: number) => (
+              {analysis.techStack.frontend.map((tech: string, i: number) => (
                 <span key={i} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200">
                   {tech}
                 </span>
@@ -187,7 +227,7 @@ function MagicalAnalysisResults({
               Backend
             </h4>
             <div className="flex flex-wrap gap-2">
-              {(analysis.techStack?.backend || ['Node.js', 'Express']).map((tech: string, i: number) => (
+              {analysis.techStack.backend.map((tech: string, i: number) => (
                 <span key={i} className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
                   {tech}
                 </span>
@@ -201,10 +241,10 @@ function MagicalAnalysisResults({
             </h4>
             <div className="flex flex-wrap gap-2">
               <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium border border-purple-200">
-                {analysis.techStack?.database || 'PostgreSQL'}
+                {analysis.techStack.database}
               </span>
               <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium border border-orange-200">
-                {analysis.techStack?.deployment || 'Vercel'}
+                {analysis.techStack.deployment}
               </span>
             </div>
           </div>
@@ -215,11 +255,7 @@ function MagicalAnalysisResults({
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Development Timeline</h3>
         <div className="space-y-4">
-          {(analysis.phases || [
-            { name: "Foundation Setup", duration: "1 week", description: "Project setup and core architecture", deliverables: ["Project structure", "Authentication", "Database schema"] },
-            { name: "Core Development", duration: "2 weeks", description: "Main features and functionality", deliverables: ["Core features", "API endpoints", "User interface"] },
-            { name: "Polish & Deploy", duration: "1 week", description: "Testing, optimization, and deployment", deliverables: ["Testing suite", "Performance optimization", "Production deployment"] }
-          ]).map((phase: any, i: number) => (
+          {analysis.phases.map((phase: Phase, i: number) => (
             <div 
               key={i} 
               className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
@@ -240,7 +276,7 @@ function MagicalAnalysisResults({
                 <div className="border-t border-emerald-200 pt-3 mt-3">
                   <h5 className="font-medium text-gray-700 mb-2">Deliverables:</h5>
                   <div className="flex flex-wrap gap-2">
-                    {phase.deliverables?.map((deliverable: string, j: number) => (
+                    {phase.deliverables.map((deliverable: string, j: number) => (
                       <span key={j} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm border">
                         <CheckCircle className="w-3 h-3 inline mr-1 text-green-500" />
                         {deliverable}
@@ -269,9 +305,7 @@ function MagicalAnalysisResults({
           </button>
         </div>
         <div className="space-y-3">
-          {(analysis.risks || [
-            { risk: "API Integration Complexity", mitigation: "Use proven libraries and thorough testing", impact: "Medium" }
-          ]).slice(0, showAllRisks ? undefined : 2).map((risk: any, i: number) => (
+          {analysis.risks.slice(0, showAllRisks ? undefined : 2).map((risk: Risk, i: number) => (
             <div key={i} className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium text-gray-900">{risk.risk}</h4>
@@ -296,7 +330,7 @@ function MagicalAnalysisResults({
           Why This Approach
         </h3>
         <p className="text-blue-800 leading-relaxed">
-          {analysis.whyRecommended || "This approach balances modern technology with proven reliability, ensuring fast development without sacrificing quality."}
+          {analysis.whyRecommended}
         </p>
       </div>
 
@@ -325,7 +359,7 @@ export default function CreateProjectPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState(null);
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult | null>(null); // ✅ FIXED: Proper typing
   const [userCredits, setUserCredits] = useState({ 
     hasCredits: true, 
     creditsRemaining: 3, 
@@ -385,8 +419,8 @@ export default function CreateProjectPage() {
     try {
       alert(`🚀 Project "${projectData.title}" submitted successfully!
 
-Estimated Price: ${analysisResults.total_cost?.toLocaleString()}
-Timeline: ${analysisResults.timeline?.accelerated}
+Estimated Price: $${analysisResults.total_cost.toLocaleString()}
+Timeline: ${analysisResults.timeline.accelerated}
 
 Tink will review the AI analysis and contact you within 24 hours to finalize details and process payment.`);
       
@@ -495,7 +529,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
       console.log('✅ Analysis complete!', analysisResult);
       
       // Store analysis results to show the beautiful display
-      setAnalysisResults(analysisResult);
+      setAnalysisResults(analysisResult as AnalysisResult); // ✅ FIXED: Proper type casting
       setCurrentStep(3); // Move to analysis results step
       
     } catch (error) {
@@ -504,7 +538,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
       // 🔧 TEMPORARY FALLBACK: Mock analysis for demo purposes
       console.log('🔄 Using fallback mock analysis for demo...');
       
-      const mockAnalysis = {
+      const mockAnalysis: AnalysisResult = { // ✅ FIXED: Proper typing
         complexity: "Moderate",
         complexity_score: 6,
         estimated_hours: 120,
@@ -555,7 +589,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
 
 Project: "${projectData.title}"
 Complexity: ${mockAnalysis.complexity}
-Estimated Cost: ${mockAnalysis.total_cost.toLocaleString()}
+Estimated Cost: $${mockAnalysis.total_cost.toLocaleString()}
 Timeline: ${mockAnalysis.timeline.accelerated}
 Tech Stack: ${mockAnalysis.techStack.frontend.join(', ')}
 
@@ -764,6 +798,8 @@ Mock analysis generated for demo purposes!`);
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

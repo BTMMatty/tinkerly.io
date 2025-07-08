@@ -71,10 +71,93 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: undefined, // or use a Clerk theme like 'dark'
+        elements: {
+          // Form elements
+          formButtonPrimary: 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg',
+          formButtonSecondary: 'bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50',
+          formFieldInput: 'rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500',
+          formFieldLabel: 'text-gray-700 font-medium',
+          
+          // Card elements
+          card: 'shadow-xl rounded-2xl border border-gray-100',
+          cardHeader: 'border-b border-gray-100',
+          headerTitle: 'text-2xl font-bold text-gray-900',
+          headerSubtitle: 'text-gray-600 mt-2',
+          
+          // Social buttons
+          socialButtonsBlockButton: 'border-2 border-gray-300 hover:bg-gray-50 transition-colors',
+          socialButtonsBlockButtonText: 'font-medium',
+          
+          // Links
+          footerActionLink: 'text-emerald-600 hover:text-emerald-700 font-medium underline',
+          identityPreviewEditButtonIcon: 'text-emerald-600',
+          
+          // Divider
+          dividerLine: 'bg-gray-300',
+          dividerText: 'text-gray-500',
+          
+          // Alerts
+          alert: 'rounded-lg',
+          alertText: 'text-sm',
+          
+          // User button
+          userButtonPopoverCard: 'shadow-xl border border-gray-100',
+          userButtonPopoverActionButton: 'hover:bg-gray-50',
+          
+          // Profile
+          profileSectionTitle: 'text-gray-900 font-semibold',
+          profileSectionContent: 'text-gray-600',
+          
+          // Navbar
+          navbar: 'bg-white shadow-sm border-b border-gray-100',
+          navbarButton: 'text-gray-600 hover:text-emerald-600',
+        },
+        layout: {
+          socialButtonsPlacement: 'top',
+          socialButtonsVariant: 'blockButton',
+          showOptionalFields: true,
+        },
+        variables: {
+          // Colors
+          colorPrimary: '#10b981', // emerald-500
+          colorDanger: '#ef4444',
+          colorSuccess: '#10b981',
+          colorWarning: '#f59e0b',
+          colorText: '#1f2937', // gray-900
+          colorTextSecondary: '#6b7280', // gray-500
+          colorBackground: '#ffffff',
+          colorInputBackground: '#ffffff',
+          colorInputText: '#1f2937',
+          
+          // Typography
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          fontSize: '16px',
+          fontWeight: {
+            normal: 400,
+            medium: 500,
+            bold: 700,
+          },
+          
+          // Spacing
+          spacingUnit: '1rem',
+          
+          // Border
+          borderRadius: '0.5rem', // rounded-lg
+        }
+      }}
+    >
       <html lang="en">
-        <body>
-          <main>{children}</main>
+        <head>
+          {/* Remove Tailwind CDN if you're using installed Tailwind */}
+          {/* <script src="https://cdn.tailwindcss.com"></script> */}
+        </head>
+        <body className="min-h-screen bg-white antialiased">
+          <main className="flex min-h-screen flex-col">
+            {children}
+          </main>
           <Footer />
           <CookieConsent />
         </body>

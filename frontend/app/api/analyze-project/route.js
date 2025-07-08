@@ -3,6 +3,53 @@ import { currentUser } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 
+// Type definitions
+interface ProjectData {
+  title: string;
+  description: string;
+  category: string;
+  requirements: string;
+  timeline?: string;
+  complexity?: string;
+}
+
+interface AnalysisResult {
+  complexity: string;
+  complexity_score: number;
+  estimated_hours: number;
+  hourly_rate: number;
+  total_cost: number;
+  timeline: {
+    industry_standard: string;
+    accelerated: string;
+  };
+  techStack: {
+    frontend: string[];
+    backend: string[];
+    database: string;
+    deployment: string;
+  };
+  phases: Array<{
+    name: string;
+    duration: string;
+    description: string;
+    deliverables: string[];
+    percentage?: number;
+  }>;
+  milestones: Array<{
+    title: string;
+    description: string;
+    percentage: number;
+  }>;
+  risks: Array<{
+    risk: string;
+    mitigation: string;
+    impact: string;
+  }>;
+  keyFeatures: string[];
+  whyRecommended: string;
+}
+
 // Safe initialization with fallback
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -32,7 +79,7 @@ try {
   console.error('Failed to initialize Anthropic:', error);
 }
 
-export async function POST(request) {
+export async function POST(request: Request) {
   try {
     // Check authentication using currentUser for API routes
     const user = await currentUser();
@@ -40,7 +87,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { projectData } = await request.json();
+    // Parse and validate request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json({ 
+        error: 'Invalid request body' 
+      }, { status: 400 });
+    }
+
+    const { projectData } = body;
 
     // Validate required fields
     if (!projectData?.title || !projectData?.description || !projectData?.category || !projectData?.requirements) {
@@ -56,7 +113,7 @@ export async function POST(request) {
       console.log('📊 Running in demo mode (no database)');
       
       // Get AI analysis
-      let analysis;
+      let analysis: AnalysisResult;
       if (anthropic) {
         analysis = await analyzeWithAnthropic(projectData);
       } else {
@@ -80,7 +137,27 @@ export async function POST(request) {
 
     if (userError || !userData) {
       console.error('User fetch error:', userError);
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      // Create user if doesn't exist
+      if (userError?.code === 'PGRST116') {
+        const { data: newUser, error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.emailAddresses?.[0]?.emailAddress || '',
+            credits_remaining: 3
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+        }
+        
+        // Continue with new user data
+        userData.credits_remaining = 3;
+      } else {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
     }
 
     if (userData.credits_remaining <= 0) {
@@ -112,7 +189,7 @@ export async function POST(request) {
     }
 
     // Get AI analysis from Anthropic
-    let analysis;
+    let analysis: AnalysisResult;
     
     if (anthropic) {
       // Use real Anthropic AI
@@ -176,7 +253,7 @@ export async function POST(request) {
         complexity: analysis.complexity,
         total_cost: analysis.total_cost,
         credits_used: 1,
-        ai_model: anthropic ? 'claude-3-opus' : 'algorithm'
+        ai_model: anthropic ? 'claude-3.5-sonnet' : 'algorithm'
       }
     });
 
@@ -190,6 +267,15 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('❌ Analysis API error:', error);
+    
+    // Better error responses based on error type
+    if (error instanceof Anthropic.APIError) {
+      return NextResponse.json({ 
+        error: 'AI service temporarily unavailable. Please try again.',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      }, { status: 503 });
+    }
+    
     return NextResponse.json({ 
       error: 'Analysis failed. Please try again.',
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
@@ -197,7 +283,7 @@ export async function POST(request) {
   }
 }
 
-async function analyzeWithAnthropic(projectData) {
+async function analyzeWithAnthropic(projectData: ProjectData): Promise<AnalysisResult> {
   const { title, description, category, requirements } = projectData;
   
   const prompt = `You are an expert software project estimator. Analyze this project and provide detailed estimates.
@@ -263,7 +349,7 @@ Respond ONLY with valid JSON, no additional text.`;
 
   try {
     const message = await anthropic.messages.create({
-      model: 'claude-3-opus-20240229',
+      model: 'claude-3-5-sonnet-20241022', // Updated to correct model
       max_tokens: 2000,
       temperature: 0.7,
       system: "You are an expert software project estimator. Always respond with valid JSON only.",
@@ -276,10 +362,19 @@ Respond ONLY with valid JSON, no additional text.`;
     });
 
     // Parse the response
-    const responseText = message.content[0].text;
-    const analysis = JSON.parse(responseText);
+    const responseText = message.content[0].type === 'text' 
+      ? message.content[0].text 
+      : '';
     
-    return analysis;
+    try {
+      const analysis = JSON.parse(responseText);
+      return analysis;
+    } catch (parseError) {
+      console.error('Failed to parse Anthropic response:', parseError);
+      console.log('Raw response:', responseText);
+      // Fallback to algorithmic analysis
+      return generateProjectAnalysis(projectData);
+    }
   } catch (error) {
     console.error('Anthropic API error:', error);
     // Fallback to algorithmic analysis
@@ -287,7 +382,7 @@ Respond ONLY with valid JSON, no additional text.`;
   }
 }
 
-function generateProjectAnalysis(projectData) {
+function generateProjectAnalysis(projectData: ProjectData): AnalysisResult {
   const { title, description, category, requirements } = projectData;
   
   // Determine complexity based on multiple factors
@@ -313,7 +408,7 @@ function generateProjectAnalysis(projectData) {
   };
 }
 
-function generateMilestones(totalCost, hours) {
+function generateMilestones(totalCost: number, hours: number) {
   const milestones = [];
   
   if (hours <= 80) {
@@ -378,10 +473,10 @@ function generateMilestones(totalCost, hours) {
   return milestones;
 }
 
-function determineComplexity(category, requirements, description) {
+function determineComplexity(category: string, requirements: string, description: string): string {
   let score = 0;
   
-  const categoryScores = {
+  const categoryScores: Record<string, number> = {
     'Landing Page': 1,
     'Web Application': 3,
     'Mobile App': 4,
@@ -417,8 +512,8 @@ function determineComplexity(category, requirements, description) {
   return 'Enterprise';
 }
 
-function getComplexityScore(complexity) {
-  const scores = {
+function getComplexityScore(complexity: string): number {
+  const scores: Record<string, number> = {
     'Simple': Math.floor(Math.random() * 3) + 1,
     'Moderate': Math.floor(Math.random() * 3) + 4,
     'Complex': Math.floor(Math.random() * 2) + 7,
@@ -427,8 +522,8 @@ function getComplexityScore(complexity) {
   return scores[complexity];
 }
 
-function calculateHours(complexity, requirements) {
-  const baseHours = {
+function calculateHours(complexity: string, requirements: string): number {
+  const baseHours: Record<string, number> = {
     'Simple': 20,
     'Moderate': 60,
     'Complex': 140,
@@ -441,8 +536,8 @@ function calculateHours(complexity, requirements) {
   return Math.round(base * (1 + reqFactor * 0.2));
 }
 
-function getHourlyRate(complexity) {
-  const rates = {
+function getHourlyRate(complexity: string): number {
+  const rates: Record<string, number> = {
     'Simple': 80,
     'Moderate': 100,
     'Complex': 125,
@@ -451,8 +546,8 @@ function getHourlyRate(complexity) {
   return rates[complexity];
 }
 
-function getTechStack(category) {
-  const stacks = {
+function getTechStack(category: string) {
+  const stacks: Record<string, any> = {
     'Web Application': {
       frontend: ['React', 'Next.js', 'TypeScript'],
       backend: ['Node.js', 'Express'],
@@ -500,7 +595,7 @@ function getTechStack(category) {
   return stacks[category] || stacks['Web Application'];
 }
 
-function calculateTimeline(hours) {
+function calculateTimeline(hours: number) {
   const weeks = Math.ceil(hours / 40);
   const acceleratedWeeks = Math.ceil(weeks * 0.6);
   
@@ -510,7 +605,7 @@ function calculateTimeline(hours) {
   };
 }
 
-function generatePhases(complexity, totalHours) {
+function generatePhases(complexity: string, totalHours: number) {
   const phases = [];
   
   if (complexity === 'Simple') {
@@ -581,8 +676,8 @@ function generatePhases(complexity, totalHours) {
   return phases;
 }
 
-function extractKeyFeatures(category, requirements) {
-  const commonFeatures = {
+function extractKeyFeatures(category: string, requirements: string): string[] {
+  const commonFeatures: Record<string, string[]> = {
     'Web Application': ['User Authentication', 'Responsive Design', 'Database Integration'],
     'Mobile App': ['Native Performance', 'Push Notifications', 'Offline Support'],
     'E-commerce Platform': ['Payment Processing', 'Inventory Management', 'Order Tracking'],
@@ -596,7 +691,7 @@ function extractKeyFeatures(category, requirements) {
   
   // Add features based on requirements
   const text = requirements.toLowerCase();
-  const additionalFeatures = [];
+  const additionalFeatures: string[] = [];
   
   if (text.includes('real-time')) additionalFeatures.push('Real-time Updates');
   if (text.includes('mobile')) additionalFeatures.push('Mobile Responsive');
@@ -607,7 +702,7 @@ function extractKeyFeatures(category, requirements) {
   return [...baseFeatures, ...additionalFeatures].slice(0, 6);
 }
 
-function assessRisks(complexity, category) {
+function assessRisks(complexity: string, category: string) {
   const risks = [];
   
   if (complexity === 'Complex' || complexity === 'Enterprise') {
@@ -643,8 +738,8 @@ function assessRisks(complexity, category) {
   return risks.slice(0, 3);
 }
 
-function generateRecommendation(category, complexity) {
-  const recommendations = {
+function generateRecommendation(category: string, complexity: string): string {
+  const recommendations: Record<string, string> = {
     'Simple': 'This approach focuses on rapid delivery while maintaining code quality. Perfect for MVP or proof-of-concept projects.',
     'Moderate': 'Balanced approach combining modern technologies with proven patterns. Ideal for production applications with room for growth.',
     'Complex': 'Enterprise-grade architecture designed for scalability and maintainability. Best for applications expecting significant growth.',

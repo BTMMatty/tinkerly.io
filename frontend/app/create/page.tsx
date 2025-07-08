@@ -63,13 +63,22 @@ export default function CreateProjectPage() {
   };
 
   const analyzeProject = async () => {
+    // Validate required fields
     if (!projectData.title || !projectData.description || !projectData.category || !projectData.requirements) {
       alert('Please fill in all required fields before analysis');
       return;
     }
 
+    // Check authentication
     if (!user) {
       alert('Please sign in to analyze projects');
+      return;
+    }
+
+    // Check credits
+    if (userCredits.creditsRemaining <= 0 && userCredits.subscriptionTier === 'free') {
+      alert('You have no credits remaining. Please upgrade to Pro for unlimited analyses.');
+      router.push('/pricing');
       return;
     }
 
@@ -86,8 +95,31 @@ export default function CreateProjectPage() {
         })
       });
 
+      // Handle different error responses
       if (!response.ok) {
-        throw new Error(`Analysis API error: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        
+        // Handle specific error cases
+        if (response.status === 401) {
+          alert('Please sign in to analyze projects');
+          router.push('/sign-in');
+          return;
+        }
+        
+        if (response.status === 403 && errorData.error === 'No credits remaining') {
+          alert('You have no credits remaining. Please upgrade to Pro.');
+          setUserCredits(prev => ({ ...prev, creditsRemaining: 0, hasCredits: false }));
+          router.push('/pricing');
+          return;
+        }
+        
+        if (response.status === 503) {
+          alert('AI service is temporarily unavailable. Please try again in a few moments.');
+          return;
+        }
+        
+        // Generic error with message from API
+        throw new Error(errorData.error || `Analysis failed with status ${response.status}`);
       }
 
       const result = await response.json();
@@ -104,11 +136,24 @@ export default function CreateProjectPage() {
             hasCredits: result.credits_remaining > 0
           }));
         }
+        
+        // Show demo mode notification if applicable
+        if (result.demo_mode) {
+          console.log('Running in demo mode - database features disabled');
+        }
+      } else {
+        throw new Error('Invalid response format from analysis API');
       }
       
     } catch (error) {
       console.error('Analysis error:', error);
-      alert('Analysis failed. Please try again.');
+      
+      // More specific error messages
+      if (error.message.includes('fetch')) {
+        alert('Network error. Please check your connection and try again.');
+      } else {
+        alert(error.message || 'Analysis failed. Please try again.');
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -163,10 +208,23 @@ export default function CreateProjectPage() {
           </p>
 
           {/* Credits Display */}
-          <div className="inline-flex items-center bg-white border border-emerald-200 rounded-full px-6 py-2 mb-8">
-            <Zap className="w-4 h-4 mr-2 text-emerald-500" />
-            <span className="text-gray-700 font-medium">
+          <div className={`inline-flex items-center border rounded-full px-6 py-2 mb-8 ${
+            userCredits.creditsRemaining > 0 
+              ? 'bg-white border-emerald-200' 
+              : 'bg-red-50 border-red-200'
+          }`}>
+            <Zap className={`w-4 h-4 mr-2 ${
+              userCredits.creditsRemaining > 0 ? 'text-emerald-500' : 'text-red-500'
+            }`} />
+            <span className={`font-medium ${
+              userCredits.creditsRemaining > 0 ? 'text-gray-700' : 'text-red-700'
+            }`}>
               {userCredits.creditsRemaining} analyses remaining
+              {userCredits.creditsRemaining === 0 && userCredits.subscriptionTier === 'free' && (
+                <span className="ml-2 text-sm">
+                  - <a href="/pricing" className="underline">Upgrade to Pro</a>
+                </span>
+              )}
             </span>
           </div>
         </div>
@@ -237,13 +295,18 @@ export default function CreateProjectPage() {
                 <button
                   type="button"
                   onClick={analyzeProject}
-                  disabled={isAnalyzing || !canAnalyze()}
+                  disabled={isAnalyzing || !canAnalyze() || (userCredits.creditsRemaining <= 0 && userCredits.subscriptionTier === 'free')}
                   className="px-8 py-3 bg-white text-emerald-600 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center font-semibold"
                 >
                   {isAnalyzing ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
                       Analyzing...
+                    </>
+                  ) : userCredits.creditsRemaining <= 0 && userCredits.subscriptionTier === 'free' ? (
+                    <>
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      No Credits - Upgrade to Pro
                     </>
                   ) : (
                     <>

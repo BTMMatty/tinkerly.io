@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Clock, Code, DollarSign, Brain, Shield, Heart, Zap, Users, Calculator, ArrowRight, Sparkles, Star, Rocket, Wand2 } from 'lucide-react';
 import { userService, analyticsService, testConnection, checkUserCredits } from '@/lib/supabase';
 
-const TinkerPlatform = () => {
+export default function TinkerPlatform() {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
   const [userCredits, setUserCredits] = useState({ hasCredits: false, creditsRemaining: 0, subscriptionTier: 'free' });
@@ -62,6 +62,69 @@ const TinkerPlatform = () => {
     if (!isSignedIn) return;
     router.push('/dashboard');
   };
+
+  const howItWorksSteps = [
+    {
+      icon: <Brain className="w-10 h-10" />,
+      title: "AI Analysis",
+      description: "Describe your project and get instant AI-powered scoping, pricing, and timeline estimation.",
+      color: "emerald",
+      delay: "0"
+    },
+    {
+      icon: <Code className="w-10 h-10" />,
+      title: "Expert Development", 
+      description: "Our skilled developers bring your vision to life with clean code and modern best practices.",
+      color: "teal",
+      delay: "100"
+    },
+    {
+      icon: <Zap className="w-10 h-10" />,
+      title: "Fast Delivery",
+      description: "Get your project delivered 50% faster than industry standard with regular updates.",
+      color: "cyan",
+      delay: "200"
+    }
+  ];
+
+  const features = [
+    { 
+      icon: <DollarSign className="w-8 h-8" />, 
+      title: "Transparent Pricing", 
+      desc: "Know exactly what you'll pay upfront",
+      gradient: "from-green-400 to-emerald-600"
+    },
+    { 
+      icon: <Clock className="w-8 h-8" />, 
+      title: "Fast Turnaround", 
+      desc: "50% faster than industry average",
+      gradient: "from-blue-400 to-cyan-600"
+    },
+    { 
+      icon: <Brain className="w-8 h-8" />, 
+      title: "AI-Powered Scoping", 
+      desc: "Accurate project estimation with AI",
+      gradient: "from-purple-400 to-pink-600"
+    },
+    { 
+      icon: <Code className="w-8 h-8" />, 
+      title: "Modern Tech Stack", 
+      desc: "Built with the latest technologies",
+      gradient: "from-orange-400 to-red-600"
+    },
+    { 
+      icon: <Shield className="w-8 h-8" />, 
+      title: "Quality Guaranteed", 
+      desc: "100% satisfaction or money back",
+      gradient: "from-teal-400 to-emerald-600"
+    },
+    { 
+      icon: <Users className="w-8 h-8" />, 
+      title: "Expert Team", 
+      desc: "Vetted developers and designers",
+      gradient: "from-indigo-400 to-purple-600"
+    }
+  ];
 
   return (
     <div className="w-full overflow-x-hidden">
@@ -195,29 +258,7 @@ const TinkerPlatform = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                icon: <Brain className="w-10 h-10" />,
-                title: "AI Analysis",
-                description: "Describe your project and get instant AI-powered scoping, pricing, and timeline estimation.",
-                color: "emerald",
-                delay: "0"
-              },
-              {
-                icon: <Code className="w-10 h-10" />,
-                title: "Expert Development", 
-                description: "Our skilled developers bring your vision to life with clean code and modern best practices.",
-                color: "teal",
-                delay: "100"
-              },
-              {
-                icon: <Zap className="w-10 h-10" />,
-                title: "Fast Delivery",
-                description: "Get your project delivered 50% faster than industry standard with regular updates.",
-                color: "cyan",
-                delay: "200"
-              }
-            ].map((step, index) => (
+            {howItWorksSteps.map((step, index) => (
               <div key={index} className={`group transform transition-all duration-700 delay-${step.delay} ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                 <div className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
                   {/* Card background gradient */}
@@ -258,44 +299,7 @@ const TinkerPlatform = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              { 
-                icon: <DollarSign className="w-8 h-8" />, 
-                title: "Transparent Pricing", 
-                desc: "Know exactly what you'll pay upfront",
-                gradient: "from-green-400 to-emerald-600"
-              },
-              { 
-                icon: <Clock className="w-8 h-8" />, 
-                title: "Fast Turnaround", 
-                desc: "50% faster than industry average",
-                gradient: "from-blue-400 to-cyan-600"
-              },
-              { 
-                icon: <Brain className="w-8 h-8" />, 
-                title: "AI-Powered Scoping", 
-                desc: "Accurate project estimation with AI",
-                gradient: "from-purple-400 to-pink-600"
-              },
-              { 
-                icon: <Code className="w-8 h-8" />, 
-                title: "Modern Tech Stack", 
-                desc: "Built with the latest technologies",
-                gradient: "from-orange-400 to-red-600"
-              },
-              { 
-                icon: <Shield className="w-8 h-8" />, 
-                title: "Quality Guaranteed", 
-                desc: "100% satisfaction or money back",
-                gradient: "from-teal-400 to-emerald-600"
-              },
-              { 
-                icon: <Users className="w-8 h-8" />, 
-                title: "Expert Team", 
-                desc: "Vetted developers and designers",
-                gradient: "from-indigo-400 to-purple-600"
-              }
-            ].map((feature, index) => (
+            {features.map((feature, index) => (
               <div key={index} className={`group transform transition-all duration-700 delay-${index * 50} ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                 <div className="relative bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 hover:bg-gray-800/70 transition-all duration-300 border border-gray-700 hover:border-emerald-500/50 overflow-hidden hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1">
                   {/* Gradient overlay on hover */}
@@ -376,6 +380,4 @@ const TinkerPlatform = () => {
       </div>
     </div>
   );
-};
-
-export default TinkerPlatform;
+}

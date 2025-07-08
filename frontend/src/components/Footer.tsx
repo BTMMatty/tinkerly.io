@@ -6,13 +6,16 @@ import { Sparkles, Heart, MessageCircle, Users, Github, Twitter, Mail, ExternalL
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+    <footer className="relative bg-gray-900 bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800" style={{ backgroundColor: '#111827' }}>
+      {/* Add a dark overlay as backup */}
+      <div className="absolute inset-0 bg-black bg-opacity-50 pointer-events-none"></div>
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/25">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
@@ -30,29 +33,29 @@ const Footer = () => {
             <h3 className="text-emerald-100 font-semibold mb-4">Product</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/story" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/story" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   Our Story
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/dashboard" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/pricing" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/blog" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   The Pixie Post
                 </Link>
               </li>
               <li>
                 <a 
                   href="https://soon.tinkerly.io" 
-                  className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center"
+                  className="text-gray-300 hover:text-emerald-300 transition-colors duration-200 flex items-center"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -70,25 +73,25 @@ const Footer = () => {
               <li>
                 <a 
                   href="https://discord.gg/AGvXAn9yxJ" 
-                  className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center group"
+                  className="text-gray-300 hover:text-emerald-300 transition-colors duration-200 flex items-center group"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <MessageCircle className="w-4 h-4 mr-2 text-purple-400 group-hover:text-purple-300" />
                   Tinkerland Discord
-                  <ExternalLink className="w-3 h-3 ml-1" />
+                  <ExternalLink className="w-3 h-3 ml-1 opacity-50 group-hover:opacity-100" />
                 </a>
               </li>
               <li>
                 <a 
                   href="https://github.com/BTMMatty/tinkerly.io" 
-                  className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center group"
+                  className="text-gray-300 hover:text-emerald-300 transition-colors duration-200 flex items-center group"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Github className="w-4 h-4 mr-2 text-gray-400 group-hover:text-white" />
                   GitHub
-                  <ExternalLink className="w-3 h-3 ml-1" />
+                  <ExternalLink className="w-3 h-3 ml-1 opacity-50 group-hover:opacity-100" />
                 </a>
               </li>
             </ul>
@@ -99,24 +102,24 @@ const Footer = () => {
             <h3 className="text-emerald-100 font-semibold mb-4">Legal & Support</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/privacy" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/terms" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/press" className="text-gray-300 hover:text-emerald-200 transition-colors">
+                <Link href="/press" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
                   Press Kit
                 </Link>
               </li>
               <li>
                 <a 
                   href="mailto:hello@tinkerly.io" 
-                  className="text-gray-300 hover:text-emerald-200 transition-colors flex items-center"
+                  className="text-gray-300 hover:text-emerald-300 transition-colors duration-200 flex items-center"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Contact
@@ -125,7 +128,7 @@ const Footer = () => {
               <li>
                 <a 
                   href="mailto:media@tinkerly.io" 
-                  className="text-gray-300 hover:text-emerald-200 transition-colors"
+                  className="text-gray-300 hover:text-emerald-300 transition-colors duration-200"
                 >
                   Media Relations
                 </a>
@@ -136,10 +139,10 @@ const Footer = () => {
 
         {/* Discord Highlight Section */}
         <div className="border-t border-emerald-800 pt-8 mt-8">
-          <div className="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border border-purple-400/20 rounded-2xl p-6 mb-6">
+          <div className="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 backdrop-blur-sm border border-purple-400/20 rounded-2xl p-6 mb-6">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
                   <MessageCircle className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -149,7 +152,7 @@ const Footer = () => {
               </div>
               <a 
                 href="https://discord.gg/AGvXAn9yxJ"
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center space-x-2 transform hover:scale-105"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center space-x-2 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
                 target="_blank"
                 rel="noopener noreferrer"
               >

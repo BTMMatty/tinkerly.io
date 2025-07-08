@@ -131,55 +131,46 @@ export async function POST(request: Request) {
       });
     }
 
-// Check user credits
-const { data: userData, error: userError } = await supabase
-  .from('users')
-  .select('credits_remaining')
-  .eq('id', user.id)
-  .single();
-
-if (userError || !userData) {
-  console.error('User fetch error:', userError);
-  // Create user if doesn't exist
-  if (userError?.code === 'PGRST116') {
-    const { data: newUser, error: createError } = await supabase
+    // Check user credits
+    let { data: userData, error: userError } = await supabase
       .from('users')
-      .insert({
-        id: user.id,
-        email: user.emailAddresses?.[0]?.emailAddress || '',
-        credits_remaining: 3
-      })
-      .select()
+      .select('credits_remaining')
+      .eq('id', user.id)
       .single();
 
-    if (createError) {
-      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+    if (userError || !userData) {
+      console.error('User fetch error:', userError);
+      
+      // Create user if doesn't exist (error code PGRST116 means not found)
+      if (userError?.code === 'PGRST116') {
+        const { data: newUser, error: createError } = await supabase
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.emailAddresses?.[0]?.emailAddress || '',
+            credits_remaining: 3
+          })
+          .select()
+          .single();
+
+        if (createError || !newUser) {
+          return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
+        }
+        
+        // Use the newly created user data
+        userData = newUser;
+      } else {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
     }
-    
-    // Fix: Create a new userData object instead of modifying null
-    const freshUserData = { credits_remaining: 3 };
-    
-    // Continue with new user data - use freshUserData for the rest of the function
-    if (freshUserData.credits_remaining <= 0) {
+
+    // Now userData is guaranteed to not be null
+    if (userData.credits_remaining <= 0) {
       return NextResponse.json({ 
         error: 'No credits remaining', 
         credits_remaining: 0 
       }, { status: 403 });
     }
-    
-    // ... rest of the function uses freshUserData instead of userData
-  } else {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
-  }
-} else {
-  // userData is not null here, proceed normally
-  if (userData.credits_remaining <= 0) {
-    return NextResponse.json({ 
-      error: 'No credits remaining', 
-      credits_remaining: 0 
-    }, { status: 403 });
-  }
-}
 
     // Create project in database
     const { data: project, error: projectError } = await supabase
@@ -236,7 +227,7 @@ if (userError || !userData) {
     if (analysis.milestones && analysis.milestones.length > 0) {
       const milestones = analysis.milestones.map((m, index) => ({
         project_id: project.id,
-        title: m.title || m.name,
+        title: m.title,
         description: m.description,
         amount: Math.round(analysis.total_cost * ((m.percentage || 33) / 100)),
         sequence_order: index + 1,

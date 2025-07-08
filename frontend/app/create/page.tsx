@@ -259,7 +259,7 @@ export default function CreateProjectPage() {
           /* AI Analysis Results */
           currentStep === 3 && analysisResults && (
             <AnalysisResults
-              analysis={analysisResults}
+              analysisResults={analysisResults}
               projectTitle={projectData.title}
               creditsRemaining={userCredits.creditsRemaining}
               onProceedToPayment={() => {

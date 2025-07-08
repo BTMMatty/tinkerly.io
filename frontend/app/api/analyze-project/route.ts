@@ -461,7 +461,7 @@ Be realistic and detailed. Consider modern development practices.
 Respond ONLY with valid JSON, no additional text.`;
 
   try {
-    // 🔥 FIX: Use type assertion to bypass TypeScript SDK issues
+    // 🔥 CRITICAL FIX: Use type assertion to bypass TypeScript SDK issues
     const message = await (anthropicClient as any).messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 2000,

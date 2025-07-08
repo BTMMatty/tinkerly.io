@@ -2,12 +2,257 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reset and viewport fixes */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-size: 16px;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
+/* Prevent zoom on mobile inputs */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* Animation delays */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Gradient animation */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+/* Custom bounce animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 3s ease-in-out infinite;
+}
+
+/* Pulse with scale */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Glow effect */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Dynamic gradient backgrounds */
+.bg-gradient-animated {
+  background: linear-gradient(-45deg, #10b981, #14b8a6, #06b6d4, #0891b2);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom shadows */
+.shadow-glow-emerald {
+  box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
+}
+
+.shadow-glow-teal {
+  box-shadow: 0 0 50px rgba(20, 184, 166, 0.3);
+}
+
+.shadow-glow-cyan {
+  box-shadow: 0 0 50px rgba(6, 182, 212, 0.3);
+}
+
+/* Fix for Tailwind color classes in dynamic components */
+.from-emerald-400 { --tw-gradient-from: #34d399; }
+.from-emerald-500 { --tw-gradient-from: #10b981; }
+.from-emerald-600 { --tw-gradient-from: #059669; }
+.to-emerald-500 { --tw-gradient-to: #10b981; }
+.to-emerald-600 { --tw-gradient-to: #059669; }
+.to-emerald-700 { --tw-gradient-to: #047857; }
+
+.from-teal-400 { --tw-gradient-from: #2dd4bf; }
+.from-teal-500 { --tw-gradient-from: #14b8a6; }
+.from-teal-600 { --tw-gradient-from: #0d9488; }
+.to-teal-500 { --tw-gradient-to: #14b8a6; }
+.to-teal-600 { --tw-gradient-to: #0d9488; }
+.to-teal-700 { --tw-gradient-to: #0f766e; }
+
+.from-cyan-400 { --tw-gradient-from: #22d3ee; }
+.from-cyan-500 { --tw-gradient-from: #06b6d4; }
+.from-cyan-600 { --tw-gradient-from: #0891b2; }
+.to-cyan-500 { --tw-gradient-to: #06b6d4; }
+.to-cyan-600 { --tw-gradient-to: #0891b2; }
+
+.from-green-400 { --tw-gradient-from: #4ade80; }
+.from-blue-400 { --tw-gradient-from: #60a5fa; }
+.from-purple-400 { --tw-gradient-from: #c084fc; }
+.from-orange-400 { --tw-gradient-from: #fb923c; }
+.from-indigo-400 { --tw-gradient-from: #818cf8; }
+
+.to-green-600 { --tw-gradient-to: #16a34a; }
+.to-blue-600 { --tw-gradient-to: #2563eb; }
+.to-purple-600 { --tw-gradient-to: #9333ea; }
+.to-pink-600 { --tw-gradient-to: #db2777; }
+.to-red-600 { --tw-gradient-to: #dc2626; }
+
+/* Background patterns */
+.bg-emerald-500\/5 { background-color: rgb(16 185 129 / 0.05); }
+.bg-emerald-600\/5 { background-color: rgb(5 150 105 / 0.05); }
+.bg-teal-500\/5 { background-color: rgb(20 184 166 / 0.05); }
+.bg-teal-600\/5 { background-color: rgb(13 148 136 / 0.05); }
+.bg-cyan-500\/5 { background-color: rgb(6 182 212 / 0.05); }
+.bg-cyan-600\/5 { background-color: rgb(8 145 178 / 0.05); }
+
+/* Shadow color fixes */
+.hover\:shadow-emerald-500\/50:hover {
+  --tw-shadow-color: rgb(16 185 129 / 0.5);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+.hover\:shadow-emerald-500\/20:hover {
+  --tw-shadow-color: rgb(16 185 129 / 0.2);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+.hover\:shadow-teal-500\/50:hover {
+  --tw-shadow-color: rgb(20 184 166 / 0.5);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+.hover\:shadow-cyan-500\/50:hover {
+  --tw-shadow-color: rgb(6 182 212 / 0.5);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
+/* Transition delays for staggered animations */
+.delay-0 { transition-delay: 0ms; }
+.delay-50 { transition-delay: 50ms; }
+.delay-100 { transition-delay: 100ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-250 { transition-delay: 250ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
+
+/* Selection color */
+::selection {
+  background: #10b981;
+  color: white;
+}
+
+::-moz-selection {
+  background: #10b981;
+  color: white;
 }

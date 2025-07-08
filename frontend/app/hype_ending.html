@@ -3,274 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tinkerly.io OG Image Generator</title>
+    <title>Kickstarter Graphics - All 29 Items</title>
     <style>
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
-            background: #1a1a1a;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            min-height: 100vh;
         }
 
-        .controls {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .download-section {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .download-buttons {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .download-btn {
+        .bulk-download {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border: none;
             padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bulk-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .graphics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .graphic-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .graphic-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #10b981;
+        }
+
+        .graphic-canvas {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graphic-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .download-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .og-image {
-            width: 1200px;
-            height: 630px;
-            background: linear-gradient(135deg, #064e3b, #065f46, #047857);
-            position: relative;
-            overflow: hidden;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            animation: backgroundPulse 4s ease-in-out infinite;
+        .section-header {
+            text-align: center;
+            font-size: 1.8em;
+            color: #4a5568;
+            margin: 40px 0 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 10px;
         }
-
-        @keyframes backgroundPulse {
-            0%, 100% { background: linear-gradient(135deg, #064e3b, #065f46, #047857); }
-            50% { background: linear-gradient(135deg, #047857, #059669, #10b981); }
-        }
-
-        .magical-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fbbf24;
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .particle:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
-        .particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 1s; }
-        .particle:nth-child(3) { top: 70%; left: 20%; animation-delay: 2s; }
-        .particle:nth-child(4) { top: 80%; left: 85%; animation-delay: 3s; }
-        .particle:nth-child(5) { top: 30%; left: 60%; animation-delay: 4s; }
-        .particle:nth-child(6) { top: 60%; left: 40%; animation-delay: 5s; }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
-            33% { transform: translateY(-20px) scale(1.2); opacity: 1; }
-            66% { transform: translateY(10px) scale(0.8); opacity: 0.5; }
-        }
-
-        .code-symbols {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.1;
-        }
-
-        .code-symbol {
-            position: absolute;
-            font-family: 'Courier New', monospace;
-            font-size: 24px;
-            color: #10faa5;
-            animation: codeFloat 8s linear infinite;
-        }
-
-        .code-symbol:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
-        .code-symbol:nth-child(2) { top: 25%; left: 90%; animation-delay: 2s; }
-        .code-symbol:nth-child(3) { top: 75%; left: 15%; animation-delay: 4s; }
-        .code-symbol:nth-child(4) { top: 85%; left: 85%; animation-delay: 6s; }
-
-        @keyframes codeFloat {
-            0% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
-            50% { transform: translateY(-30px) rotate(180deg); opacity: 0.3; }
-            100% { transform: translateY(0px) rotate(360deg); opacity: 0.1; }
-        }
-
-        .content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: white;
-            z-index: 10;
-        }
-
-        .pixie {
-            font-size: 120px;
-            margin-bottom: 20px;
-            animation: pixieBounce 3s ease-in-out infinite;
-            text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
-        }
-
-        @keyframes pixieBounce {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-15px) scale(1.1); }
-        }
-
-        .main-title {
-            font-size: 72px;
-            font-weight: 900;
-            margin: 0;
-            background: linear-gradient(45deg, #10faa5, #ffffff, #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            letter-spacing: -2px;
-        }
-
-        .subtitle {
-            font-size: 36px;
-            margin: 15px 0;
-            color: #d1fae5;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .tagline {
-            font-size: 28px;
-            color: #fbbf24;
-            font-weight: 500;
-            margin-top: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .corner-accent {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(16, 250, 165, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(20px);
-        }
-
-        .corner-accent.top-left {
-            top: -100px;
-            left: -100px;
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        .corner-accent.bottom-right {
-            bottom: -100px;
-            right: -100px;
-            animation: pulse 4s ease-in-out infinite reverse;
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.3); opacity: 0.6; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
-        .preview-note {
-            color: #10faa5;
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
+
+        .floating { animation: float 3s ease-in-out infinite; }
+        .pulsing { animation: pulse 2s ease-in-out infinite; }
+        .spinning { animation: spin 4s linear infinite; }
     </style>
 </head>
 <body>
-    <div class="preview-note">Perfect 1200x630 Open Graph Image for X/Twitter Link Previews</div>
-    
-    <div class="controls">
-        <button class="download-btn" onclick="downloadImage()">📥 Download OG Image (PNG)</button>
-        <button class="download-btn" onclick="downloadHighRes()">🎨 Download High-Res (PNG)</button>
-    </div>
+    <div class="container">
+        <h1>🧚‍♀️ Complete Kickstarter Graphics</h1>
+        <p class="subtitle">All 29 Items - Ready for Download! ✨</p>
 
-    <div class="og-image" id="ogImage">
-        <!-- Corner Accents -->
-        <div class="corner-accent top-left"></div>
-        <div class="corner-accent bottom-right"></div>
+        <div class="download-section">
+            <h3 style="text-align: center; margin-bottom: 20px;">🚀 Bulk Downloads</h3>
+            <div class="download-buttons">
+                <button class="bulk-download" onclick="downloadRewardItems()">
+                    📦 Download All Reward Items (24)
+                </button>
+                <button class="bulk-download" onclick="downloadDevServices()">
+                    🛠️ Download Dev Services (5)
+                </button>
+                <button class="bulk-download" onclick="downloadEverything()">
+                    ⭐ Download Everything (29)
+                </button>
+            </div>
+        </div>
+
+        <div class="section-header">🎁 Reward Tier Items (24 Graphics)</div>
         
-        <!-- Magical Particles -->
-        <div class="magical-particles">
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-        </div>
+        <div class="graphics-grid" id="rewardItems"></div>
 
-        <!-- Code Symbols -->
-        <div class="code-symbols">
-            <div class="code-symbol">{}</div>
-            <div class="code-symbol">&lt;/&gt;</div>
-            <div class="code-symbol">=&gt;</div>
-            <div class="code-symbol">[]</div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="content">
-            <div class="pixie">🧚‍♀️</div>
-            <h1 class="main-title">TINKERLY.IO</h1>
-            <div class="subtitle">Where Code Meets Magic</div>
-            <div class="tagline">AI-Powered Development ✨</div>
-        </div>
+        <div class="section-header">🛠️ Development Services (5 Graphics)</div>
+        
+        <div class="graphics-grid" id="devServices"></div>
     </div>
 
     <script>
-        function downloadImage() {
-            html2canvas(document.getElementById('ogImage'), {
-                width: 1200,
-                height: 630,
-                scale: 1,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'og-image.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+        const rewardItems = [
+            { name: "Thank You Email", icon: "❤️", bg: "#ff6b6b" },
+            { name: "Supporters Page", icon: "⭐", bg: "#ffd93d" },
+            { name: "Campaign Updates", icon: "🔔", bg: "#6bcf7f" },
+            { name: "Algorithm Guide", icon: "🧠", bg: "#4ecdc4" },
+            { name: "AI Templates", icon: "🤖", bg: "#45b7d1" },
+            { name: "Discord Access", icon: "💬", bg: "#7289da" },
+            { name: "Cardiac Playlist", icon: "🎵", bg: "#ff9ff3" },
+            { name: "Workshop Recording", icon: "▶️", bg: "#ff6b6b" },
+            { name: "Disney Case Study", icon: "🏰", bg: "#96ceb4" },
+            { name: "Video Series", icon: "📺", bg: "#ffeaa7" },
+            { name: "Early Beta Access", icon: "🚀", bg: "#fd79a8" },
+            { name: "Code Pixie T-Shirt", icon: "👕", bg: "#fdcb6e" },
+            { name: "Founding Badge", icon: "🛡️", bg: "#6c5ce7" },
+            { name: "Platform Access", icon: "🔑", bg: "#a29bfe" },
+            { name: "Priority Support", icon: "👑", bg: "#ffd93d" },
+            { name: "Video Call", icon: "📹", bg: "#00b894" },
+            { name: "Personalized Advice", icon: "💡", bg: "#fdcb6e" },
+            { name: "Thank You Card", icon: "💖", bg: "#ff7675" },
+            { name: "Session Recording", icon: "⏺️", bg: "#e17055" },
+            { name: "Logo Homepage", icon: "🌐", bg: "#0984e3" },
+            { name: "Strategic Consultation", icon: "📈", bg: "#00b894" },
+            { name: "Lifetime Updates", icon: "∞", bg: "#6c5ce7" },
+            { name: "Phone Access", icon: "📱", bg: "#2d3436" },
+            { name: "Executive Summary", icon: "📊", bg: "#74b9ff" }
+        ];
+
+        const devServices = [
+            { name: "Custom AI Chatbot", icon: "🤖💬", bg: "#00b894" },
+            { name: "AI Workflow Automation", icon: "⚡", bg: "#fdcb6e" },
+            { name: "Multi-Agent AI System", icon: "🔄", bg: "#6c5ce7" },
+            { name: "Complete AI-Powered App", icon: "📱", bg: "#fd79a8" },
+            { name: "Business AI Ecosystem", icon: "🏢", bg: "#0984e3" }
+        ];
+
+        function createCanvas(item, index, isDevService = false) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 200;
+            canvas.className = 'graphic-canvas';
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 300, 200);
+            gradient.addColorStop(0, item.bg);
+            gradient.addColorStop(1, adjustBrightness(item.bg, -20));
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 300, 200);
+            
+            // Add magical particles
+            for (let i = 0; i < 8; i++) {
+                const x = Math.random() * 300;
+                const y = Math.random() * 200;
+                const size = Math.random() * 3 + 1;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Main icon
+            ctx.font = '48px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Icon shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillText(item.icon, 152, 102);
+            
+            // Main icon
+            ctx.fillStyle = 'white';
+            ctx.fillText(item.icon, 150, 100);
+            
+            // Decorative elements
+            if (isDevService) {
+                // Add gear for dev services
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(250, 50, 20, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Add smaller gear
+                ctx.beginPath();
+                ctx.arc(230, 170, 12, 0, Math.PI * 2);
+                ctx.stroke();
+            } else {
+                // Add sparkles for reward items
+                const sparkles = ['✨', '⭐', '💫'];
+                ctx.font = '16px Arial';
+                for (let i = 0; i < 3; i++) {
+                    const sparkle = sparkles[i % sparkles.length];
+                    const x = 50 + (i * 100);
+                    const y = 30 + (i % 2) * 140;
+                    ctx.fillText(sparkle, x, y);
+                }
+            }
+            
+            return canvas;
+        }
+
+        function adjustBrightness(color, amount) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * amount);
+            const R = (num >> 16) + amt;
+            const B = (num >> 8 & 0x00FF) + amt;
+            const G = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
+                (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + 
+                (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
+        }
+
+        function createGraphicItem(item, index, isDevService = false) {
+            const div = document.createElement('div');
+            div.className = 'graphic-item';
+            
+            const canvas = createCanvas(item, index, isDevService);
+            const title = document.createElement('div');
+            title.className = 'graphic-title';
+            title.textContent = item.name;
+            
+            const button = document.createElement('button');
+            button.className = 'download-btn';
+            button.textContent = '📥 Download PNG';
+            button.onclick = () => downloadCanvas(canvas, item.name);
+            
+            div.appendChild(canvas);
+            div.appendChild(title);
+            div.appendChild(button);
+            
+            return div;
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = `${filename.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function downloadRewardItems() {
+            rewardItems.forEach((item, index) => {
+                setTimeout(() => {
+                    const canvas = createCanvas(item, index, false);
+                    downloadCanvas(canvas, `reward_${item.name}`);
+                }, index * 200);
             });
         }
 
-        function downloadHighRes() {
-            html2canvas(document.getElementById('ogImage'), {
-                width: 1200,
-                height: 630,
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: null
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'og-image-highres.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+        function downloadDevServices() {
+            devServices.forEach((item, index) => {
+                setTimeout(() => {
+                    const canvas = createCanvas(item, index, true);
+                    downloadCanvas(canvas, `dev_${item.name}`);
+                }, index * 200);
             });
         }
+
+        function downloadEverything() {
+            downloadRewardItems();
+            setTimeout(() => {
+                downloadDevServices();
+            }, rewardItems.length * 200 + 1000);
+        }
+
+        // Initialize the page
+        function init() {
+            const rewardContainer = document.getElementById('rewardItems');
+            const devContainer = document.getElementById('devServices');
+            
+            rewardItems.forEach((item, index) => {
+                rewardContainer.appendChild(createGraphicItem(item, index, false));
+            });
+            
+            devServices.forEach((item, index) => {
+                devContainer.appendChild(createGraphicItem(item, index, true));
+            });
+        }
+
+        init();
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>

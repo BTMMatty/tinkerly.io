@@ -8,9 +8,9 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 border-t border-emerald-800">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div className="md:col-span-1">
+          <div>
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
@@ -19,7 +19,7 @@ const Footer = () => {
                 Tinkerly.io
               </div>
             </div>
-            <p className="text-gray-300 mb-4 max-w-md">
+            <p className="text-gray-300 mb-4">
               Transform your dreams into reality with AI-powered development. 
               50% faster delivery, transparent pricing, and magical results. ✨
             </p>

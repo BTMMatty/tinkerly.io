@@ -16,6 +16,7 @@
     "postbuild": "echo 'Build completed successfully! 🎉'"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.9.1",
     "@clerk/nextjs": "^6.23.3",
     "@supabase/supabase-js": "^2.50.3",
     "@types/node": "^20.8.0",
@@ -34,11 +35,10 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.52.0",
     "eslint-config-next": "14.0.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^3.4.17"
   }
 }

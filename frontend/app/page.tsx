@@ -5,6 +5,7 @@ import { useUser, SignInButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Clock, Code, DollarSign, Brain, Shield, Heart, Zap, Users, Calculator, ArrowRight, Sparkles } from 'lucide-react';
 import AuthHeader from '@/components/AuthHeader';
+import Footer from '@/components/Footer'; // ✅ FIXED: Added Footer import
 
 const TinkerPlatform = () => {
   const { user, isSignedIn } = useUser();
@@ -51,7 +52,7 @@ const TinkerPlatform = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden"> {/* ✅ FIXED: Added min-h-screen and overflow-hidden */}
       <AuthHeader />
       
       {/* Animated background elements */}
@@ -141,7 +142,7 @@ const TinkerPlatform = () => {
       </div>
 
       {/* How Tinkerly.io Works */}
-      <div className="relative z-10 container mx-auto px-6 py-12">
+      <div className="relative z-10 container mx-auto px-6 py-16"> {/* ✅ FIXED: Increased padding */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">How does Tinkerly.io work?</h2>
           <p className="text-gray-400 text-lg">Simple, transparent, and magical ✨</p>
@@ -149,24 +150,24 @@ const TinkerPlatform = () => {
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="text-center group">
-            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110">
-              <Brain className="w-8 h-8" />
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-emerald-500/50 group-hover:brightness-110">
+              <Brain className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-xl font-bold mb-4">AI Analysis</h3>
             <p className="text-gray-400 leading-relaxed">Describe your project and get instant AI-powered scoping, pricing, and timeline estimation.</p>
           </div>
           
           <div className="text-center group">
-            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110">
-              <Code className="w-8 h-8" />
+            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-teal-500/50 group-hover:brightness-110">
+              <Code className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-xl font-bold mb-4">Expert Development</h3>
             <p className="text-gray-400 leading-relaxed">Our skilled developers bring your vision to life with clean code and modern best practices.</p>
           </div>
           
           <div className="text-center group">
-            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:brightness-110">
-              <Zap className="w-8 h-8" />
+            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-cyan-500/50 group-hover:brightness-110">
+              <Zap className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-xl font-bold mb-4">Fast Delivery</h3>
             <p className="text-gray-400 leading-relaxed">Get your project delivered 50% faster than industry standard with regular updates.</p>
@@ -175,7 +176,7 @@ const TinkerPlatform = () => {
       </div>
 
       {/* Features Grid */}
-      <div className="relative z-10 container mx-auto px-6 py-12">
+      <div className="relative z-10 container mx-auto px-6 py-16"> {/* ✅ FIXED: Increased padding */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {[
             { icon: <DollarSign className="w-6 h-6" />, title: "Transparent Pricing", desc: "Know exactly what you'll pay upfront" },
@@ -189,14 +190,14 @@ const TinkerPlatform = () => {
               <div className="text-emerald-400 mb-4 transition-all duration-300 group-hover:text-emerald-300 group-hover:drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">
                 {feature.icon}
               </div>
-              <h3 className="font-semibold mb-2">{feature.title}</h3>
+              <h3 className="font-semibold mb-2 text-white">{feature.title}</h3>
               <p className="text-gray-400 text-sm">{feature.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* The Story Section - FIXED VERSION */}
+      {/* The Story Section */}
       <section id="story" className="relative z-10 py-20 bg-black/20 backdrop-blur-sm">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
@@ -224,7 +225,7 @@ const TinkerPlatform = () => {
             </div>
             
             <div className="mt-12 grid md:grid-cols-3 gap-8">
-              <div className="bg-emerald-500/10 rounded-xl p-6 border border-emerald-500/20">
+              <div className="bg-emerald-500/10 rounded-xl p-6 border border-emerald-500/20 backdrop-blur-sm">
                 <div className="text-4xl mb-4">🤖</div>
                 <h3 className="text-xl font-bold text-emerald-300 mb-2">AI-Powered Analysis</h3>
                 <p className="text-emerald-100">
@@ -232,7 +233,7 @@ const TinkerPlatform = () => {
                 </p>
               </div>
               
-              <div className="bg-teal-500/10 rounded-xl p-6 border border-teal-500/20">
+              <div className="bg-teal-500/10 rounded-xl p-6 border border-teal-500/20 backdrop-blur-sm">
                 <div className="text-4xl mb-4">💎</div>
                 <h3 className="text-xl font-bold text-teal-300 mb-2">Transparent Pricing</h3>
                 <p className="text-teal-100">
@@ -240,7 +241,7 @@ const TinkerPlatform = () => {
                 </p>
               </div>
               
-              <div className="bg-cyan-500/10 rounded-xl p-6 border border-cyan-500/20">
+              <div className="bg-cyan-500/10 rounded-xl p-6 border border-cyan-500/20 backdrop-blur-sm">
                 <div className="text-4xl mb-4">📚</div>
                 <h3 className="text-xl font-bold text-cyan-300 mb-2">Knowledge Transfer</h3>
                 <p className="text-cyan-100">
@@ -252,10 +253,10 @@ const TinkerPlatform = () => {
         </div>
       </section>
 
-      {/* CTA Section - PROPER SPACING */}
+      {/* CTA Section */}
       <div className="relative z-10 container mx-auto px-6 py-20">
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to build something amazing?</h2>
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-12 text-center shadow-2xl">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ready to build something amazing?</h2>
           <p className="text-emerald-100 text-lg mb-8">Join hundreds of founders who trust Tinkerly.io with their vision</p>
           
           {isSignedIn ? (

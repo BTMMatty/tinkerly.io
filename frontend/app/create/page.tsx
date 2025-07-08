@@ -798,8 +798,6 @@ Mock analysis generated for demo purposes!`);
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

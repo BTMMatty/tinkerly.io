@@ -52,6 +52,13 @@ interface AnalysisResult {
   whyRecommended: string;
 }
 
+// Type for user data from database
+interface UserData {
+  credits_remaining: number;
+  id?: string;
+  email?: string;
+}
+
 // Safe initialization with fallback
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -131,50 +138,16 @@ export async function POST(request: Request) {
       });
     }
 
-    // Check user credits
-    let { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('credits_remaining')
-      .eq('id', user.id)
-      .single();
-
-    if (userError || !userData) {
-      console.error('User fetch error:', userError);
-      
-      // Create user if doesn't exist (error code PGRST116 means not found)
-      if (userError?.code === 'PGRST116') {
-        const { data: newUser, error: createError } = await supabase
-          .from('users')
-          .insert({
-            id: user.id,
-            email: user.emailAddresses?.[0]?.emailAddress || '',
-            credits_remaining: 3
-          })
-          .select()
-          .single();
-
-        if (createError || !newUser) {
-          return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
-        }
-        
-        // Use the newly created user data
-        userData = newUser;
-      } else {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
-      }
+    // 🔥 FIX: Get or create user data with proper TypeScript handling
+    const userData = await getOrCreateUserData(supabase, user);
+    
+    // Check credits
+    if (userData.credits_remaining <= 0) {
+      return NextResponse.json({ 
+        error: 'No credits remaining', 
+        credits_remaining: 0 
+      }, { status: 403 });
     }
-
- // Now userData is guaranteed to not be null
-if (!userData) {
-  throw new Error('userData should not be null at this point');
-}
-
-if (userData.credits_remaining <= 0) {
-  return NextResponse.json({ 
-    error: 'No credits remaining', 
-    credits_remaining: 0 
-  }, { status: 403 });
-}
 
     // Create project in database
     const { data: project, error: projectError } = await supabase
@@ -250,7 +223,7 @@ if (userData.credits_remaining <= 0) {
     // Deduct credit
     await supabase
       .from('users')
-      .update({ credits_remaining: userData!.credits_remaining - 1 })
+      .update({ credits_remaining: userData.credits_remaining - 1 })
       .eq('id', user.id);
 
     // Track usage
@@ -271,7 +244,7 @@ if (userData.credits_remaining <= 0) {
     return NextResponse.json({
       project_id: project.id,
       analysis: analysis,
-      credits_remaining: userData!.credits_remaining - 1
+      credits_remaining: userData.credits_remaining - 1
     });
 
   } catch (error) {
@@ -290,6 +263,44 @@ if (userData.credits_remaining <= 0) {
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     }, { status: 500 });
   }
+}
+
+// 🔥 NEW: Dedicated function to handle user data logic with proper typing
+async function getOrCreateUserData(supabase: SupabaseClient, user: any): Promise<UserData> {
+  // Try to get existing user
+  const { data: existingUser, error: userError } = await supabase
+    .from('users')
+    .select('credits_remaining')
+    .eq('id', user.id)
+    .single();
+
+  if (existingUser && !userError) {
+    // User exists, return their data
+    return existingUser;
+  }
+
+  // User doesn't exist or there was an error
+  if (userError?.code === 'PGRST116') {
+    // User not found, create new user
+    const { data: newUser, error: createError } = await supabase
+      .from('users')
+      .insert({
+        id: user.id,
+        email: user.emailAddresses?.[0]?.emailAddress || '',
+        credits_remaining: 3
+      })
+      .select('credits_remaining')
+      .single();
+
+    if (createError || !newUser) {
+      throw new Error('Failed to create user');
+    }
+
+    return newUser;
+  }
+
+  // Some other error occurred
+  throw new Error('Failed to fetch or create user');
 }
 
 async function analyzeWithAnthropic(projectData: ProjectData): Promise<AnalysisResult> {
@@ -357,8 +368,8 @@ Be realistic and detailed. Consider modern development practices.
 Respond ONLY with valid JSON, no additional text.`;
 
   try {
-    const message = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022', // Updated to correct model
+    const message = await anthropic!.messages.create({
+      model: 'claude-3-5-sonnet-20241022',
       max_tokens: 2000,
       temperature: 0.7,
       system: "You are an expert software project estimator. Always respond with valid JSON only.",

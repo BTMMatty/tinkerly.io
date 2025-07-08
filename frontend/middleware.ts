@@ -1,4 +1,5 @@
 // frontend/middleware.ts
+// frontend/middleware.ts
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 // Define public routes that don't require authentication
@@ -15,7 +16,11 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   // Protect all routes except public ones
   if (!isPublicRoute(req)) {
-    await auth.protect();
+    await auth.protect({
+      // Use the new props instead of deprecated ones
+      fallbackRedirectUrl: '/sign-in',
+      forceRedirectUrl: '/dashboard'
+    });
   }
 });
 

@@ -1,6 +1,8 @@
+// app/api/analyze-project/route.ts
+
 import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 
 // Type definitions
@@ -54,7 +56,8 @@ interface AnalysisResult {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-let supabase = null;
+// Fix: Add proper type annotation
+let supabase: SupabaseClient | null = null;
 try {
   if (supabaseUrl && supabaseKey) {
     supabase = createClient(supabaseUrl, supabaseKey);
@@ -65,8 +68,8 @@ try {
   console.error('Failed to initialize Supabase:', error);
 }
 
-// Safe Anthropic initialization
-let anthropic = null;
+// Safe Anthropic initialization - Fix: Add type annotation
+let anthropic: Anthropic | null = null;
 try {
   if (process.env.ANTHROPIC_API_KEY) {
     anthropic = new Anthropic({

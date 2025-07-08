@@ -62,6 +62,13 @@ export default function CreateProjectPage() {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
+  // 🔥 FIX: Helper function to safely get error message
+  const getErrorMessage = (err: unknown): string => {
+    if (err instanceof Error) return err.message;
+    if (typeof err === 'string') return err;
+    return 'Analysis failed. Please try again.';
+  };
+
   const analyzeProject = async () => {
     // Validate required fields
     if (!projectData.title || !projectData.description || !projectData.category || !projectData.requirements) {
@@ -148,11 +155,14 @@ export default function CreateProjectPage() {
     } catch (error) {
       console.error('Analysis error:', error);
       
+      // 🔥 FIX: Safe error message extraction
+      const errorMessage = getErrorMessage(error);
+      
       // More specific error messages
-      if (error.message.includes('fetch')) {
+      if (errorMessage.includes('fetch')) {
         alert('Network error. Please check your connection and try again.');
       } else {
-        alert(error.message || 'Analysis failed. Please try again.');
+        alert(errorMessage);
       }
     } finally {
       setIsAnalyzing(false);

@@ -3,16 +3,34 @@ import { currentUser } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 
-// Initialize Supabase
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY // Use service role for server-side
-);
+// Safe initialization with fallback
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Initialize Anthropic
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+let supabase = null;
+try {
+  if (supabaseUrl && supabaseKey) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+  } else {
+    console.warn('⚠️ Supabase environment variables not found. Running in demo mode.');
+  }
+} catch (error) {
+  console.error('Failed to initialize Supabase:', error);
+}
+
+// Safe Anthropic initialization
+let anthropic = null;
+try {
+  if (process.env.ANTHROPIC_API_KEY) {
+    anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  } else {
+    console.warn('⚠️ Anthropic API key not found. Using fallback algorithm.');
+  }
+} catch (error) {
+  console.error('Failed to initialize Anthropic:', error);
+}
 
 export async function POST(request) {
   try {
@@ -32,6 +50,26 @@ export async function POST(request) {
     }
 
     console.log('🧠 Analyzing project:', projectData.title);
+
+    // If no Supabase, run in demo mode
+    if (!supabase) {
+      console.log('📊 Running in demo mode (no database)');
+      
+      // Get AI analysis
+      let analysis;
+      if (anthropic) {
+        analysis = await analyzeWithAnthropic(projectData);
+      } else {
+        analysis = generateProjectAnalysis(projectData);
+      }
+      
+      return NextResponse.json({
+        analysis: analysis,
+        credits_remaining: 3,
+        demo_mode: true,
+        message: 'Analysis completed in demo mode. Database features disabled.'
+      });
+    }
 
     // Check user credits
     const { data: userData, error: userError } = await supabase
@@ -76,7 +114,7 @@ export async function POST(request) {
     // Get AI analysis from Anthropic
     let analysis;
     
-    if (process.env.ANTHROPIC_API_KEY) {
+    if (anthropic) {
       // Use real Anthropic AI
       analysis = await analyzeWithAnthropic(projectData);
     } else {
@@ -138,7 +176,7 @@ export async function POST(request) {
         complexity: analysis.complexity,
         total_cost: analysis.total_cost,
         credits_used: 1,
-        ai_model: process.env.ANTHROPIC_API_KEY ? 'claude-3-opus' : 'algorithm'
+        ai_model: anthropic ? 'claude-3-opus' : 'algorithm'
       }
     });
 
@@ -249,9 +287,6 @@ Respond ONLY with valid JSON, no additional text.`;
   }
 }
 
-// Keep your existing generateProjectAnalysis function and all helper functions below...
-// [All your existing functions remain the same - they're your fallback!]
-
 function generateProjectAnalysis(projectData) {
   const { title, description, category, requirements } = projectData;
   
@@ -343,43 +378,278 @@ function generateMilestones(totalCost, hours) {
   return milestones;
 }
 
-// [Include all your other helper functions here - they stay the same!]
 function determineComplexity(category, requirements, description) {
-  // ... your existing code ...
+  let score = 0;
+  
+  const categoryScores = {
+    'Landing Page': 1,
+    'Web Application': 3,
+    'Mobile App': 4,
+    'E-commerce Platform': 6,
+    'API Development': 4,
+    'Database Design': 3,
+    'AI/ML Integration': 8,
+    'Custom Dashboard': 5,
+    'Integration Project': 6,
+    'Enterprise Solution': 9
+  };
+  
+  score += categoryScores[category] || 3;
+  
+  const reqLength = requirements.length;
+  if (reqLength > 1000) score += 3;
+  else if (reqLength > 500) score += 2;
+  else if (reqLength > 200) score += 1;
+  
+  const complexKeywords = [
+    'real-time', 'ai', 'ml', 'machine learning', 'payment', 'authentication',
+    'integration', 'api', 'database', 'scalable', 'enterprise', 'security',
+    'microservices', 'cloud', 'mobile', 'responsive'
+  ];
+  
+  const text = (requirements + ' ' + description).toLowerCase();
+  const keywordCount = complexKeywords.filter(keyword => text.includes(keyword)).length;
+  score += Math.min(keywordCount, 5);
+  
+  if (score <= 3) return 'Simple';
+  if (score <= 6) return 'Moderate';
+  if (score <= 9) return 'Complex';
+  return 'Enterprise';
 }
 
 function getComplexityScore(complexity) {
-  // ... your existing code ...
+  const scores = {
+    'Simple': Math.floor(Math.random() * 3) + 1,
+    'Moderate': Math.floor(Math.random() * 3) + 4,
+    'Complex': Math.floor(Math.random() * 2) + 7,
+    'Enterprise': Math.floor(Math.random() * 2) + 9
+  };
+  return scores[complexity];
 }
 
 function calculateHours(complexity, requirements) {
-  // ... your existing code ...
+  const baseHours = {
+    'Simple': 20,
+    'Moderate': 60,
+    'Complex': 140,
+    'Enterprise': 300
+  };
+  
+  const base = baseHours[complexity];
+  const reqFactor = Math.min(requirements.length / 100, 3);
+  
+  return Math.round(base * (1 + reqFactor * 0.2));
 }
 
 function getHourlyRate(complexity) {
-  // ... your existing code ...
+  const rates = {
+    'Simple': 80,
+    'Moderate': 100,
+    'Complex': 125,
+    'Enterprise': 150
+  };
+  return rates[complexity];
 }
 
 function getTechStack(category) {
-  // ... your existing code ...
+  const stacks = {
+    'Web Application': {
+      frontend: ['React', 'Next.js', 'TypeScript'],
+      backend: ['Node.js', 'Express'],
+      database: 'PostgreSQL',
+      deployment: 'Vercel'
+    },
+    'Mobile App': {
+      frontend: ['React Native', 'TypeScript'],
+      backend: ['Node.js', 'Express'],
+      database: 'PostgreSQL',
+      deployment: 'Expo'
+    },
+    'E-commerce Platform': {
+      frontend: ['Next.js', 'TypeScript', 'Stripe'],
+      backend: ['Node.js', 'Express'],
+      database: 'PostgreSQL',
+      deployment: 'Vercel'
+    },
+    'AI/ML Integration': {
+      frontend: ['React', 'Next.js', 'TypeScript'],
+      backend: ['Python', 'FastAPI', 'OpenAI API'],
+      database: 'PostgreSQL',
+      deployment: 'Railway'
+    },
+    'API Development': {
+      frontend: ['Documentation Site'],
+      backend: ['Node.js', 'Express', 'OpenAPI'],
+      database: 'PostgreSQL',
+      deployment: 'Railway'
+    },
+    'Custom Dashboard': {
+      frontend: ['React', 'Next.js', 'Chart.js'],
+      backend: ['Node.js', 'Express'],
+      database: 'PostgreSQL',
+      deployment: 'Vercel'
+    },
+    'Enterprise Solution': {
+      frontend: ['React', 'Next.js', 'TypeScript'],
+      backend: ['Node.js', 'Express', 'Redis'],
+      database: 'PostgreSQL',
+      deployment: 'AWS'
+    }
+  };
+  
+  return stacks[category] || stacks['Web Application'];
 }
 
 function calculateTimeline(hours) {
-  // ... your existing code ...
+  const weeks = Math.ceil(hours / 40);
+  const acceleratedWeeks = Math.ceil(weeks * 0.6);
+  
+  return {
+    industry_standard: `${weeks} week${weeks > 1 ? 's' : ''}`,
+    accelerated: `${acceleratedWeeks} week${acceleratedWeeks > 1 ? 's' : ''}`
+  };
 }
 
 function generatePhases(complexity, totalHours) {
-  // ... your existing code ...
+  const phases = [];
+  
+  if (complexity === 'Simple') {
+    phases.push(
+      {
+        name: 'Setup & Development',
+        duration: '1-2 weeks',
+        description: 'Project setup and core development',
+        deliverables: ['Project structure', 'Core features', 'Basic testing']
+      },
+      {
+        name: 'Polish & Deploy',
+        duration: '0.5-1 week',
+        description: 'Final testing and deployment',
+        deliverables: ['Testing', 'Deployment', 'Documentation']
+      }
+    );
+  } else if (complexity === 'Moderate') {
+    phases.push(
+      {
+        name: 'Planning & Setup',
+        duration: '1 week',
+        description: 'Architecture planning and project setup',
+        deliverables: ['Technical spec', 'Project structure', 'Database design']
+      },
+      {
+        name: 'Core Development',
+        duration: '2-3 weeks',
+        description: 'Main feature development',
+        deliverables: ['Core features', 'API endpoints', 'User interface']
+      },
+      {
+        name: 'Integration & Testing',
+        duration: '1 week',
+        description: 'Integration testing and deployment',
+        deliverables: ['Testing suite', 'Deployment', 'Documentation']
+      }
+    );
+  } else {
+    phases.push(
+      {
+        name: 'Architecture & Planning',
+        duration: '1-2 weeks',
+        description: 'Detailed architecture and technical planning',
+        deliverables: ['Architecture docs', 'Technical specs', 'Database design']
+      },
+      {
+        name: 'Core Development',
+        duration: '3-6 weeks',
+        description: 'Main application development',
+        deliverables: ['Core features', 'APIs', 'User interfaces']
+      },
+      {
+        name: 'Advanced Features',
+        duration: '2-4 weeks',
+        description: 'Complex features and integrations',
+        deliverables: ['Advanced features', 'Third-party integrations', 'Security implementation']
+      },
+      {
+        name: 'Testing & Deployment',
+        duration: '1-2 weeks',
+        description: 'Comprehensive testing and production deployment',
+        deliverables: ['Testing suite', 'Performance optimization', 'Production deployment']
+      }
+    );
+  }
+  
+  return phases;
 }
 
 function extractKeyFeatures(category, requirements) {
-  // ... your existing code ...
+  const commonFeatures = {
+    'Web Application': ['User Authentication', 'Responsive Design', 'Database Integration'],
+    'Mobile App': ['Native Performance', 'Push Notifications', 'Offline Support'],
+    'E-commerce Platform': ['Payment Processing', 'Inventory Management', 'Order Tracking'],
+    'AI/ML Integration': ['Machine Learning Models', 'Data Processing', 'Predictive Analytics'],
+    'API Development': ['RESTful APIs', 'Authentication', 'Rate Limiting'],
+    'Custom Dashboard': ['Data Visualization', 'Real-time Updates', 'User Management'],
+    'Enterprise Solution': ['Scalable Architecture', 'Security Compliance', 'Integration APIs']
+  };
+  
+  const baseFeatures = commonFeatures[category] || ['Custom Features', 'Modern UI', 'Secure Backend'];
+  
+  // Add features based on requirements
+  const text = requirements.toLowerCase();
+  const additionalFeatures = [];
+  
+  if (text.includes('real-time')) additionalFeatures.push('Real-time Updates');
+  if (text.includes('mobile')) additionalFeatures.push('Mobile Responsive');
+  if (text.includes('payment')) additionalFeatures.push('Payment Integration');
+  if (text.includes('social')) additionalFeatures.push('Social Features');
+  if (text.includes('search')) additionalFeatures.push('Advanced Search');
+  
+  return [...baseFeatures, ...additionalFeatures].slice(0, 6);
 }
 
 function assessRisks(complexity, category) {
-  // ... your existing code ...
+  const risks = [];
+  
+  if (complexity === 'Complex' || complexity === 'Enterprise') {
+    risks.push({
+      risk: 'Technical complexity may require additional research',
+      mitigation: 'Prototype complex features early and get stakeholder feedback',
+      impact: 'Medium'
+    });
+  }
+  
+  if (category.includes('Integration') || category.includes('API')) {
+    risks.push({
+      risk: 'Third-party API dependencies',
+      mitigation: 'Test integrations early and have fallback options',
+      impact: 'Medium'
+    });
+  }
+  
+  if (category === 'AI/ML Integration') {
+    risks.push({
+      risk: 'AI model performance variability',
+      mitigation: 'Extensive testing with diverse datasets',
+      impact: 'High'
+    });
+  }
+  
+  risks.push({
+    risk: 'Scope creep during development',
+    mitigation: 'Clear requirements documentation and change management process',
+    impact: 'Low'
+  });
+  
+  return risks.slice(0, 3);
 }
 
 function generateRecommendation(category, complexity) {
-  // ... your existing code ...
+  const recommendations = {
+    'Simple': 'This approach focuses on rapid delivery while maintaining code quality. Perfect for MVP or proof-of-concept projects.',
+    'Moderate': 'Balanced approach combining modern technologies with proven patterns. Ideal for production applications with room for growth.',
+    'Complex': 'Enterprise-grade architecture designed for scalability and maintainability. Best for applications expecting significant growth.',
+    'Enterprise': 'Cutting-edge solution with advanced features and robust architecture. Suitable for mission-critical applications.'
+  };
+  
+  return recommendations[complexity];
 }

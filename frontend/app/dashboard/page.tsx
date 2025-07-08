@@ -11,11 +11,29 @@ import {
   GitBranch, Target, Rocket, Gift, Trophy
 } from 'lucide-react';
 
+// Add this interface to define the Project type
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  total_cost?: number;
+  status: string;
+  ai_analysis?: {
+    timeline?: {
+      accelerated?: string;
+    };
+    techStack?: {
+      frontend?: string[];
+    };
+  };
+}
+
 export default function DashboardPage() {
   const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<Project[]>([]); // Add type here
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,

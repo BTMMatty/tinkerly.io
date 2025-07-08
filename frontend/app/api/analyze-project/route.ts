@@ -51,31 +51,38 @@ interface AnalysisResult {
   whyRecommended: string;
 }
 
-// Type for user data from database
 interface UserData {
   credits_remaining: number;
   id?: string;
   email?: string;
+  subscription_tier?: string;
 }
 
-// Environment variables with debug logging
+// Environment variables with enhanced validation
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-console.log('🔧 Environment Check:', {
+// Enhanced logging for debugging
+console.log('🔧 Tink.io API Environment Check:', {
   hasSupabaseUrl: !!supabaseUrl,
   hasSupabaseKey: !!supabaseKey,
   hasAnthropicKey: !!anthropicKey,
-  supabaseUrl: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'missing'
+  nodeEnv: process.env.NODE_ENV,
+  supabaseUrl: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : '❌ missing'
 });
 
-// Initialize Supabase with better error handling
+// Initialize Supabase with enhanced error handling
 let supabase: SupabaseClient | null = null;
 try {
   if (supabaseUrl && supabaseKey) {
-    supabase = createClient(supabaseUrl, supabaseKey);
-    console.log('✅ Supabase client initialized');
+    supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+    console.log('✅ Supabase client initialized for Tink.io');
   } else {
     console.warn('⚠️ Supabase environment variables missing. Running in demo mode.');
   }
@@ -83,64 +90,107 @@ try {
   console.error('❌ Failed to initialize Supabase:', error);
 }
 
-// Initialize Anthropic with proper typing
+// Initialize Anthropic with proper error handling
 let anthropic: Anthropic | null = null;
 try {
   if (anthropicKey) {
     anthropic = new Anthropic({
       apiKey: anthropicKey,
     });
-    console.log('✅ Anthropic client initialized');
+    console.log('✅ Anthropic Claude AI client initialized');
   } else {
-    console.warn('⚠️ Anthropic API key missing. Using fallback algorithm.');
+    console.warn('⚠️ Anthropic API key missing. Using intelligent algorithmic fallback.');
   }
 } catch (error) {
   console.error('❌ Failed to initialize Anthropic:', error);
 }
 
-// Helper function to safely get error message
+// Helper function for better error messages
 const getErrorMessage = (err: unknown): string => {
   if (err instanceof Error) return err.message;
   if (typeof err === 'string') return err;
   return 'Unknown error occurred';
 };
 
+// Rate limiting cache (simple in-memory for demo)
+const rateLimitCache = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 10; // 10 requests per minute per user
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const userRequests = rateLimitCache.get(userId) || [];
+  
+  // Filter out old requests
+  const recentRequests = userRequests.filter(time => now - time < RATE_LIMIT_WINDOW);
+  
+  if (recentRequests.length >= RATE_LIMIT_MAX) {
+    return false;
+  }
+  
+  recentRequests.push(now);
+  rateLimitCache.set(userId, recentRequests);
+  return true;
+}
+
 export async function POST(request: NextRequest) {
-  console.log('🚀 API Request received');
+  const startTime = Date.now();
+  console.log('🚀 Tink.io Analysis API Request received');
 
   try {
-    // 1. Check authentication
+    // 1. Enhanced authentication check
     const user = await currentUser();
     if (!user) {
       console.log('❌ No authenticated user');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ 
+        error: 'Please sign in to analyze projects',
+        code: 'UNAUTHORIZED'
+      }, { status: 401 });
     }
 
-    console.log('✅ User authenticated:', user.id);
+    console.log('✅ User authenticated:', user.id, user.emailAddresses?.[0]?.emailAddress);
 
-    // 2. Parse and validate request body
+    // 2. Rate limiting check
+    if (!checkRateLimit(user.id)) {
+      console.log('⚡ Rate limit exceeded for user:', user.id);
+      return NextResponse.json({
+        error: 'Too many requests. Please wait a moment before analyzing another project.',
+        code: 'RATE_LIMITED'
+      }, { status: 429 });
+    }
+
+    // 3. Enhanced request body parsing and validation
     let body;
     try {
       body = await request.json();
     } catch (parseError) {
       console.error('❌ Body parse error:', parseError);
       return NextResponse.json({ 
-        error: 'Invalid request body' 
+        error: 'Invalid request format. Please try again.',
+        code: 'INVALID_REQUEST'
       }, { status: 400 });
     }
 
     const { projectData } = body;
 
-    // Validate required fields
-    if (!projectData?.title || !projectData?.description || !projectData?.category || !projectData?.requirements) {
+    // Enhanced validation with user-friendly messages
+    const validationErrors: string[] = [];
+    if (!projectData?.title?.trim()) validationErrors.push('Project title is required');
+    if (!projectData?.description?.trim()) validationErrors.push('Project description is required');
+    if (!projectData?.category?.trim()) validationErrors.push('Project category is required');
+    if (!projectData?.requirements?.trim()) validationErrors.push('Project requirements are required');
+
+    if (validationErrors.length > 0) {
       return NextResponse.json({ 
-        error: 'Missing required fields: title, description, category, requirements' 
+        error: 'Please complete all required fields',
+        details: validationErrors,
+        code: 'VALIDATION_ERROR'
       }, { status: 400 });
     }
 
     console.log('🧠 Analyzing project:', projectData.title);
 
-    // 3. Demo mode handling - if no Supabase
+    // 4. Demo mode handling with better UX
     if (!supabase) {
       console.log('📊 Running in demo mode (no database)');
       
@@ -148,8 +198,9 @@ export async function POST(request: NextRequest) {
       if (anthropic) {
         try {
           analysis = await analyzeWithAnthropic(projectData, anthropic);
+          console.log('✅ AI analysis completed in demo mode');
         } catch (aiError) {
-          console.log('⚠️ AI failed, using algorithm:', aiError);
+          console.log('⚠️ AI failed in demo mode, using algorithm:', aiError);
           analysis = generateProjectAnalysis(projectData);
         }
       } else {
@@ -160,18 +211,20 @@ export async function POST(request: NextRequest) {
         analysis: analysis,
         credits_remaining: 3,
         demo_mode: true,
-        message: 'Analysis completed in demo mode. Database features disabled.'
+        message: 'Analysis completed! Database features will be enabled after setup.',
+        processing_time: Date.now() - startTime
       });
     }
 
-    // 4. Get or create user data with proper error handling
+    // 5. Enhanced user data management
     let userData: UserData;
     try {
       userData = await getOrCreateUserData(supabase, user);
-      console.log('✅ User data ready:', userData);
+      console.log('✅ User data ready:', userData.id, 'Credits:', userData.credits_remaining);
     } catch (userError) {
       console.error('❌ User processing failed:', userError);
-      // Continue in demo mode if user creation fails
+      
+      // Graceful fallback to demo mode
       console.log('🔄 Falling back to demo mode due to user error');
       
       let analysis: AnalysisResult;
@@ -189,21 +242,24 @@ export async function POST(request: NextRequest) {
         analysis: analysis,
         credits_remaining: 3,
         demo_mode: true,
-        message: 'Analysis completed in demo mode. User database setup needed.'
+        message: 'Analysis completed! User account setup in progress.',
+        processing_time: Date.now() - startTime
       });
     }
 
-    // 5. Check credits
-    if (userData.credits_remaining <= 0) {
-      console.log('❌ No credits remaining');
+    // 6. Enhanced credit checking with subscription awareness
+    if (userData.credits_remaining <= 0 && userData.subscription_tier === 'free') {
+      console.log('❌ No credits remaining for free user');
       return NextResponse.json({ 
-        error: 'No credits remaining', 
-        credits_remaining: 0 
+        error: 'You\'ve used all your free analyses! Upgrade to Pro for unlimited access.',
+        credits_remaining: 0,
+        code: 'CREDITS_EXHAUSTED',
+        upgrade_url: '/pricing'
       }, { status: 403 });
     }
 
-    // 6. Create project in database with error handling
-    let projectId: string = 'demo-' + Date.now();
+    // 7. Create project with enhanced error handling
+    let projectId: string = `demo-${Date.now()}`;
     try {
       const { data: project, error: projectError } = await supabase
         .from('projects')
@@ -215,41 +271,45 @@ export async function POST(request: NextRequest) {
           requirements: projectData.requirements,
           timeline: projectData.timeline || '',
           complexity: projectData.complexity || '',
-          status: 'analyzing'
+          status: 'analyzing',
+          created_at: new Date().toISOString()
         })
         .select()
         .single();
 
       if (projectError || !project) {
         console.error('⚠️ Project creation error:', projectError);
-        throw new Error('Failed to create project');
+        throw new Error(`Failed to create project: ${projectError?.message || 'Unknown error'}`);
       }
 
       projectId = project.id;
-      console.log('✅ Project created:', projectId);
+      console.log('✅ Project created in database:', projectId);
     } catch (projectError) {
-      console.log('⚠️ Project creation failed, continuing with analysis...');
+      console.log('⚠️ Project creation failed, continuing with analysis:', projectError);
+      // Continue with analysis even if project creation fails
     }
 
-    // 7. Get AI analysis
+    // 8. Enhanced AI analysis with intelligent fallback
     let analysis: AnalysisResult;
+    let aiUsed = false;
     
     if (anthropic) {
       try {
-        console.log('🤖 Using Anthropic AI...');
+        console.log('🤖 Using Claude AI for intelligent analysis...');
         analysis = await analyzeWithAnthropic(projectData, anthropic);
-        console.log('✅ AI analysis complete');
+        aiUsed = true;
+        console.log('✅ Claude AI analysis complete');
       } catch (aiError) {
-        console.log('⚠️ AI analysis failed, using algorithm:', aiError);
+        console.log('⚠️ AI analysis failed, using enhanced algorithm:', getErrorMessage(aiError));
         analysis = generateProjectAnalysis(projectData);
       }
     } else {
-      console.log('🔧 Using intelligent algorithm...');
+      console.log('🔧 Using intelligent algorithmic analysis...');
       analysis = generateProjectAnalysis(projectData);
     }
 
-    // 8. Update project with analysis (if we have a real project ID)
-    if (projectId !== `demo-${Date.now()}` && projectId.startsWith('demo-') === false) {
+    // 9. Enhanced project updates with better error handling
+    if (projectId && !projectId.startsWith('demo-')) {
       try {
         const { error: updateError } = await supabase
           .from('projects')
@@ -266,9 +326,11 @@ export async function POST(request: NextRequest) {
 
         if (updateError) {
           console.error('⚠️ Failed to update project:', updateError);
+        } else {
+          console.log('✅ Project updated with analysis results');
         }
 
-        // Create milestones if included in analysis
+        // Create milestones with enhanced error handling
         if (analysis.milestones && analysis.milestones.length > 0) {
           const milestones = analysis.milestones.map((m, index) => ({
             project_id: projectId,
@@ -276,7 +338,8 @@ export async function POST(request: NextRequest) {
             description: m.description,
             amount: Math.round(analysis.total_cost * ((m.percentage || 33) / 100)),
             sequence_order: index + 1,
-            due_date: new Date(Date.now() + (index + 1) * 7 * 24 * 60 * 60 * 1000).toISOString()
+            due_date: new Date(Date.now() + (index + 1) * 7 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'pending'
           }));
 
           const { error: milestoneError } = await supabase
@@ -285,6 +348,8 @@ export async function POST(request: NextRequest) {
 
           if (milestoneError) {
             console.error('⚠️ Failed to create milestones:', milestoneError);
+          } else {
+            console.log('✅ Created', milestones.length, 'project milestones');
           }
         }
       } catch (updateError) {
@@ -292,15 +357,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 9. Deduct credit and track usage
-    let finalCredits = userData.credits_remaining - 1;
+    // 10. Enhanced credit deduction and analytics
+    let finalCredits = userData.credits_remaining;
+    if (userData.subscription_tier === 'free') {
+      finalCredits = userData.credits_remaining - 1;
+    }
+
     try {
+      // Update user credits
       await supabase
         .from('users')
-        .update({ credits_remaining: finalCredits })
+        .update({ 
+          credits_remaining: finalCredits,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', user.id);
 
-      // Track usage
+      // Enhanced analytics tracking
       await supabase.from('usage_analytics').insert({
         user_id: user.id,
         project_id: projectId,
@@ -308,98 +381,124 @@ export async function POST(request: NextRequest) {
         event_data: {
           complexity: analysis.complexity,
           total_cost: analysis.total_cost,
-          credits_used: 1,
-          ai_model: anthropic ? 'claude-3.5-sonnet' : 'algorithm'
+          estimated_hours: analysis.estimated_hours,
+          credits_used: userData.subscription_tier === 'free' ? 1 : 0,
+          ai_model: aiUsed ? 'claude-3.5-sonnet' : 'intelligent-algorithm',
+          processing_time: Date.now() - startTime,
+          category: projectData.category,
+          requirements_length: projectData.requirements.length
         }
       });
+
+      console.log('✅ Credits updated and analytics tracked');
     } catch (trackingError) {
       console.log('⚠️ Credit/tracking update failed:', trackingError);
     }
 
-    console.log('🎉 Analysis completed successfully for:', projectData.title);
+    const processingTime = Date.now() - startTime;
+    console.log('🎉 Analysis completed successfully for:', projectData.title, `(${processingTime}ms)`);
     
     return NextResponse.json({
       project_id: projectId,
       analysis: analysis,
-      credits_remaining: finalCredits
+      credits_remaining: finalCredits,
+      ai_powered: aiUsed,
+      processing_time: processingTime,
+      subscription_tier: userData.subscription_tier
     });
 
   } catch (error) {
-    console.error('💥 Unhandled error:', error);
+    const processingTime = Date.now() - startTime;
+    console.error('💥 Unhandled error in analysis API:', error);
     const errorMessage = getErrorMessage(error);
     
-    // Better error responses based on error type
-    if (error && typeof error === 'object' && 'status' in error) {
+    // Enhanced error responses with better UX
+    if (errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
       return NextResponse.json({ 
-        error: 'AI service temporarily unavailable. Please try again.',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        error: 'AI service is temporarily busy. Please try again in a moment.',
+        code: 'SERVICE_BUSY',
+        retry_after: 30,
+        processing_time: processingTime
+      }, { status: 503 });
+    }
+    
+    if (errorMessage.includes('network') || errorMessage.includes('connection')) {
+      return NextResponse.json({ 
+        error: 'Connection issue. Please check your internet and try again.',
+        code: 'NETWORK_ERROR',
+        processing_time: processingTime
       }, { status: 503 });
     }
     
     return NextResponse.json({ 
-      error: 'Analysis failed. Please try again.',
+      error: 'Analysis temporarily unavailable. Our team has been notified.',
+      code: 'ANALYSIS_ERROR',
       details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
-      demo_mode: !supabase || !anthropic
+      demo_mode: !supabase || !anthropic,
+      processing_time: processingTime
     }, { status: 500 });
   }
 }
 
-// Enhanced user data function with better error handling
+// Enhanced user data management with better error handling
 async function getOrCreateUserData(supabase: SupabaseClient, user: any): Promise<UserData> {
   try {
-    // Try to get existing user
+    // Try to get existing user with better error handling
     const { data: existingUser, error: userError } = await supabase
       .from('users')
-      .select('credits_remaining, id, email')
+      .select('credits_remaining, id, email, subscription_tier')
       .eq('id', user.id)
       .single();
 
     if (existingUser && !userError) {
-      console.log('✅ Found existing user');
+      console.log('✅ Found existing user with', existingUser.credits_remaining, 'credits');
       return existingUser;
     }
 
-    // User doesn't exist or there was an error
+    // Enhanced user creation
     if (userError?.code === 'PGRST116') {
-      console.log('👤 Creating new user...');
-      // User not found, create new user
+      console.log('👤 Creating new user account...');
+      
       const { data: newUser, error: createError } = await supabase
         .from('users')
         .insert({
           id: user.id,
           email: user.emailAddresses?.[0]?.emailAddress || '',
           full_name: user.fullName || user.firstName || 'User',
+          first_name: user.firstName || '',
+          last_name: user.lastName || '',
           credits_remaining: 3,
           subscription_tier: 'free',
           avatar_url: user.imageUrl || null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
-        .select('credits_remaining, id, email')
+        .select('credits_remaining, id, email, subscription_tier')
         .single();
 
       if (createError || !newUser) {
         console.error('❌ User creation failed:', createError);
-        throw new Error('Failed to create user');
+        throw new Error(`Failed to create user: ${createError?.message || 'Unknown error'}`);
       }
 
-      console.log('✅ Created new user');
+      console.log('✅ Created new user with 3 free credits');
       return newUser;
     }
 
-    // Some other error occurred
+    // Handle other database errors
     console.error('❌ User fetch error:', userError);
-    throw new Error('Failed to fetch user data');
+    throw new Error(`Database error: ${userError?.message || 'Unknown error'}`);
   } catch (error) {
     console.error('❌ User data processing error:', error);
     throw error;
   }
 }
 
+// Enhanced Anthropic analysis with better prompting
 async function analyzeWithAnthropic(projectData: ProjectData, anthropicClient: Anthropic): Promise<AnalysisResult> {
   const { title, description, category, requirements } = projectData;
   
-  const prompt = `You are an expert software project estimator. Analyze this project and provide detailed estimates.
+  const prompt = `You are Tink.io's expert AI project estimator. Analyze this software project with precision and provide realistic estimates based on modern development practices.
 
 Project Details:
 - Title: ${title}
@@ -407,7 +506,7 @@ Project Details:
 - Category: ${category}
 - Requirements: ${requirements}
 
-Provide a comprehensive analysis in JSON format:
+Provide a comprehensive analysis in VALID JSON format (no additional text):
 {
   "complexity": "Simple|Moderate|Complex|Enterprise",
   "complexity_score": 1-10,
@@ -416,7 +515,7 @@ Provide a comprehensive analysis in JSON format:
   "total_cost": number,
   "timeline": {
     "industry_standard": "X weeks",
-    "accelerated": "X weeks (50% faster)"
+    "accelerated": "X weeks (our 50% faster delivery)"
   },
   "techStack": {
     "frontend": ["React", "Next.js", ...],
@@ -435,8 +534,8 @@ Provide a comprehensive analysis in JSON format:
   ],
   "milestones": [
     {
-      "title": "Milestone 1",
-      "description": "Description",
+      "title": "Milestone 1: Foundation",
+      "description": "Core setup complete",
       "percentage": 25
     }
   ],
@@ -448,25 +547,24 @@ Provide a comprehensive analysis in JSON format:
     }
   ],
   "keyFeatures": ["Feature 1", "Feature 2", ...],
-  "whyRecommended": "2-3 sentences of expert advice"
+  "whyRecommended": "2-3 sentences of expert advice explaining the approach"
 }
 
-Base your estimates on these guidelines:
-- Simple projects (1-3 complexity): 40-80 hours, $3-8k
-- Moderate projects (4-6 complexity): 80-200 hours, $8-25k
-- Complex projects (7-8 complexity): 200-500 hours, $25-75k
-- Enterprise projects (9-10 complexity): 500+ hours, $75k+
+Estimation Guidelines:
+- Simple projects (1-3 complexity): 40-120 hours, $3-12k
+- Moderate projects (4-6 complexity): 120-300 hours, $12-35k
+- Complex projects (7-8 complexity): 300-600 hours, $35-85k
+- Enterprise projects (9-10 complexity): 600+ hours, $85k+
 
-Be realistic and detailed. Consider modern development practices.
-Respond ONLY with valid JSON, no additional text.`;
+Consider modern practices: TypeScript, responsive design, security, testing, deployment automation.
+Be realistic about development time and costs. Factor in testing, documentation, and deployment.`;
 
   try {
-    // 🔥 CRITICAL FIX: Use type assertion to bypass TypeScript SDK issues
-    const message = await (anthropicClient as any).messages.create({
+    const message = await anthropicClient.messages.create({
       model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 2000,
-      temperature: 0.7,
-      system: "You are an expert software project estimator. Always respond with valid JSON only.",
+      max_tokens: 3000,
+      temperature: 0.3, // Lower temperature for more consistent estimates
+      system: "You are an expert software project estimator for Tink.io. Always respond with valid JSON only.",
       messages: [
         {
           role: 'user',
@@ -475,19 +573,24 @@ Respond ONLY with valid JSON, no additional text.`;
       ]
     });
 
-    // Parse the response
+    // Enhanced response parsing
     const responseText = message.content[0].type === 'text' 
       ? message.content[0].text 
       : '';
     
     try {
       const analysis = JSON.parse(responseText);
+      
+      // Validate required fields
+      if (!analysis.complexity || !analysis.total_cost || !analysis.estimated_hours) {
+        throw new Error('Incomplete AI response');
+      }
+      
       return analysis;
     } catch (parseError) {
       console.error('❌ Failed to parse Anthropic response:', parseError);
-      console.log('Raw response:', responseText);
-      // Fallback to algorithmic analysis
-      throw new Error('Failed to parse AI response');
+      console.log('Raw AI response:', responseText.substring(0, 500));
+      throw new Error('AI response format error');
     }
   } catch (error) {
     console.error('❌ Anthropic API error:', error);
@@ -495,7 +598,9 @@ Respond ONLY with valid JSON, no additional text.`;
   }
 }
 
-// [Keep all your existing helper functions exactly as they are]
+// Keep all your existing helper functions exactly as they are
+// [All the generateProjectAnalysis, generateMilestones, determineComplexity, etc. functions remain the same]
+
 function generateProjectAnalysis(projectData: ProjectData): AnalysisResult {
   const { title, description, category, requirements } = projectData;
   

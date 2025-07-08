@@ -17,12 +17,49 @@ interface ProjectFormData {
   complexity: string;
 }
 
+// 🔧 FIXED: Add proper TypeScript interface for analysis results
+interface AnalysisResult {
+  complexity: string;
+  complexity_score: number;
+  estimated_hours: number;
+  hourly_rate: number;
+  total_cost: number;
+  timeline: {
+    industry_standard: string;
+    accelerated: string;
+  };
+  techStack: {
+    frontend: string[];
+    backend: string[];
+    database: string;
+    deployment: string;
+  };
+  phases: Array<{
+    name: string;
+    duration: string;
+    description: string;
+    deliverables: string[];
+  }>;
+  keyFeatures: string[];
+  risks: Array<{
+    risk: string;
+    mitigation: string;
+    impact: string;
+  }>;
+  whyRecommended: string;
+  // Legacy support for old format
+  pricing?: {
+    recommended: string;
+  };
+}
+
 export default function CreateProjectPage() {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState(null);
+  // 🔧 FIXED: Proper TypeScript typing for analysis results
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult | null>(null);
   const [userCredits, setUserCredits] = useState({ 
     hasCredits: true, 
     creditsRemaining: 3, 
@@ -78,12 +115,21 @@ export default function CreateProjectPage() {
     }
 
     try {
-      const totalCost = analysisResults.total_cost || analysisResults.pricing?.recommended || 'TBD';
-      const timeline = analysisResults.timeline?.accelerated || analysisResults.timeline || 'TBD';
+      // 🔧 FIXED: Safe property access with proper typing
+      const totalCost = analysisResults.total_cost || 
+        (analysisResults.pricing?.recommended) || 
+        'TBD';
+      
+      const timeline = analysisResults.timeline?.accelerated || 
+        'TBD';
+      
+      const formattedCost = typeof totalCost === 'number' ? 
+        '$' + totalCost.toLocaleString() : 
+        totalCost;
       
       alert(`🚀 Project "${projectData.title}" submitted successfully!
 
-Estimated Price: ${typeof totalCost === 'number' ? '$' + totalCost.toLocaleString() : totalCost}
+Estimated Price: ${formattedCost}
 Timeline: ${timeline}
 
 Tink will review the AI analysis and contact you within 24 hours to finalize details and process payment.`);
@@ -125,54 +171,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
     try {
       console.log('🧠 Running AI analysis...');
       
-      const analysisPrompt = `
-        Analyze this project request and provide a detailed breakdown:
-        
-        Title: ${projectData.title}
-        Description: ${projectData.description}
-        Category: ${projectData.category}
-        Requirements: ${projectData.requirements}
-        
-        Provide a JSON response with:
-        {
-          "complexity": "Simple|Moderate|Complex|Enterprise",
-          "complexity_score": 1-10,
-          "estimated_hours": number,
-          "hourly_rate": number (80-150),
-          "total_cost": number,
-          "techStack": {
-            "frontend": ["technology1", "technology2"],
-            "backend": ["technology1", "technology2"],
-            "database": "recommended_db",
-            "deployment": "platform"
-          },
-          "timeline": {
-            "industry_standard": "X weeks",
-            "accelerated": "X weeks"
-          },
-          "phases": [
-            {
-              "name": "Phase Name",
-              "duration": "X weeks",
-              "description": "What gets built",
-              "deliverables": ["item1", "item2"]
-            }
-          ],
-          "keyFeatures": ["feature1", "feature2"],
-          "risks": [
-            {
-              "risk": "Risk description", 
-              "mitigation": "How to handle it",
-              "impact": "Low|Medium|High"
-            }
-          ],
-          "whyRecommended": "2-3 sentence explanation"
-        }
-        
-        DO NOT OUTPUT ANYTHING OTHER THAN VALID JSON.
-      `;
-
-      // 🔧 FIXED: Use proper API call instead of window.claude.complete
+      // 🔧 FIXED: Use proper API call with error handling
       try {
         const response = await fetch('/api/analyze-project', {
           method: 'POST',
@@ -180,7 +179,6 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            prompt: analysisPrompt,
             projectData: projectData
           })
         });
@@ -189,7 +187,9 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
           throw new Error(`Analysis API error: ${response.status}`);
         }
 
-        const analysisResult = await response.json();
+        const result = await response.json();
+        const analysisResult: AnalysisResult = result.analysis || result;
+        
         console.log('✅ Analysis complete!', analysisResult);
         
         // Store analysis results to show the beautiful display
@@ -207,7 +207,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
       // 🔧 FALLBACK: Mock analysis for demo purposes
       console.log('🔄 Using fallback mock analysis for demo...');
       
-      const mockAnalysis = {
+      const mockAnalysis: AnalysisResult = {
         complexity: "Moderate",
         complexity_score: 6,
         estimated_hours: 120,
@@ -294,7 +294,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
   }
 
   // Helper function to safely format numbers
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: any): string => {
     if (typeof value === 'number') {
       return '$' + value.toLocaleString();
     }
@@ -304,7 +304,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
     return value || 'TBD';
   };
 
-  const safeGet = (obj, path, defaultValue = 'N/A') => {
+  const safeGet = (obj: any, path: string, defaultValue: any = 'N/A'): any => {
     try {
       return path.split('.').reduce((current, key) => current?.[key], obj) || defaultValue;
     } catch {
@@ -426,7 +426,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
             </div>
           </div>
         ) : (
-          /* AI Analysis Results - FIXED */
+          /* AI Analysis Results - FIXED WITH PROPER TYPING */
           analysisResults && (
             <div className="bg-white rounded-xl shadow-lg border border-emerald-100 p-6">
               <div className="flex items-center mb-6">
@@ -448,9 +448,9 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
                   </h4>
                   <div className="space-y-2 text-sm">
                     <p><span className="font-medium">Total Cost:</span> {formatCurrency(analysisResults.total_cost)}</p>
-                    <p><span className="font-medium">Rate:</span> ${safeGet(analysisResults, 'hourly_rate', '100')}/hour</p>
-                    <p><span className="font-medium">Est. Hours:</span> {safeGet(analysisResults, 'estimated_hours', '120')}</p>
-                    <p><span className="font-medium">Complexity:</span> {safeGet(analysisResults, 'complexity', 'Moderate')}</p>
+                    <p><span className="font-medium">Rate:</span> ${analysisResults.hourly_rate || 100}/hour</p>
+                    <p><span className="font-medium">Est. Hours:</span> {analysisResults.estimated_hours || 120}</p>
+                    <p><span className="font-medium">Complexity:</span> {analysisResults.complexity || 'Moderate'}</p>
                   </div>
                 </div>
 
@@ -460,10 +460,10 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
                     Timeline Analysis
                   </h4>
                   <div className="space-y-2 text-sm">
-                    <p><span className="font-medium">Industry Standard:</span> {safeGet(analysisResults, 'timeline.industry_standard', '8 weeks')}</p>
-                    <p><span className="font-medium">Our Delivery:</span> {safeGet(analysisResults, 'timeline.accelerated', '4 weeks')}</p>
+                    <p><span className="font-medium">Industry Standard:</span> {analysisResults.timeline?.industry_standard || '8 weeks'}</p>
+                    <p><span className="font-medium">Our Delivery:</span> {analysisResults.timeline?.accelerated || '4 weeks'}</p>
                     <p><span className="font-medium">Time Saved:</span> 50% faster</p>
-                    <p><span className="font-medium">Score:</span> {safeGet(analysisResults, 'complexity_score', '6')}/10</p>
+                    <p><span className="font-medium">Score:</span> {analysisResults.complexity_score || 6}/10</p>
                   </div>
                 </div>
               </div>
@@ -496,10 +496,10 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
                   <p className="text-sm font-medium text-gray-700 mb-2">Database & Deployment:</p>
                   <div className="flex flex-wrap gap-2">
                     <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">
-                      {safeGet(analysisResults, 'techStack.database', 'PostgreSQL')}
+                      {analysisResults.techStack?.database || 'PostgreSQL'}
                     </span>
                     <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs">
-                      {safeGet(analysisResults, 'techStack.deployment', 'Vercel')}
+                      {analysisResults.techStack?.deployment || 'Vercel'}
                     </span>
                   </div>
                 </div>

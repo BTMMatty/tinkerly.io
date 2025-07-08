@@ -164,13 +164,17 @@ export async function POST(request: Request) {
       }
     }
 
-    // Now userData is guaranteed to not be null
-    if (userData.credits_remaining <= 0) {
-      return NextResponse.json({ 
-        error: 'No credits remaining', 
-        credits_remaining: 0 
-      }, { status: 403 });
-    }
+ // Now userData is guaranteed to not be null
+if (!userData) {
+  throw new Error('userData should not be null at this point');
+}
+
+if (userData.credits_remaining <= 0) {
+  return NextResponse.json({ 
+    error: 'No credits remaining', 
+    credits_remaining: 0 
+  }, { status: 403 });
+}
 
     // Create project in database
     const { data: project, error: projectError } = await supabase
@@ -246,7 +250,7 @@ export async function POST(request: Request) {
     // Deduct credit
     await supabase
       .from('users')
-      .update({ credits_remaining: userData.credits_remaining - 1 })
+      .update({ credits_remaining: userData!.credits_remaining - 1 })
       .eq('id', user.id);
 
     // Track usage
@@ -267,7 +271,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       project_id: project.id,
       analysis: analysis,
-      credits_remaining: userData.credits_remaining - 1
+      credits_remaining: userData!.credits_remaining - 1
     });
 
   } catch (error) {

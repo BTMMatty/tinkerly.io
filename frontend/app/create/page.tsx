@@ -1,3 +1,5 @@
+'use client';
+
 // Add this import at the top of your create/page.tsx
 import AnalysisResults from '@/components/AnalysisResults';
 

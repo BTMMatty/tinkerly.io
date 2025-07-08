@@ -250,17 +250,24 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('❌ Analysis API error:', error);
     
+    // Helper function to safely get error message
+    const getErrorMessage = (err: unknown): string => {
+      if (err instanceof Error) return err.message;
+      if (typeof err === 'string') return err;
+      return 'Unknown error occurred';
+    };
+    
     // Better error responses based on error type
     if (error instanceof Anthropic.APIError) {
       return NextResponse.json({ 
         error: 'AI service temporarily unavailable. Please try again.',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' ? getErrorMessage(error) : undefined
       }, { status: 503 });
     }
     
     return NextResponse.json({ 
       error: 'Analysis failed. Please try again.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? getErrorMessage(error) : undefined
     }, { status: 500 });
   }
 }

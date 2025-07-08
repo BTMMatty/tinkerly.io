@@ -2,7 +2,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import Anthropic from '@anthropic-ai/sdk';
 
 // Type definitions
 interface ProjectData {
@@ -88,21 +87,6 @@ try {
   }
 } catch (error) {
   console.error('❌ Failed to initialize Supabase:', error);
-}
-
-// Initialize Anthropic with proper error handling
-let anthropic: Anthropic | null = null;
-try {
-  if (anthropicKey) {
-    anthropic = new Anthropic({
-      apiKey: anthropicKey,
-    });
-    console.log('✅ Anthropic Claude AI client initialized');
-  } else {
-    console.warn('⚠️ Anthropic API key missing. Using intelligent algorithmic fallback.');
-  }
-} catch (error) {
-  console.error('❌ Failed to initialize Anthropic:', error);
 }
 
 // Helper function for better error messages
@@ -195,9 +179,9 @@ export async function POST(request: NextRequest) {
       console.log('📊 Running in demo mode (no database)');
       
       let analysis: AnalysisResult;
-      if (anthropic) {
+      if (anthropicKey) {
         try {
-          analysis = await analyzeWithAnthropic(projectData, anthropic);
+          analysis = await analyzeWithAnthropic(projectData);
           console.log('✅ AI analysis completed in demo mode');
         } catch (aiError) {
           console.log('⚠️ AI failed in demo mode, using algorithm:', aiError);
@@ -228,9 +212,9 @@ export async function POST(request: NextRequest) {
       console.log('🔄 Falling back to demo mode due to user error');
       
       let analysis: AnalysisResult;
-      if (anthropic) {
+      if (anthropicKey) {
         try {
-          analysis = await analyzeWithAnthropic(projectData, anthropic);
+          analysis = await analyzeWithAnthropic(projectData);
         } catch (aiError) {
           analysis = generateProjectAnalysis(projectData);
         }
@@ -293,10 +277,10 @@ export async function POST(request: NextRequest) {
     let analysis: AnalysisResult;
     let aiUsed = false;
     
-    if (anthropic) {
+    if (anthropicKey) {
       try {
         console.log('🤖 Using Claude AI for intelligent analysis...');
-        analysis = await analyzeWithAnthropic(projectData, anthropic);
+        analysis = await analyzeWithAnthropic(projectData);
         aiUsed = true;
         console.log('✅ Claude AI analysis complete');
       } catch (aiError) {
@@ -434,7 +418,7 @@ export async function POST(request: NextRequest) {
       error: 'Analysis temporarily unavailable. Our team has been notified.',
       code: 'ANALYSIS_ERROR',
       details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
-      demo_mode: !supabase || !anthropic,
+      demo_mode: !supabase || !anthropicKey,
       processing_time: processingTime
     }, { status: 500 });
   }
@@ -494,8 +478,8 @@ async function getOrCreateUserData(supabase: SupabaseClient, user: any): Promise
   }
 }
 
-// Enhanced Anthropic analysis with better prompting
-async function analyzeWithAnthropic(projectData: ProjectData, anthropicClient: Anthropic): Promise<AnalysisResult> {
+// 🔧 FIXED: Simplified Anthropic analysis to avoid TypeScript errors
+async function analyzeWithAnthropic(projectData: ProjectData): Promise<AnalysisResult> {
   const { title, description, category, requirements } = projectData;
   
   const prompt = `You are Tink.io's expert AI project estimator. Analyze this software project with precision and provide realistic estimates based on modern development practices.
@@ -560,23 +544,34 @@ Consider modern practices: TypeScript, responsive design, security, testing, dep
 Be realistic about development time and costs. Factor in testing, documentation, and deployment.`;
 
   try {
-    const message = await anthropicClient.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 3000,
-      temperature: 0.3, // Lower temperature for more consistent estimates
-      system: "You are an expert software project estimator for Tink.io. Always respond with valid JSON only.",
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ]
+    // 🔧 FIXED: Use direct fetch to Claude API instead of TypeScript problematic SDK
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey!,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 3000,
+        temperature: 0.3,
+        system: "You are an expert software project estimator for Tink.io. Always respond with valid JSON only.",
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      })
     });
 
-    // Enhanced response parsing
-    const responseText = message.content[0].type === 'text' 
-      ? message.content[0].text 
-      : '';
+    if (!response.ok) {
+      throw new Error(`Claude API error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    const responseText = result.content?.[0]?.text || '';
     
     try {
       const analysis = JSON.parse(responseText);
@@ -588,19 +583,17 @@ Be realistic about development time and costs. Factor in testing, documentation,
       
       return analysis;
     } catch (parseError) {
-      console.error('❌ Failed to parse Anthropic response:', parseError);
+      console.error('❌ Failed to parse Claude response:', parseError);
       console.log('Raw AI response:', responseText.substring(0, 500));
       throw new Error('AI response format error');
     }
   } catch (error) {
-    console.error('❌ Anthropic API error:', error);
+    console.error('❌ Claude API error:', error);
     throw error;
   }
 }
 
-// Keep all your existing helper functions exactly as they are
-// [All the generateProjectAnalysis, generateMilestones, determineComplexity, etc. functions remain the same]
-
+// All the helper functions remain exactly the same
 function generateProjectAnalysis(projectData: ProjectData): AnalysisResult {
   const { title, description, category, requirements } = projectData;
   

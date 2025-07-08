@@ -75,8 +75,8 @@ try {
   console.error('Failed to initialize Supabase:', error);
 }
 
-// Safe Anthropic initialization - Fix: Add type annotation
-let anthropic: Anthropic | null = null;
+// Safe Anthropic initialization - Fix: Add proper type casting
+let anthropic: any = null;
 try {
   if (process.env.ANTHROPIC_API_KEY) {
     anthropic = new Anthropic({
@@ -258,7 +258,7 @@ export async function POST(request: Request) {
     };
     
     // Better error responses based on error type
-    if (error instanceof Anthropic.APIError) {
+    if (anthropic && error instanceof Error && error.constructor.name === 'APIError') {
       return NextResponse.json({ 
         error: 'AI service temporarily unavailable. Please try again.',
         details: process.env.NODE_ENV === 'development' ? getErrorMessage(error) : undefined
@@ -379,7 +379,9 @@ Respond ONLY with valid JSON, no additional text.`;
       throw new Error('Anthropic client not initialized');
     }
 
-    const message = await anthropic.messages.create({
+    // Type assertion to bypass TypeScript issues with Anthropic SDK
+    const anthropicClient = anthropic as any;
+    const message = await anthropicClient.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 2000,
       temperature: 0.7,

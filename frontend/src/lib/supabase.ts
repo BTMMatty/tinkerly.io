@@ -140,13 +140,63 @@ export const userService = {
   },
 
   async decrementCredits(clerkUserId: string) {
+    const { data: user },
+
+  async addCredits(clerkUserId: string, creditsToAdd: number) {
     const { data: user } = await this.getUser(clerkUserId);
+    if (user) {
+      return await this.updateUser(clerkUserId, {
+        credits_remaining: (user.credits_remaining || 0) + creditsToAdd
+      });
+    }
+    return { data: null, error: "User not found" };
+  } = await this.getUser(clerkUserId);
     if (user && user.credits_remaining > 0) {
       return await this.updateUser(clerkUserId, {
         credits_remaining: user.credits_remaining - 1
+      },
+
+  async addCredits(clerkUserId: string, creditsToAdd: number) {
+    const { data: user } = await this.getUser(clerkUserId);
+    if (user) {
+      return await this.updateUser(clerkUserId, {
+        credits_remaining: (user.credits_remaining || 0) + creditsToAdd
       });
     }
-    return { data: null, error: 'No credits remaining' };
+    return { data: null, error: "User not found" };
+  });
+    },
+
+  async addCredits(clerkUserId: string, creditsToAdd: number) {
+    const { data: user } = await this.getUser(clerkUserId);
+    if (user) {
+      return await this.updateUser(clerkUserId, {
+        credits_remaining: (user.credits_remaining || 0) + creditsToAdd
+      });
+    }
+    return { data: null, error: "User not found" };
+  }
+    return { data: null, error: 'No credits remaining' },
+
+  async addCredits(clerkUserId: string, creditsToAdd: number) {
+    const { data: user } = await this.getUser(clerkUserId);
+    if (user) {
+      return await this.updateUser(clerkUserId, {
+        credits_remaining: (user.credits_remaining || 0) + creditsToAdd
+      });
+    }
+    return { data: null, error: "User not found" };
+  };
+  },
+
+  async addCredits(clerkUserId: string, creditsToAdd: number) {
+    const { data: user } = await this.getUser(clerkUserId);
+    if (user) {
+      return await this.updateUser(clerkUserId, {
+        credits_remaining: (user.credits_remaining || 0) + creditsToAdd
+      });
+    }
+    return { data: null, error: "User not found" };
   }
 };
 
@@ -272,3 +322,12 @@ export const checkUserCredits = async (clerkUserId: string) => {
     subscriptionTier: user?.subscription_tier || 'free'
   };
 };
+  async addCredits(clerkUserId: string, creditsToAdd: number) {
+    const { data: user } = await this.getUser(clerkUserId);
+    if (user) {
+      return await this.updateUser(clerkUserId, {
+        credits_remaining: (user.credits_remaining || 0) + creditsToAdd
+      });
+    }
+    return { data: null, error: 'User not found' };
+  },

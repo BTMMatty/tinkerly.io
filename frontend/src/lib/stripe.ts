@@ -85,3 +85,27 @@ export const getPlanByBilling = (planId: string, billingCycle: 'monthly' | 'annu
     stripe_price_id: billingCycle === 'annual' ? plan.stripe_price_annual : plan.stripe_price_monthly
   };
 };
+// Credit packages configuration
+export const CREDIT_PACKAGES = {
+  starter: {
+    id: 'credits_starter',
+    name: 'Starter Pack',
+    credits: 50,
+    price: 999, // $9.99
+    priceDisplay: '$9.99'
+  },
+  professional: {
+    id: 'credits_professional',
+    name: 'Professional Pack',
+    credits: 200,
+    price: 2999, // $29.99
+    priceDisplay: '$29.99'
+  },
+  enterprise: {
+    id: 'credits_enterprise',
+    name: 'Enterprise Pack',
+    credits: 500,
+    price: 5999, // $59.99
+    priceDisplay: '$59.99'
+  }
+};

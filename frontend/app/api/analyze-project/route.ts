@@ -101,7 +101,7 @@ export async function POST(request: Request) {
     let body;
     try {
       body = await request.json();
-    } catch (error) {
+    } catch (parseError) {
       return NextResponse.json({ 
         error: 'Invalid request body' 
       }, { status: 400 });
@@ -250,7 +250,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('❌ Analysis API error:', error);
     
-    // Better error responses based on error type
+    // 🔥 FIXED: Proper error handling with type checking
     if (error instanceof Anthropic.APIError) {
       return NextResponse.json({ 
         error: 'AI service temporarily unavailable. Please try again.',
@@ -260,7 +260,7 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ 
       error: 'Analysis failed. Please try again.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
     }, { status: 500 });
   }
 }
@@ -395,8 +395,8 @@ Respond ONLY with valid JSON, no additional text.`;
       // Fallback to algorithmic analysis
       return generateProjectAnalysis(projectData);
     }
-  } catch (error) {
-    console.error('Anthropic API error:', error);
+  } catch (anthropicError) {
+    console.error('Anthropic API error:', anthropicError);
     // Fallback to algorithmic analysis
     return generateProjectAnalysis(projectData);
   }

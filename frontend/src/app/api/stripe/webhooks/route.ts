@@ -292,7 +292,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
             event_type: 'payment_failed',
             event_data: {
               invoice_id: invoice.id,
-              subscription_id: invoice.subscription,
+              subscription_id: (invoice as any).subscription,
               failed_at: new Date().toISOString()
             }
           });

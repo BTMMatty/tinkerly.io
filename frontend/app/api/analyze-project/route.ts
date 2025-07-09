@@ -3,7 +3,6 @@
 import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import Anthropic from '@anthropic-ai/sdk';
 
 // Type definitions
 interface ProjectData {
@@ -63,7 +62,7 @@ interface UserData {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Fix: Add proper type annotation
+// Initialize Supabase
 let supabase: SupabaseClient | null = null;
 try {
   if (supabaseUrl && supabaseKey) {
@@ -75,19 +74,8 @@ try {
   console.error('Failed to initialize Supabase:', error);
 }
 
-// Safe Anthropic initialization - Fix: Add type annotation
-let anthropic: Anthropic | null = null;
-try {
-  if (process.env.ANTHROPIC_API_KEY) {
-    anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-    });
-  } else {
-    console.warn('⚠️ Anthropic API key not found. Using fallback algorithm.');
-  }
-} catch (error) {
-  console.error('Failed to initialize Anthropic:', error);
-}
+// Using intelligent algorithmic analysis (no external AI dependencies)
+console.log('🧠 Using intelligent algorithmic project analysis');
 
 export async function POST(request: Request) {
   try {
@@ -122,13 +110,8 @@ export async function POST(request: Request) {
     if (!supabase) {
       console.log('📊 Running in demo mode (no database)');
       
-      // Get AI analysis
-      let analysis: AnalysisResult;
-      if (anthropic) {
-        analysis = await analyzeWithAnthropic(projectData);
-      } else {
-        analysis = generateProjectAnalysis(projectData);
-      }
+      // Get intelligent analysis
+      const analysis = generateProjectAnalysis(projectData);
       
       return NextResponse.json({
         analysis: analysis,
@@ -138,7 +121,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // 🔥 FIX: Get or create user data with proper TypeScript handling
+    // Get or create user data with proper TypeScript handling
     const userData = await getOrCreateUserData(supabase, user);
     
     // Check credits
@@ -170,17 +153,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
     }
 
-    // Get AI analysis from Anthropic
-    let analysis: AnalysisResult;
-    
-    if (anthropic) {
-      // Use real Anthropic AI
-      analysis = await analyzeWithAnthropic(projectData);
-    } else {
-      // Fallback to your smart algorithm if no API key
-      console.log('⚠️ No Anthropic API key found, using intelligent algorithm');
-      analysis = generateProjectAnalysis(projectData);
-    }
+    // Get intelligent analysis using our advanced algorithm
+    console.log('🔬 Running intelligent algorithmic analysis...');
+    const analysis = generateProjectAnalysis(projectData);
 
     // Update project with analysis
     const { error: updateError } = await supabase
@@ -235,7 +210,7 @@ export async function POST(request: Request) {
         complexity: analysis.complexity,
         total_cost: analysis.total_cost,
         credits_used: 1,
-        ai_model: anthropic ? 'claude-3.5-sonnet' : 'algorithm'
+        ai_model: 'intelligent_algorithm'
       }
     });
 
@@ -250,14 +225,6 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('❌ Analysis API error:', error);
     
-    // 🔥 FIXED: Proper error handling with type checking
-    if (error instanceof Anthropic.APIError) {
-      return NextResponse.json({ 
-        error: 'AI service temporarily unavailable. Please try again.',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
-      }, { status: 503 });
-    }
-    
     return NextResponse.json({ 
       error: 'Analysis failed. Please try again.',
       details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
@@ -265,7 +232,7 @@ export async function POST(request: Request) {
   }
 }
 
-// 🔥 NEW: Dedicated function to handle user data logic with proper typing
+// Dedicated function to handle user data logic with proper typing
 async function getOrCreateUserData(supabase: SupabaseClient, user: any): Promise<UserData> {
   // Try to get existing user
   const { data: existingUser, error: userError } = await supabase
@@ -303,105 +270,7 @@ async function getOrCreateUserData(supabase: SupabaseClient, user: any): Promise
   throw new Error('Failed to fetch or create user');
 }
 
-async function analyzeWithAnthropic(projectData: ProjectData): Promise<AnalysisResult> {
-  const { title, description, category, requirements } = projectData;
-  
-  const prompt = `You are an expert software project estimator. Analyze this project and provide detailed estimates.
-
-Project Details:
-- Title: ${title}
-- Description: ${description}
-- Category: ${category}
-- Requirements: ${requirements}
-
-Provide a comprehensive analysis in JSON format:
-{
-  "complexity": "Simple|Moderate|Complex|Enterprise",
-  "complexity_score": 1-10,
-  "estimated_hours": number,
-  "hourly_rate": number (80-150 based on complexity),
-  "total_cost": number,
-  "timeline": {
-    "industry_standard": "X weeks",
-    "accelerated": "X weeks (50% faster)"
-  },
-  "techStack": {
-    "frontend": ["React", "Next.js", ...],
-    "backend": ["Node.js", ...],
-    "database": "PostgreSQL|MongoDB|etc",
-    "deployment": "Vercel|AWS|etc"
-  },
-  "phases": [
-    {
-      "name": "Phase 1: Foundation",
-      "duration": "1 week",
-      "description": "Setup, authentication, database",
-      "deliverables": ["item1", "item2"],
-      "percentage": 25
-    }
-  ],
-  "milestones": [
-    {
-      "title": "Milestone 1",
-      "description": "Description",
-      "percentage": 25
-    }
-  ],
-  "risks": [
-    {
-      "risk": "Description",
-      "mitigation": "How to handle",
-      "impact": "Low|Medium|High"
-    }
-  ],
-  "keyFeatures": ["Feature 1", "Feature 2", ...],
-  "whyRecommended": "2-3 sentences of expert advice"
-}
-
-Base your estimates on these guidelines:
-- Simple projects (1-3 complexity): 40-80 hours, $3-8k
-- Moderate projects (4-6 complexity): 80-200 hours, $8-25k
-- Complex projects (7-8 complexity): 200-500 hours, $25-75k
-- Enterprise projects (9-10 complexity): 500+ hours, $75k+
-
-Be realistic and detailed. Consider modern development practices.
-Respond ONLY with valid JSON, no additional text.`;
-
-  try {
-    const message = await anthropic!.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 2000,
-      temperature: 0.7,
-      system: "You are an expert software project estimator. Always respond with valid JSON only.",
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ]
-    });
-
-    // Parse the response
-    const responseText = message.content[0].type === 'text' 
-      ? message.content[0].text 
-      : '';
-    
-    try {
-      const analysis = JSON.parse(responseText);
-      return analysis;
-    } catch (parseError) {
-      console.error('Failed to parse Anthropic response:', parseError);
-      console.log('Raw response:', responseText);
-      // Fallback to algorithmic analysis
-      return generateProjectAnalysis(projectData);
-    }
-  } catch (anthropicError) {
-    console.error('Anthropic API error:', anthropicError);
-    // Fallback to algorithmic analysis
-    return generateProjectAnalysis(projectData);
-  }
-}
-
+// 🧠 INTELLIGENT PROJECT ANALYSIS ALGORITHM
 function generateProjectAnalysis(projectData: ProjectData): AnalysisResult {
   const { title, description, category, requirements } = projectData;
   

@@ -110,7 +110,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       // Update user subscription status in Supabase
       const { data, error } = await userService.updateUser(clerkUserId, {
-        subscription_tier: planName as 'professional' | 'enterprise',
+        subscription_tier: planName === 'professional' ? 'pro' : planName as 'enterprise',
         subscription_status: 'active',
         subscription_period: billingCycle as 'monthly' | 'annual',
         stripe_customer_id: session.customer as string,

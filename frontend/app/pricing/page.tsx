@@ -264,7 +264,6 @@ export default function ModernPricingPage() {
                   <SubscriptionButton
                     plan={plan}
                     billingCycle={billingCycle}
-                    popular={plan.popular}
                   />
                 )
               ) : (

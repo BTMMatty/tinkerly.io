@@ -7,13 +7,19 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database Types (matching new schema)
 export interface User {
-  id: string; // Clerk user ID
+  id: string;
   email: string;
   full_name?: string;
   avatar_url?: string;
   bio?: string;
   company?: string;
   subscription_tier: 'free' | 'pro' | 'enterprise';
+  subscription_status?: 'active' | 'inactive' | 'canceled' | 'past_due';  
+  subscription_period?: 'monthly' | 'annual';  
+  stripe_customer_id?: string;  
+  subscription_id?: string;  
+  subscription_start_date?: string;  
+  subscription_end_date?: string;
   credits_remaining: number;
   total_projects: number;
   created_at: string;

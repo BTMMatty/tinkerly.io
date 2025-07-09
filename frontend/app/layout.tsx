@@ -1,8 +1,10 @@
 import { ClerkProvider } from '@clerk/nextjs';
+import { StripeProvider } from '@/components/StripeProvider'; // ← ADD THIS LINE
 import './globals.css';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
 
+// Keep ALL your existing metadata exactly as is
 export const metadata = {
   title: 'Tinkerly.io - AI-Powered Development Studio',
   description: 'Transform your ideas into reality with AI-powered project scoping, transparent pricing, and 50% faster delivery. Where code meets magic.',
@@ -12,7 +14,7 @@ export const metadata = {
   publisher: 'Tinkerly.io',
   robots: 'index, follow',
   
-  // ADD THIS - Critical for preventing zoom issues
+  // Critical for preventing zoom issues (already perfect!)
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
   
   // OpenGraph
@@ -78,7 +80,7 @@ export default function RootLayout({
       appearance={{
         baseTheme: undefined,
         elements: {
-          // Form elements
+          // Keep ALL your existing ClerkProvider styling - it's perfect!
           formButtonPrimary: 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg',
           formButtonSecondary: 'bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50',
           formFieldInput: 'rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500',
@@ -158,10 +160,13 @@ export default function RootLayout({
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         </head>
         <body className="min-h-screen bg-white antialiased flex flex-col">
-          {/* Main content area that grows to push footer down */}
-          <main className="flex-grow">
-            {children}
-          </main>
+          {/* ONLY ADD: Wrap main content with StripeProvider */}
+          <StripeProvider>
+            {/* Main content area that grows to push footer down */}
+            <main className="flex-grow">
+              {children}
+            </main>
+          </StripeProvider>
           {/* Footer will always stick to bottom */}
           <Footer />
           <CookieConsent />

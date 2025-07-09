@@ -6,6 +6,7 @@ import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { Check, X, Zap, Crown, Building, ArrowRight, Sparkles, Shield, Clock, Users, Star, Rocket, Brain, Code, DollarSign, Heart, MessageSquare, Calendar } from 'lucide-react';
 import NavigationHeader from '@/components/NavigationHeader';
 import Footer from '@/components/Footer';
+import { SubscriptionButton } from '@/components/SubscriptionButton'; // ← ADD THIS IMPORT
 
 export default function ModernPricingPage() {
   const { isSignedIn } = useUser();
@@ -87,16 +88,16 @@ export default function ModernPricingPage() {
 
   const faqs = [
     {
-      question: 'How does the credit-based system work?',
-      answer: 'Each AI analysis consumes credits based on project complexity. Simple projects use 1 credit, moderate projects use 2-3 credits, and complex enterprise projects may use 5+ credits. This ensures fair usage while providing accurate, detailed analysis.'
+      question: 'How does the subscription system work?',
+      answer: 'Choose a plan that fits your needs. Starter gives you 3 free analyses monthly, Professional includes 50 analyses with advanced features, and Enterprise provides unlimited analyses with dedicated support.'
     },
     {
-      question: 'What happens if I exceed my monthly credits?',
-      answer: 'Pro users can purchase additional credit packs at $0.50 per credit. Enterprise users have unlimited credits. We\'ll always notify you before you hit your limit and provide options to upgrade or purchase additional credits.'
+      question: 'What happens if I exceed my monthly analyses?',
+      answer: 'Professional users can upgrade to Enterprise for unlimited analyses. We\'ll notify you before you hit your limit and provide upgrade options. Enterprise users have unlimited analyses.'
     },
     {
       question: 'Can I upgrade or downgrade anytime?',
-      answer: 'Absolutely! You can change plans anytime with immediate effect. Unused credits roll over for Pro users, and we provide prorated billing for fair transitions.'
+      answer: 'Absolutely! You can change plans anytime with immediate effect. We provide prorated billing for fair transitions and immediate access to new features.'
     },
     {
       question: 'What\'s included in AI project analysis?',
@@ -248,18 +249,26 @@ export default function ModernPricingPage() {
                 ))}
               </div>
 
+              {/* UPDATED: Enhanced Button Section with Stripe Integration */}
               {isSignedIn ? (
-                <Link href="/create">
-                  <button className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center ${
-                    plan.popular
-                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105'
-                      : 'bg-gray-900 text-white hover:bg-gray-800'
-                  }`}>
-                    {plan.buttonText}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </button>
-                </Link>
+                plan.name === 'Starter' ? (
+                  // Free plan - direct to dashboard
+                  <Link href="/create">
+                    <button className="w-full py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center bg-gray-900 text-white hover:bg-gray-800">
+                      {plan.buttonText}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </button>
+                  </Link>
+                ) : (
+                  // Paid plans - use Stripe subscription
+                  <SubscriptionButton
+                    plan={plan}
+                    billingCycle={billingCycle}
+                    popular={plan.popular}
+                  />
+                )
               ) : (
+                // Not signed in - show sign in modal
                 <SignInButton mode="modal">
                   <button className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center ${
                     plan.popular
@@ -281,7 +290,7 @@ export default function ModernPricingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Why Choose Tink.io?
+              Why Choose Tinkerly.io?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               We deliver projects 40-60% faster than industry standard with unmatched transparency and quality.
@@ -358,7 +367,7 @@ export default function ModernPricingPage() {
               Ready to build something amazing?
             </h2>
             <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Join hundreds of founders who trust Tink.io to bring their vision to life.
+              Join hundreds of founders who trust Tinkerly.io to bring their vision to life.
               Start with 3 free analyses today.
             </p>
             

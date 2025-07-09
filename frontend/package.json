@@ -18,6 +18,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.9.1",
     "@clerk/nextjs": "^6.23.3",
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.4.0",
     "@supabase/supabase-js": "^2.50.3",
     "@types/node": "^20.8.0",
     "@types/react": "^18.2.0",

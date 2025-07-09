@@ -10,7 +10,7 @@ import { SubscriptionButton } from '@/components/SubscriptionButton'; // ← ADD
 
 export default function ModernPricingPage() {
   const { isSignedIn } = useUser();
-  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
   const plans = [
     {

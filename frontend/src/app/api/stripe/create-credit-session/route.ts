@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { packageId } = await request.json();
-    const creditPackage = CREDIT_PACKAGES.find(pkg => pkg.id === packageId);
+    const creditPackage = Object.values(CREDIT_PACKAGES).find(pkg => pkg.id === packageId);
     
     if (!creditPackage) {
       return NextResponse.json({ error: 'Invalid package' }, { status: 400 });

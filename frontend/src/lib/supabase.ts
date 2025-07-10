@@ -440,7 +440,7 @@ export const checkUserAnalyses = async (clerkUserId: string) => {
     return {
       canAnalyze: false,
       remaining: 0,
-      pixieTier: 'fresh',
+      pixieTier: 'fresh' as 'fresh' | 'pro' | 'elite' | 'unlimited',
       used: 0,
       limit: 3
     };
@@ -455,7 +455,7 @@ export const checkUserAnalyses = async (clerkUserId: string) => {
     return {
       canAnalyze: false,
       remaining: 0,
-      pixieTier: 'fresh',
+      pixieTier: 'fresh' as 'fresh' | 'pro' | 'elite' | 'unlimited',
       used: 0,
       limit: 3
     };

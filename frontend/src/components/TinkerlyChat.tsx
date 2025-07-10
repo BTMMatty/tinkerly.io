@@ -173,7 +173,7 @@ const TinkerlyChat = () => {
   return (
     <>
       {/* Chat Bubble - Fixed Position */}
-      <div className="fixed bottom-8 right-8 z-[9999]" style={{ position: 'fixed' }}>
+      <div className="fixed bottom-8 right-8 z-[99999] isolate" style={{ position: 'fixed', zIndex: 99999 }}>
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
@@ -198,7 +198,7 @@ const TinkerlyChat = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-8 right-8 z-[9999] w-96 h-[600px] bg-white rounded-2xl shadow-2xl border border-emerald-200 flex flex-col overflow-hidden" style={{ position: 'fixed' }}>
+        <div className="fixed bottom-8 right-8 z-[99999] isolate w-96 h-[600px] bg-white rounded-2xl shadow-2xl border border-emerald-200 flex flex-col overflow-hidden" style={{ position: 'fixed', zIndex: 99999 }}>
           {/* Header */}
           <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 flex items-center justify-between text-white">
             <div className="flex items-center space-x-3">

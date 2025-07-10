@@ -461,14 +461,15 @@ export const checkUserAnalyses = async (clerkUserId: string) => {
     };
   }
 
-  const tierConfig = PIXIE_TIERS[refreshedUser.pixie_tier];
+  const pixieTier = refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS;
+  const tierConfig = PIXIE_TIERS[pixieTier];
   const isUnlimited = refreshedUser.pixie_tier === 'unlimited';
   const remaining = isUnlimited ? 999 : tierConfig.analyses_per_month - refreshedUser.analyses_used_this_month;
 
   return {
     canAnalyze: isUnlimited || remaining > 0,
     remaining: Math.max(0, remaining),
-    pixieTier: refreshedUser.pixie_tier,
+    pixieTier: refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS,
     used: refreshedUser.analyses_used_this_month,
     limit: tierConfig.analyses_per_month
   };

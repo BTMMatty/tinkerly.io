@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, startTransition, useCallback, useRef } from 'react';
-import { useUser, SignInButton } from '@clerk/nextjs';
+import { useUser, SignInButton, type User } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Clock, Code, DollarSign, Brain, Shield, Heart, Zap, Users, Calculator, ArrowRight, Sparkles } from 'lucide-react';
 import AuthHeader from './AuthHeader';
@@ -16,7 +16,7 @@ const TinkerlyPlatform = () => {
   const [userCredits, setUserCredits] = useState({ hasCredits: false, creditsRemaining: 0, subscriptionTier: 'free' });
   const [syncAttempted, setSyncAttempted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [syncError, setSyncError] = useState(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
   
   // 🔧 FIX: Use ref to track if Supabase was initialized
   const supabaseInitialized = useRef(false);
@@ -43,8 +43,8 @@ const TinkerlyPlatform = () => {
     initializeSupabase();
   }, []); // Empty deps - runs once only
 
-  // 🔧 FIX: Stable sync function using useCallback
-  const syncUserProfile = useCallback(async (clerkUser) => {
+  // 🔧 FIX: Stable sync function using useCallback with proper types
+  const syncUserProfile = useCallback(async (clerkUser: User | null | undefined) => {
     // Prevent multiple sync attempts
     if (syncAttempted || isLoading || !clerkUser?.id) {
       console.log('🔄 Sync skipped - already attempted or invalid user');

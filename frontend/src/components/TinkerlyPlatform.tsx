@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, startTransition, useCallback, useRef } from 'react';
-import { useUser, SignInButton, type User } from '@clerk/nextjs';
+import { useUser, SignInButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Clock, Code, DollarSign, Brain, Shield, Heart, Zap, Users, Calculator, ArrowRight, Sparkles } from 'lucide-react';
 import AuthHeader from './AuthHeader';
@@ -44,7 +44,7 @@ const TinkerlyPlatform = () => {
   }, []); // Empty deps - runs once only
 
   // 🔧 FIX: Stable sync function using useCallback with proper types
-  const syncUserProfile = useCallback(async (clerkUser: User | null | undefined) => {
+  const syncUserProfile = useCallback(async (clerkUser: any) => {
     // Prevent multiple sync attempts
     if (syncAttempted || isLoading || !clerkUser?.id) {
       console.log('🔄 Sync skipped - already attempted or invalid user');

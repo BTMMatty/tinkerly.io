@@ -84,12 +84,22 @@ const TinkerlyPlatform = () => {
           }
         } catch (error) {
           console.error('💥 SYNC USER CATASTROPHIC FAILURE:', error);
-          console.error('📍 Error name:', error.name);
-          console.error('📝 Error message:', error.message);
-          console.error('🗂️ Error stack:', error.stack);
           
-          // Show user-friendly error
-          alert(`💥 Critical error during user sync: ${error.message}`);
+          // 🔧 FIX: Properly handle unknown error type
+          if (error instanceof Error) {
+            console.error('📍 Error name:', error.name);
+            console.error('📝 Error message:', error.message);
+            console.error('🗂️ Error stack:', error.stack);
+            
+            // Show user-friendly error
+            alert(`💥 Critical error during user sync: ${error.message}`);
+          } else {
+            console.error('📝 Unknown error type:', typeof error);
+            console.error('🔍 Error details:', error);
+            
+            // Show generic error
+            alert('💥 Critical error during user sync. Please try refreshing the page.');
+          }
         }
       } else {
         console.log('⏸️ User sync skipped - not signed in or no user ID');

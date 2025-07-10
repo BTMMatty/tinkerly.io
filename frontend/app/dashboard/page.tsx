@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 // 🧚‍♀️ NEW IMPORTS
 import { checkUserAnalyses, PIXIE_TIERS } from '@/lib/supabase';
+// 🔧 FIX: Add NavigationHeader import
+import NavigationHeader from '@/components/NavigationHeader';
 
 // Add this interface to define the Project type
 interface Project {
@@ -138,12 +140,16 @@ export default function DashboardPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Sparkles className="w-8 h-8 text-white animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+        {/* 🔧 FIX: Show NavigationHeader even during loading */}
+        <NavigationHeader />
+        <div className="flex items-center justify-center min-h-[80vh]">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+              <Sparkles className="w-8 h-8 text-white animate-spin" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">Loading your pixie magic... 🧚‍♀️</h1>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Loading your pixie magic... 🧚‍♀️</h1>
         </div>
       </div>
     );
@@ -153,6 +159,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+      {/* 🔧 FIX: Add NavigationHeader at the top */}
+      <NavigationHeader />
+      
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>

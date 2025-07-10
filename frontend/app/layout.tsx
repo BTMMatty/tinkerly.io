@@ -5,6 +5,21 @@ import { StripeProvider } from '@/components/StripeProvider';
 import './globals.css';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
+import TinkerlyChat from '@/components/TinkerlyChat';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ClerkProvider>
+      <html lang="en">
+        <body>
+          <main>{children}</main>
+          <TinkerlyChat /> {/* Add this line */}
+          <CookieConsent />
+        </body>
+      </html>
+    </ClerkProvider>
+  );
+}
 
 // Keep ALL your existing metadata exactly as is
 export const metadata = {

@@ -3,371 +3,1374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kickstarter Graphics - All 29 Items</title>
+    <title>Tinkerly - Making Development Magical ✨</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        * {
             margin: 0;
-            padding: 20px;
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .container {
-            max-width: 1200px;
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        .deck-container {
+            width: 100%;
+            max-width: 1920px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: #ffffff;
         }
 
-        h1 {
+        .slide {
+            width: 100%;
+            height: 100vh;
+            max-height: 1080px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            padding: 60px;
+            overflow: hidden;
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1600px;
             text-align: center;
-            color: #4a5568;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Typography following brand guide */
+        h1 {
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #1f2937;
+        }
+
+        h3 {
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #0d9488;
+        }
+
+        p {
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #1f2937;
+            margin-bottom: 30px;
         }
 
         .subtitle {
-            text-align: center;
-            color: #718096;
-            margin-bottom: 30px;
+            font-size: 24px;
+            color: #10b981;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .caption {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Magical Elements */
+        .emoji-accent {
             font-size: 1.2em;
+            margin: 0 5px;
         }
 
-        .download-section {
-            background: #f7fafc;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 2px solid #e2e8f0;
+        .sparkle-text {
+            position: relative;
+            display: inline-block;
         }
 
-        .download-buttons {
+        .sparkle-text::after {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -20px;
+            font-size: 0.8em;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); }
+        }
+
+        /* Layout Components */
+        .split-layout {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 80px;
         }
 
-        .bulk-download {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .left-content, .right-content {
+            flex: 1;
         }
 
-        .bulk-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        .left-content {
+            text-align: left;
         }
 
-        .graphics-grid {
+        /* Metric Cards with magical touch */
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
         }
 
-        .graphic-item {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 2px solid #e2e8f0;
+        .metric-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(13, 148, 136, 0.05) 100%);
+            border: 2px solid #10b981;
+            border-radius: 20px;
+            padding: 40px;
             transition: all 0.3s ease;
-        }
-
-        .graphic-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            border-color: #10b981;
-        }
-
-        .graphic-canvas {
-            width: 100%;
-            height: 200px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
 
-        .graphic-title {
-            font-weight: bold;
-            color: #2d3748;
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 1.1em;
+        .metric-card::before {
+            content: '✨';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.3;
         }
 
-        .download-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .metric-number {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 18px;
+            color: #1f2937;
+        }
+
+        /* Timeline with pixie dust */
+        .timeline {
+            position: relative;
+            margin: 60px 0;
+        }
+
+        .timeline-bar {
+            height: 6px;
+            background: rgba(16, 185, 129, 0.2);
+            position: relative;
+            margin: 40px 0;
+            border-radius: 3px;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #0d9488 100%);
+            width: 0;
+            animation: growTimeline 2s ease-out forwards;
+            border-radius: 3px;
+        }
+
+        @keyframes growTimeline {
+            to { width: 100%; }
+        }
+
+        .timeline-points {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .timeline-point {
+            text-align: center;
+            flex: 1;
+        }
+
+        .timeline-date {
+            font-size: 16px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .timeline-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        /* Charts */
+        .chart-container {
+            margin: 40px auto;
+            max-width: 800px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 400px;
+            border-left: 2px solid rgba(31, 41, 55, 0.1);
+            border-bottom: 2px solid rgba(31, 41, 55, 0.1);
+            padding: 20px;
+        }
+
+        .bar {
+            width: 80px;
+            background: linear-gradient(180deg, #10b981 0%, #0d9488 100%);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: growBar 1.5s ease-out forwards;
+        }
+
+        @keyframes growBar {
+            from { height: 0; }
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #6b7280;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        /* Feature List */
+        .feature-list {
+            text-align: left;
+            margin: 40px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(13, 148, 136, 0.05) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(10px);
+            border-color: #10b981;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-right: 30px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .feature-text h4 {
+            font-size: 20px;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .feature-text p {
+            font-size: 16px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* CTA Button - Magical */
+        .cta-button {
+            display: inline-block;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .cta-button::after {
+            content: '✨';
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        /* Download Controls */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            gap: 20px;
+        }
+
+        .control-button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
             border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: 30px;
+            color: white;
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .download-btn:hover {
+        .control-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
         }
 
-        .section-header {
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            transform: translateY(50px);
+            opacity: 0;
+            animation: slideUp 1s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Decorative Elements */
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+            top: -200px;
+            right: -200px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #fbbf24;
+            bottom: -100px;
+            left: -100px;
+        }
+
+        /* Revenue Split Visual */
+        .revenue-split {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .split-box {
+            padding: 40px;
+            border-radius: 20px;
             text-align: center;
-            font-size: 1.8em;
-            color: #4a5568;
-            margin: 40px 0 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, #10b981, #059669);
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .split-developers {
+            background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
             color: white;
-            border-radius: 10px;
+        }
+
+        .split-platform {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+
+        .split-percentage {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .split-label {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        /* Market Size Visual */
+        .market-circles {
+            position: relative;
+            height: 500px;
+            margin: 40px 0;
+        }
+
+        .market-circle {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 3px solid;
+        }
+
+        .tam-circle {
+            width: 400px;
+            height: 400px;
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .sam-circle {
+            width: 280px;
+            height: 280px;
+            background: rgba(13, 148, 136, 0.1);
+            border-color: #0d9488;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .som-circle {
+            width: 160px;
+            height: 160px;
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .market-label {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .market-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Navigation Dots */
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.3);
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #10b981;
+            transform: scale(1.5);
+        }
+
+        /* Problem slide specific styling */
+        .problem-bar {
+            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        /* Magical flourishes */
+        .pixie-dust {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fbbf24;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .magic-glow {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .floating { animation: float 3s ease-in-out infinite; }
-        .pulsing { animation: pulse 2s ease-in-out infinite; }
-        .spinning { animation: spin 4s linear infinite; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧚‍♀️ Complete Kickstarter Graphics</h1>
-        <p class="subtitle">All 29 Items - Ready for Download! ✨</p>
-
-        <div class="download-section">
-            <h3 style="text-align: center; margin-bottom: 20px;">🚀 Bulk Downloads</h3>
-            <div class="download-buttons">
-                <button class="bulk-download" onclick="downloadRewardItems()">
-                    📦 Download All Reward Items (24)
-                </button>
-                <button class="bulk-download" onclick="downloadDevServices()">
-                    🛠️ Download Dev Services (5)
-                </button>
-                <button class="bulk-download" onclick="downloadEverything()">
-                    ⭐ Download Everything (29)
-                </button>
+    <div class="deck-container">
+        <!-- Slide 1: Title -->
+        <div class="slide" id="slide-1">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="slide-content fade-in">
+                <div class="subtitle">Making Development Magical <span class="emoji-accent">✨</span></div>
+                <h1 style="font-size: 72px;">Tinkerly<span class="emoji-accent">🧚‍♀️</span></h1>
+                <p style="font-size: 24px;">Where code pixies deliver enterprise-grade solutions<br>50% faster than traditional agencies</p>
+                <div class="metrics-grid" style="max-width: 900px; margin: 60px auto;">
+                    <div class="metric-card magic-glow">
+                        <div class="metric-number">10,000</div>
+                        <div class="metric-label">Lines of Production Code</div>
+                    </div>
+                    <div class="metric-card magic-glow">
+                        <div class="metric-number">5 Days</div>
+                        <div class="metric-label">Magical Delivery</div>
+                    </div>
+                    <div class="metric-card magic-glow">
+                        <div class="metric-number">50%</div>
+                        <div class="metric-label">Faster Than Industry</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="section-header">🎁 Reward Tier Items (24 Graphics)</div>
-        
-        <div class="graphics-grid" id="rewardItems"></div>
+        <!-- Slide 2: Founder Story -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <h2>From Recovery to Revolutionary Code <span class="emoji-accent">💫</span></h2>
+                <div class="split-layout">
+                    <div class="left-content slide-up">
+                        <h3>The Magical Journey</h3>
+                        <p>After overcoming life-threatening challenges and addiction, I discovered that recovery and exceptional software development share the same foundation: transparency, systematic discipline, and relentless commitment to improvement.</p>
+                        <p>This journey taught me that true magic happens when we combine human resilience with technological innovation—creating solutions that transform lives, not just codebases.</p>
+                    </div>
+                    <div class="right-content">
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <div class="feature-icon">🌟</div>
+                                <div class="feature-text">
+                                    <h4>Systematic Magic</h4>
+                                    <p>Recovery principles = Development excellence</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">💎</div>
+                                <div class="feature-text">
+                                    <h4>Transparent Foundation</h4>
+                                    <p>No hidden costs, no hidden struggles</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🧚‍♀️</div>
+                                <div class="feature-text">
+                                    <h4>Pixie Dust Purpose</h4>
+                                    <p>Making the impossible possible, daily</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="section-header">🛠️ Development Services (5 Graphics)</div>
-        
-        <div class="graphics-grid" id="devServices"></div>
+        <!-- Slide 3: The Problem -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <h2>The Development Crisis <span class="emoji-accent">😰</span></h2>
+                <div class="chart-container">
+                    <div class="bar-chart">
+                        <div class="bar problem-bar" style="height: 80%">
+                            <span class="bar-value">6 months</span>
+                            <span class="bar-label">Traditional<br>Dev Time</span>
+                        </div>
+                        <div class="bar problem-bar" style="height: 60%">
+                            <span class="bar-value">$300K</span>
+                            <span class="bar-label">Average<br>Cost</span>
+                        </div>
+                        <div class="bar problem-bar" style="height: 70%">
+                            <span class="bar-value">68%</span>
+                            <span class="bar-label">Project<br>Failures</span>
+                        </div>
+                        <div class="bar problem-bar" style="height: 50%">
+                            <span class="bar-value">56%</span>
+                            <span class="bar-label">AI Privacy<br>Concerns</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="metrics-grid" style="margin-top: 60px;">
+                    <div class="metric-card" style="border-color: #ef4444;">
+                        <h3 style="color: #ef4444;">Time Crisis ⏰</h3>
+                        <p>Businesses can't wait 6 months for software that should take weeks</p>
+                    </div>
+                    <div class="metric-card" style="border-color: #ef4444;">
+                        <h3 style="color: #ef4444;">Trust Crisis 🚨</h3>
+                        <p>AI development lacks transparency—clients fear the black box</p>
+                    </div>
+                    <div class="metric-card" style="border-color: #ef4444;">
+                        <h3 style="color: #ef4444;">Cost Crisis 💸</h3>
+                        <p>Enterprise pricing kills innovation for startups and SMBs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Solution -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <h2>Enter the Code Pixies <span class="emoji-accent">🧚‍♀️✨</span></h2>
+                <div class="subtitle" style="margin-bottom: 40px;">Making development magical, transparent, and 50% faster</div>
+                <div class="feature-list" style="max-width: 1000px; margin: 0 auto;">
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-text">
+                            <h4>Lightning-Fast Delivery</h4>
+                            <p>AI-powered development that delivers in days, not months</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💎</div>
+                        <div class="feature-text">
+                            <h4>Crystal-Clear Pricing</h4>
+                            <p>Every line itemized, every hour accounted for—no surprises</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎓</div>
+                        <div class="feature-text">
+                            <h4>Knowledge Transfer Magic</h4>
+                            <p>We don't just build—we teach you the magic tricks</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🛡️</div>
+                        <div class="feature-text">
+                            <h4>Ethical AI Foundation</h4>
+                            <p>Privacy-first, transparent processes, client data protection</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: The 10,000 Lines Achievement -->
+        <div class="slide" id="slide-5">
+            <div class="gradient-orb orb-1"></div>
+            <div class="slide-content">
+                <h2>The Magic is Real: 10,000 Lines in 5 Days <span class="emoji-accent">🚀</span></h2>
+                <div class="subtitle">Enterprise SaaS platform built with pixie dust and precision</div>
+                <div class="timeline">
+                    <div class="timeline-bar">
+                        <div class="timeline-progress"></div>
+                    </div>
+                    <div class="timeline-points">
+                        <div class="timeline-point">
+                            <div class="timeline-date">Day 1 ✨</div>
+                            <div class="timeline-label">Architecture Magic</div>
+                        </div>
+                        <div class="timeline-point">
+                            <div class="timeline-date">Day 2-3 🧚‍♀️</div>
+                            <div class="timeline-label">Core Development</div>
+                        </div>
+                        <div class="timeline-point">
+                            <div class="timeline-date">Day 4 ⚡</div>
+                            <div class="timeline-label">Integration Spells</div>
+                        </div>
+                        <div class="timeline-point">
+                            <div class="timeline-date">Day 5 🎉</div>
+                            <div class="timeline-label">Production Ready!</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metrics-grid" style="margin-top: 60px;">
+                    <div class="metric-card">
+                        <div class="metric-number">99.5%</div>
+                        <div class="metric-label">Code Quality Score</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">100%</div>
+                        <div class="metric-label">Test Coverage</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">0</div>
+                        <div class="metric-label">Production Bugs</div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 40px; font-size: 20px; color: #10b981;">
+                    "It's not magic—it's better. It's systematic excellence powered by AI." ✨
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Market Opportunity -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <h2>A $428B Magical Market <span class="emoji-accent">💰</span></h2>
+                <div class="market-circles">
+                    <div class="market-circle tam-circle">
+                        <div class="market-label">TAM</div>
+                        <div class="market-value">$428B</div>
+                    </div>
+                    <div class="market-circle sam-circle">
+                        <div class="market-label">SAM</div>
+                        <div class="market-value">$64B</div>
+                    </div>
+                    <div class="market-circle som-circle">
+                        <div class="market-label">SOM</div>
+                        <div class="market-value">$1.5B</div>
+                    </div>
+                </div>
+                <div class="metrics-grid" style="margin-top: 40px;">
+                    <div class="metric-card">
+                        <h3>AI Software Market 🤖</h3>
+                        <p>$390B in 2025 → $1.8T by 2030</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Low-Code Revolution 🚀</h3>
+                        <p>$37B in 2025 → $264B by 2032</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Ethics-First Demand 🛡️</h3>
+                        <p>56% of businesses prioritize transparent AI</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Product Demo -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <h2>Watch the Magic Happen <span class="emoji-accent">🎪</span></h2>
+                <div class="split-layout">
+                    <div class="left-content">
+                        <h3>1. Share Your Vision 💭</h3>
+                        <p>Tell us your dream in plain English—no tech jargon needed</p>
+                        
+                        <h3 style="margin-top: 40px;">2. AI Analysis Magic 🧠</h3>
+                        <p>Instant scoping with transparent pricing breakdown</p>
+                        
+                        <h3 style="margin-top: 40px;">3. Pixie Dust Development 🧚‍♀️</h3>
+                        <p>Watch your project come to life in real-time</p>
+                        
+                        <h3 style="margin-top: 40px;">4. Knowledge Transfer ✨</h3>
+                        <p>Receive code + documentation + the magic recipe</p>
+                    </div>
+                    <div class="right-content">
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%); border: 2px solid #10b981; border-radius: 20px; padding: 40px; height: 500px; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 100px; margin-bottom: 20px;">🎬</div>
+                                <p style="font-size: 24px; color: #10b981;">Live Demo Available</p>
+                                <p style="font-size: 18px;">See 10,000 lines generated in real-time!</p>
+                                <p style="font-size: 16px; color: #6b7280; margin-top: 20px;">
+                                    "It's like watching a master<br>magician reveal their tricks" ✨
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Business Model -->
+        <div class="slide" id="slide-8">
+            <div class="slide-content">
+                <h2>Transparent & Magical Business Model <span class="emoji-accent">💎</span></h2>
+                <div class="revenue-split">
+                    <div class="split-box split-developers">
+                        <div class="split-percentage">80%</div>
+                        <div class="split-label">To Code Pixies</div>
+                    </div>
+                    <div style="font-size: 48px;">✨</div>
+                    <div class="split-box split-platform">
+                        <div class="split-percentage">20%</div>
+                        <div class="split-label">Platform Magic</div>
+                    </div>
+                </div>
+                <div class="feature-list" style="max-width: 1000px; margin: 60px auto 0;">
+                    <div class="feature-item">
+                        <div class="feature-icon">💳</div>
+                        <div class="feature-text">
+                            <h4>Credit-Based Pricing</h4>
+                            <p>Buy magic credits starting at $9.99—use as needed</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-text">
+                            <h4>Milestone Magic</h4>
+                            <p>Pay as we deliver—protected by our enchanted escrow</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-text">
+                            <h4>Scalable Spells</h4>
+                            <p>From $19/month pixie dust to enterprise enchantments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Traction & Metrics -->
+        <div class="slide" id="slide-9">
+            <div class="gradient-orb orb-2"></div>
+            <div class="slide-content">
+                <h2>The Magic is Working <span class="emoji-accent">📈✨</span></h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-number">156%</div>
+                        <div class="metric-label">Monthly Growth</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">92%</div>
+                        <div class="metric-label">Pixie Satisfaction</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">$127K</div>
+                        <div class="metric-label">Platform Value</div>
+                    </div>
+                </div>
+                <div class="chart-container" style="margin-top: 60px;">
+                    <h3>Our Magical Growth Trajectory 🚀</h3>
+                    <div class="bar-chart">
+                        <div class="bar" style="height: 20%">
+                            <span class="bar-value">$200K</span>
+                            <span class="bar-label">Year 1</span>
+                        </div>
+                        <div class="bar" style="height: 40%">
+                            <span class="bar-value">$2.8M</span>
+                            <span class="bar-label">Year 2</span>
+                        </div>
+                        <div class="bar" style="height: 60%">
+                            <span class="bar-value">$18M</span>
+                            <span class="bar-label">Year 3</span>
+                        </div>
+                        <div class="bar" style="height: 80%">
+                            <span class="bar-value">$156M</span>
+                            <span class="bar-label">Year 4</span>
+                        </div>
+                        <div class="bar" style="height: 100%">
+                            <span class="bar-value">$1.52B</span>
+                            <span class="bar-label">Year 5 ✨</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Financial Projections -->
+        <div class="slide" id="slide-10">
+            <div class="slide-content">
+                <h2>Path to Unicorn Status <span class="emoji-accent">🦄✨</span></h2>
+                <div class="split-layout">
+                    <div class="left-content">
+                        <h3>Unit Economics Magic</h3>
+                        <div class="metric-card" style="margin: 20px 0;">
+                            <div class="metric-number">$127</div>
+                            <div class="metric-label">Per Pixie Revenue</div>
+                        </div>
+                        <div class="metric-card" style="margin: 20px 0;">
+                            <div class="metric-number">$18</div>
+                            <div class="metric-label">Pixie Acquisition Cost</div>
+                        </div>
+                        <div class="metric-card" style="margin: 20px 0;">
+                            <div class="metric-number">7.1x</div>
+                            <div class="metric-label">Magic Multiplier</div>
+                        </div>
+                    </div>
+                    <div class="right-content">
+                        <h3>Growth Spells</h3>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <div class="feature-icon">🎯</div>
+                                <div class="feature-text">
+                                    <h4>1% Market Capture</h4>
+                                    <p>50,000 happy pixies worldwide</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🏢</div>
+                                <div class="feature-text">
+                                    <h4>Enterprise Magic</h4>
+                                    <p>$50-300K enchantment packages</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🌍</div>
+                                <div class="feature-text">
+                                    <h4>Global Pixie Network</h4>
+                                    <p>Spreading magic across continents</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Why Now -->
+        <div class="slide" id="slide-11">
+            <div class="slide-content">
+                <h2>Why Now: The Perfect Magical Storm <span class="emoji-accent">⚡✨</span></h2>
+                <div class="feature-list" style="max-width: 1200px; margin: 0 auto;">
+                    <div class="feature-item">
+                        <div class="feature-icon">🧠</div>
+                        <div class="feature-text">
+                            <h4>AI Has Reached Magic Level</h4>
+                            <p>Claude 3.5 Sonnet can finally write production-grade spells</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏰</div>
+                        <div class="feature-text">
+                            <h4>Speed is Everything</h4>
+                            <p>Businesses die waiting 6 months—we deliver in days</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🛡️</div>
+                        <div class="feature-text">
+                            <h4>Trust Crisis = Our Opportunity</h4>
+                            <p>56% fear AI black boxes—we're crystal clear</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💸</div>
+                        <div class="feature-text">
+                            <h4>$300K Projects Are History</h4>
+                            <p>Enterprises crave our 80% cost reduction magic</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 60px;">
+                    <p style="font-size: 28px; color: #10b981;">The window for ethical AI leadership closes in 18 months</p>
+                    <p style="font-size: 24px; color: #6b7280; margin-top: 20px;">First movers become the magic standard ✨</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Competition -->
+        <div class="slide" id="slide-12">
+            <div class="slide-content">
+                <h2>Our Magical Moat <span class="emoji-accent">🏰✨</span></h2>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 20px; margin-top: 40px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #10b981;">
+                                <th style="padding: 20px; text-align: left;">Feature</th>
+                                <th style="padding: 20px; text-align: center; color: #10b981;">Tinkerly 🧚‍♀️</th>
+                                <th style="padding: 20px; text-align: center;">Toptal</th>
+                                <th style="padding: 20px; text-align: center;">Gigster</th>
+                                <th style="padding: 20px; text-align: center;">Traditional</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(31,41,55,0.1);">
+                                <td style="padding: 20px;">Development Speed</td>
+                                <td style="padding: 20px; text-align: center; color: #10b981; font-weight: 600;">5 days ⚡</td>
+                                <td style="padding: 20px; text-align: center;">30 days</td>
+                                <td style="padding: 20px; text-align: center;">45 days</td>
+                                <td style="padding: 20px; text-align: center;">180 days</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(31,41,55,0.1);">
+                                <td style="padding: 20px;">AI-Powered Magic</td>
+                                <td style="padding: 20px; text-align: center; color: #10b981;">✨ Yes!</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                                <td style="padding: 20px; text-align: center;">Partial</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(31,41,55,0.1);">
+                                <td style="padding: 20px;">Transparent Pricing</td>
+                                <td style="padding: 20px; text-align: center; color: #10b981;">💎 Crystal</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(31,41,55,0.1);">
+                                <td style="padding: 20px;">Knowledge Transfer</td>
+                                <td style="padding: 20px; text-align: center; color: #10b981;">🎓 Complete</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                                <td style="padding: 20px; text-align: center;">❌</td>
+                                <td style="padding: 20px; text-align: center;">Limited</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 20px;">Average Cost</td>
+                                <td style="padding: 20px; text-align: center; color: #10b981; font-weight: 600;">$15K 💰</td>
+                                <td style="padding: 20px; text-align: center;">$80K</td>
+                                <td style="padding: 20px; text-align: center;">$120K</td>
+                                <td style="padding: 20px; text-align: center;">$300K</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; margin-top: 60px;">
+                    <div class="metric-card magic-glow" style="display: inline-block; padding: 30px 60px;">
+                        <h3>Our Secret Sauce</h3>
+                        <p style="font-size: 24px;">50% Speed + Transparency + Knowledge = Pure Magic ✨</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Team -->
+        <div class="slide" id="slide-13">
+            <div class="gradient-orb orb-1"></div>
+            <div class="slide-content">
+                <h2>Meet Your Chief Pixie <span class="emoji-accent">🧚‍♀️</span></h2>
+                <div style="text-align: center; margin: 40px 0;">
+                    <div style="width: 150px; height: 150px; background: linear-gradient(135deg, #10b981 0%, #0d9488 100%); border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 60px;">
+                        ✨
+                    </div>
+                    <h3>Matty - daft_pixie</h3>
+                    <p style="font-size: 24px; margin-bottom: 40px;">Founder & Chief Pixie Officer</p>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>Technical Magic 🎯</h3>
+                        <p>10+ years conjuring enterprise solutions</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>AI Pioneer 🧠</h3>
+                        <p>First to harness Claude 3.5's full power</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Mission-Driven 💫</h3>
+                        <p>Recovery taught me transparency = trust</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 60px;">
+                    <p style="font-size: 28px; color: #10b981;">"My journey from darkness to light powers every line of code.<br>We don't just build software—we transform lives." ✨</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: The Ask -->
+        <div class="slide" id="slide-14">
+            <div class="gradient-orb orb-2"></div>
+            <div class="slide-content">
+                <h2>Join Our Magical Revolution <span class="emoji-accent">🚀✨</span></h2>
+                <div class="subtitle" style="margin-bottom: 60px;">Seeking $5M to scale the pixie network</div>
+                <div class="split-layout">
+                    <div class="left-content">
+                        <h3>Use of Magic Funds</h3>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <div class="feature-icon">🧚‍♀️</div>
+                                <div class="feature-text">
+                                    <h4>Pixie Recruitment (40%)</h4>
+                                    <p>10 senior code pixies + AI wizards</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">✨</div>
+                                <div class="feature-text">
+                                    <h4>Platform Magic (30%)</h4>
+                                    <p>Enterprise spells + scaling enchantments</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🌍</div>
+                                <div class="feature-text">
+                                    <h4>Global Expansion (20%)</h4>
+                                    <p>Spreading magic worldwide</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🛡️</div>
+                                <div class="feature-text">
+                                    <h4>Trust & Security (10%)</h4>
+                                    <p>SOC2, GDPR, enterprise shields</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-content">
+                        <h3>What You Get</h3>
+                        <div class="metrics-grid" style="gap: 20px;">
+                            <div class="metric-card">
+                                <div class="metric-number">First</div>
+                                <div class="metric-label">Mover Advantage</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-number">$1.5B</div>
+                                <div class="metric-label">5-Year Target</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-number">156%</div>
+                                <div class="metric-label">Monthly Growth</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-number">✨</div>
+                                <div class="metric-label">Pure Magic</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Contact -->
+        <div class="slide" id="slide-15">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="slide-content">
+                <h1 style="margin-bottom: 60px;">Let's Make Magic Together <span class="emoji-accent">✨🧚‍♀️</span></h1>
+                <div style="max-width: 700px; margin: 0 auto;">
+                    <div class="metric-card magic-glow" style="padding: 60px; margin-bottom: 40px;">
+                        <h3 style="margin-bottom: 30px;">Ready to see 10,000 lines of magic?</h3>
+                        <p style="font-size: 24px; margin-bottom: 0;">Book a magical demo and witness the transformation</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 28px; margin-bottom: 20px;">📧 invest@tinkerly.io</p>
+                        <p style="font-size: 28px; margin-bottom: 20px;">🌐 tinkerly.io</p>
+                        <p style="font-size: 28px;">🧚‍♀️ Book Magic Session</p>
+                    </div>
+                    <a href="#" class="cta-button">Start Your Magic Session ✨</a>
+                </div>
+                <div style="margin-top: 80px; text-align: center;">
+                    <p style="font-size: 24px; color: #10b981;">
+                        "Making development magical,<br>
+                        50% faster delivery,<br>
+                        100% transparent pricing" ✨
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Dots -->
+    <div class="nav-dots" id="nav-dots"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="control-button" onclick="previousSlide()">← Previous</button>
+        <button class="control-button" onclick="nextSlide()">Next →</button>
+        <button class="control-button" onclick="downloadCurrentSlide()">📥 Download Slide</button>
+        <button class="control-button" onclick="downloadAllSlides()">📦 Download All</button>
     </div>
 
     <script>
-        const rewardItems = [
-            { name: "Thank You Email", icon: "❤️", bg: "#ff6b6b" },
-            { name: "Supporters Page", icon: "⭐", bg: "#ffd93d" },
-            { name: "Campaign Updates", icon: "🔔", bg: "#6bcf7f" },
-            { name: "Algorithm Guide", icon: "🧠", bg: "#4ecdc4" },
-            { name: "AI Templates", icon: "🤖", bg: "#45b7d1" },
-            { name: "Discord Access", icon: "💬", bg: "#7289da" },
-            { name: "Cardiac Playlist", icon: "🎵", bg: "#ff9ff3" },
-            { name: "Workshop Recording", icon: "▶️", bg: "#ff6b6b" },
-            { name: "Disney Case Study", icon: "🏰", bg: "#96ceb4" },
-            { name: "Video Series", icon: "📺", bg: "#ffeaa7" },
-            { name: "Early Beta Access", icon: "🚀", bg: "#fd79a8" },
-            { name: "Code Pixie T-Shirt", icon: "👕", bg: "#fdcb6e" },
-            { name: "Founding Badge", icon: "🛡️", bg: "#6c5ce7" },
-            { name: "Platform Access", icon: "🔑", bg: "#a29bfe" },
-            { name: "Priority Support", icon: "👑", bg: "#ffd93d" },
-            { name: "Video Call", icon: "📹", bg: "#00b894" },
-            { name: "Personalized Advice", icon: "💡", bg: "#fdcb6e" },
-            { name: "Thank You Card", icon: "💖", bg: "#ff7675" },
-            { name: "Session Recording", icon: "⏺️", bg: "#e17055" },
-            { name: "Logo Homepage", icon: "🌐", bg: "#0984e3" },
-            { name: "Strategic Consultation", icon: "📈", bg: "#00b894" },
-            { name: "Lifetime Updates", icon: "∞", bg: "#6c5ce7" },
-            { name: "Phone Access", icon: "📱", bg: "#2d3436" },
-            { name: "Executive Summary", icon: "📊", bg: "#74b9ff" }
-        ];
+        let currentSlide = 1;
+        const totalSlides = 15;
 
-        const devServices = [
-            { name: "Custom AI Chatbot", icon: "🤖💬", bg: "#00b894" },
-            { name: "AI Workflow Automation", icon: "⚡", bg: "#fdcb6e" },
-            { name: "Multi-Agent AI System", icon: "🔄", bg: "#6c5ce7" },
-            { name: "Complete AI-Powered App", icon: "📱", bg: "#fd79a8" },
-            { name: "Business AI Ecosystem", icon: "🏢", bg: "#0984e3" }
-        ];
-
-        function createCanvas(item, index, isDevService = false) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 300;
-            canvas.height = 200;
-            canvas.className = 'graphic-canvas';
-            
-            const ctx = canvas.getContext('2d');
-            
-            // Background gradient
-            const gradient = ctx.createLinearGradient(0, 0, 300, 200);
-            gradient.addColorStop(0, item.bg);
-            gradient.addColorStop(1, adjustBrightness(item.bg, -20));
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 300, 200);
-            
-            // Add magical particles
-            for (let i = 0; i < 8; i++) {
-                const x = Math.random() * 300;
-                const y = Math.random() * 200;
-                const size = Math.random() * 3 + 1;
-                
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
+        // Initialize navigation dots
+        function initNavDots() {
+            const navDotsContainer = document.getElementById('nav-dots');
+            for (let i = 1; i <= totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                if (i === 1) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                navDotsContainer.appendChild(dot);
             }
+        }
+
+        // Update active navigation dot
+        function updateNavDots() {
+            const dots = document.querySelectorAll('.nav-dot');
+            dots.forEach((dot, index) => {
+                if (index + 1 === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Navigation functions
+        function goToSlide(slideNumber) {
+            document.getElementById(`slide-${currentSlide}`).style.display = 'none';
+            currentSlide = slideNumber;
+            document.getElementById(`slide-${currentSlide}`).style.display = 'flex';
+            updateNavDots();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+
+        // Download functions
+        async function downloadCurrentSlide() {
+            const slideElement = document.getElementById(`slide-${currentSlide}`);
+            const controls = document.querySelector('.controls');
+            const navDots = document.querySelector('.nav-dots');
             
-            // Main icon
-            ctx.font = '48px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            // Hide controls temporarily
+            controls.style.display = 'none';
+            navDots.style.display = 'none';
             
-            // Icon shadow
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-            ctx.fillText(item.icon, 152, 102);
-            
-            // Main icon
-            ctx.fillStyle = 'white';
-            ctx.fillText(item.icon, 150, 100);
-            
-            // Decorative elements
-            if (isDevService) {
-                // Add gear for dev services
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(250, 50, 20, 0, Math.PI * 2);
-                ctx.stroke();
+            try {
+                const canvas = await html2canvas(slideElement, {
+                    scale: 2,
+                    width: 1920,
+                    height: 1080,
+                    backgroundColor: '#ffffff'
+                });
                 
-                // Add smaller gear
-                ctx.beginPath();
-                ctx.arc(230, 170, 12, 0, Math.PI * 2);
-                ctx.stroke();
-            } else {
-                // Add sparkles for reward items
-                const sparkles = ['✨', '⭐', '💫'];
-                ctx.font = '16px Arial';
-                for (let i = 0; i < 3; i++) {
-                    const sparkle = sparkles[i % sparkles.length];
-                    const x = 50 + (i * 100);
-                    const y = 30 + (i % 2) * 140;
-                    ctx.fillText(sparkle, x, y);
+                const link = document.createElement('a');
+                link.download = `tinkerly-slide-${currentSlide}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            } finally {
+                // Show controls again
+                controls.style.display = 'flex';
+                navDots.style.display = 'block';
+            }
+        }
+
+        async function downloadAllSlides() {
+            const controls = document.querySelector('.controls');
+            const navDots = document.querySelector('.nav-dots');
+            
+            // Hide controls temporarily
+            controls.style.display = 'none';
+            navDots.style.display = 'none';
+            
+            for (let i = 1; i <= totalSlides; i++) {
+                // Show current slide
+                document.getElementById(`slide-${i}`).style.display = 'flex';
+                
+                // Wait a bit for animations to settle
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                try {
+                    const slideElement = document.getElementById(`slide-${i}`);
+                    const canvas = await html2canvas(slideElement, {
+                        scale: 2,
+                        width: 1920,
+                        height: 1080,
+                        backgroundColor: '#ffffff'
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.download = `tinkerly-slide-${i}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    
+                    // Wait between downloads
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    console.error(`Error downloading slide ${i}:`, error);
+                }
+                
+                // Hide slide again unless it's the current slide
+                if (i !== currentSlide) {
+                    document.getElementById(`slide-${i}`).style.display = 'none';
                 }
             }
             
-            return canvas;
+            // Show controls again
+            controls.style.display = 'flex';
+            navDots.style.display = 'block';
         }
 
-        function adjustBrightness(color, amount) {
-            const num = parseInt(color.replace("#", ""), 16);
-            const amt = Math.round(2.55 * amount);
-            const R = (num >> 16) + amt;
-            const B = (num >> 8 & 0x00FF) + amt;
-            const G = (num & 0x0000FF) + amt;
-            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
-                (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + 
-                (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Initialize
+        initNavDots();
+        
+        // Hide all slides except the first
+        for (let i = 2; i <= totalSlides; i++) {
+            document.getElementById(`slide-${i}`).style.display = 'none';
         }
 
-        function createGraphicItem(item, index, isDevService = false) {
-            const div = document.createElement('div');
-            div.className = 'graphic-item';
+        // Add some pixie dust animation
+        function createPixieDust() {
+            const dust = document.createElement('div');
+            dust.className = 'pixie-dust';
+            dust.style.left = Math.random() * 100 + '%';
+            dust.style.animationDelay = Math.random() * 3 + 's';
+            document.body.appendChild(dust);
             
-            const canvas = createCanvas(item, index, isDevService);
-            const title = document.createElement('div');
-            title.className = 'graphic-title';
-            title.textContent = item.name;
-            
-            const button = document.createElement('button');
-            button.className = 'download-btn';
-            button.textContent = '📥 Download PNG';
-            button.onclick = () => downloadCanvas(canvas, item.name);
-            
-            div.appendChild(canvas);
-            div.appendChild(title);
-            div.appendChild(button);
-            
-            return div;
+            setTimeout(() => dust.remove(), 3000);
         }
 
-        function downloadCanvas(canvas, filename) {
-            const link = document.createElement('a');
-            link.download = `${filename.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-
-        function downloadRewardItems() {
-            rewardItems.forEach((item, index) => {
-                setTimeout(() => {
-                    const canvas = createCanvas(item, index, false);
-                    downloadCanvas(canvas, `reward_${item.name}`);
-                }, index * 200);
-            });
-        }
-
-        function downloadDevServices() {
-            devServices.forEach((item, index) => {
-                setTimeout(() => {
-                    const canvas = createCanvas(item, index, true);
-                    downloadCanvas(canvas, `dev_${item.name}`);
-                }, index * 200);
-            });
-        }
-
-        function downloadEverything() {
-            downloadRewardItems();
-            setTimeout(() => {
-                downloadDevServices();
-            }, rewardItems.length * 200 + 1000);
-        }
-
-        // Initialize the page
-        function init() {
-            const rewardContainer = document.getElementById('rewardItems');
-            const devContainer = document.getElementById('devServices');
-            
-            rewardItems.forEach((item, index) => {
-                rewardContainer.appendChild(createGraphicItem(item, index, false));
-            });
-            
-            devServices.forEach((item, index) => {
-                devContainer.appendChild(createGraphicItem(item, index, true));
-            });
-        }
-
-        init();
+        // Create pixie dust occasionally
+        setInterval(createPixieDust, 2000);
     </script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Send, X, Sparkles, Zap, Heart, User, Circle } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';

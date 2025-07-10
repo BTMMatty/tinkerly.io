@@ -1,125 +1,186 @@
 'use client';
 
-import React, { useState, useEffect, startTransition } from 'react';
+import React, { useState, useEffect, startTransition, useCallback, useRef } from 'react';
 import { useUser, SignInButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Clock, Code, DollarSign, Brain, Shield, Heart, Zap, Users, Calculator, ArrowRight, Sparkles } from 'lucide-react';
 import AuthHeader from './AuthHeader';
 import Footer from './Footer';
-import { userService, analyticsService, testConnection, checkUserCredits } from '@/lib/supabase';
+import { userService, analyticsService, testConnection, checkUserAnalyses } from '@/lib/supabase';
 
 const TinkerlyPlatform = () => {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
+  
+  // 🔧 FIX: State to prevent infinite loops
   const [userCredits, setUserCredits] = useState({ hasCredits: false, creditsRemaining: 0, subscriptionTier: 'free' });
+  const [syncAttempted, setSyncAttempted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [syncError, setSyncError] = useState(null);
+  
+  // 🔧 FIX: Use ref to track if Supabase was initialized
+  const supabaseInitialized = useRef(false);
 
-  // Test Supabase connection on mount
+  // 🔧 FIX: Test Supabase connection ONCE only
   useEffect(() => {
+    if (supabaseInitialized.current) return;
+    
     const initializeSupabase = async () => {
-      const isConnected = await testConnection();
-      if (isConnected) {
-        console.log('🚀 Supabase ready for Tinkerly.io!');
-      }
-    };
-    initializeSupabase();
-  }, []);
-
-  // 🔍 ENHANCED: Sync user with Supabase when they sign in (WITH DEBUG)
-  useEffect(() => {
-    const syncUserProfile = async () => {
-      if (isSignedIn && user?.id) {
-        try {
-          console.log('🔍 STARTING USER SYNC DEBUG');
-          console.log('👤 Clerk User Data:', {
-            id: user.id,
-            email: user.emailAddresses[0]?.emailAddress,
-            fullName: user.fullName,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            imageUrl: user.imageUrl,
-            emailAddresses: user.emailAddresses,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt
-          });
-          
-          console.log('🧚‍♀️ Calling userService.syncUser...');
-          const { data: profile, error } = await userService.syncUser(user);
-          
-          console.log('📊 SyncUser Result:', { profile, error });
-          
-          if (error) {
-            console.error('❌ SyncUser ERROR:', error);
-            // Try to understand the error better
-            if (error.message) console.error('💬 Error message:', error.message);
-            if (error.details) console.error('📋 Error details:', error.details);
-            if (error.hint) console.error('💡 Error hint:', error.hint);
-            if (error.code) console.error('🔢 Error code:', error.code);
-            
-            // Show user-friendly error
-            alert(`❌ Failed to sync user profile: ${error.message || 'Unknown error'}`);
-          } else {
-            console.log('✅ User synced successfully:', profile);
-            
-            // Now try to check analyses
-            console.log('🔄 Checking user credits/analyses...');
-            const credits = await checkUserCredits(user.id);
-            setUserCredits(credits);
-            console.log('💳 User credits result:', credits);
-            
-            // Track user login (non-blocking)
-            try {
-              await analyticsService.trackEvent({
-                user_id: user.id,
-                event_type: 'user_login',
-                event_data: { 
-                  timestamp: new Date().toISOString(),
-                  platform: 'web',
-                  userAgent: navigator.userAgent
-                }
-              });
-              console.log('📊 Analytics event tracked');
-            } catch (analyticsError) {
-              console.warn('⚠️ Analytics tracking failed (non-critical):', analyticsError);
-            }
-          }
-        } catch (error) {
-          console.error('💥 SYNC USER CATASTROPHIC FAILURE:', error);
-          
-          // 🔧 FIX: Properly handle unknown error type
-          if (error instanceof Error) {
-            console.error('📍 Error name:', error.name);
-            console.error('📝 Error message:', error.message);
-            console.error('🗂️ Error stack:', error.stack);
-            
-            // Show user-friendly error
-            alert(`💥 Critical error during user sync: ${error.message}`);
-          } else {
-            console.error('📝 Unknown error type:', typeof error);
-            console.error('🔍 Error details:', error);
-            
-            // Show generic error
-            alert('💥 Critical error during user sync. Please try refreshing the page.');
-          }
+      try {
+        const isConnected = await testConnection();
+        if (isConnected) {
+          console.log('🚀 Supabase ready for Tinkerly.io!');
+        } else {
+          console.error('❌ Supabase connection failed');
         }
-      } else {
-        console.log('⏸️ User sync skipped - not signed in or no user ID');
-        console.log('🔍 Debug state:', { isSignedIn, hasUserId: !!user?.id });
+        supabaseInitialized.current = true;
+      } catch (error) {
+        console.error('❌ Supabase initialization error:', error);
+        supabaseInitialized.current = true;
       }
     };
+    
+    initializeSupabase();
+  }, []); // Empty deps - runs once only
 
-    if (isSignedIn && user?.id) {
+  // 🔧 FIX: Stable sync function using useCallback
+  const syncUserProfile = useCallback(async (clerkUser) => {
+    // Prevent multiple sync attempts
+    if (syncAttempted || isLoading || !clerkUser?.id) {
+      console.log('🔄 Sync skipped - already attempted or invalid user');
+      return;
+    }
+
+    setIsLoading(true);
+    setSyncAttempted(true);
+    setSyncError(null);
+
+    try {
+      console.log('🔍 STARTING USER SYNC DEBUG');
+      console.log('👤 Clerk User Data:', {
+        id: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        fullName: clerkUser.fullName,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        imageUrl: clerkUser.imageUrl
+      });
+      
+      console.log('🧚‍♀️ Calling userService.syncUser...');
+      const { data: profile, error } = await userService.syncUser(clerkUser);
+      
+      console.log('📊 SyncUser Result:', { profile, error });
+      
+      if (error) {
+        console.error('❌ SyncUser ERROR:', error);
+        setSyncError(error.message || 'Unknown sync error');
+        
+        // Set default credits on error
+        setUserCredits({
+          hasCredits: true,
+          creditsRemaining: 3,
+          subscriptionTier: 'free'
+        });
+        
+        // Try to understand the error better
+        if (error.message) console.error('💬 Error message:', error.message);
+        if (error.details) console.error('📋 Error details:', error.details);
+        if (error.hint) console.error('💡 Error hint:', error.hint);
+        if (error.code) console.error('🔢 Error code:', error.code);
+      } else {
+        console.log('✅ User synced successfully:', profile);
+        
+        // 🔧 FIX: Use checkUserAnalyses instead of checkUserCredits
+        console.log('🔄 Checking user analyses...');
+        try {
+          const analyses = await checkUserAnalyses(clerkUser.id);
+          setUserCredits({
+            hasCredits: analyses.canAnalyze,
+            creditsRemaining: analyses.remaining,
+            subscriptionTier: analyses.pixieTier === 'fresh' ? 'free' : 'pro'
+          });
+          console.log('💳 User analyses result:', analyses);
+        } catch (creditError) {
+          console.error('⚠️ Credit check failed:', creditError);
+          // Use defaults if credit check fails
+          setUserCredits({
+            hasCredits: true,
+            creditsRemaining: 3,
+            subscriptionTier: 'free'
+          });
+        }
+        
+        // Track user login (non-blocking)
+        try {
+          await analyticsService.trackEvent({
+            user_id: clerkUser.id,
+            event_type: 'user_login',
+            event_data: { 
+              timestamp: new Date().toISOString(),
+              platform: 'web',
+              userAgent: navigator.userAgent
+            }
+          });
+          console.log('📊 Analytics event tracked');
+        } catch (analyticsError) {
+          console.warn('⚠️ Analytics tracking failed (non-critical):', analyticsError);
+        }
+      }
+    } catch (error) {
+      console.error('💥 SYNC USER CATASTROPHIC FAILURE:', error);
+      
+      // 🔧 FIX: Properly handle unknown error type
+      if (error instanceof Error) {
+        console.error('📍 Error name:', error.name);
+        console.error('📝 Error message:', error.message);
+        console.error('🗂️ Error stack:', error.stack);
+        setSyncError(error.message);
+      } else {
+        console.error('📝 Unknown error type:', typeof error);
+        console.error('🔍 Error details:', error);
+        setSyncError('Unknown error occurred');
+      }
+      
+      // Set safe defaults on catastrophic failure
+      setUserCredits({
+        hasCredits: true,
+        creditsRemaining: 3,
+        subscriptionTier: 'free'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [syncAttempted, isLoading]); // Only depend on sync state
+
+  // 🔧 FIX: Only sync when conditions are met and not already attempted
+  useEffect(() => {
+    if (isSignedIn && user?.id && !syncAttempted && !isLoading) {
       console.log('🚀 Starting user sync for:', user.id);
-      syncUserProfile();
+      syncUserProfile(user);
     } else {
-      console.log('⏳ Waiting for user authentication...');
+      console.log('⏳ Sync conditions not met:', { 
+        isSignedIn, 
+        hasUserId: !!user?.id, 
+        syncAttempted, 
+        isLoading 
+      });
+    }
+  }, [isSignedIn, user?.id, syncUserProfile, syncAttempted, isLoading]);
+
+  // 🔧 FIX: Reset sync state when user changes
+  useEffect(() => {
+    if (!isSignedIn || !user?.id) {
+      setSyncAttempted(false);
+      setIsLoading(false);
+      setSyncError(null);
+      setUserCredits({ hasCredits: false, creditsRemaining: 0, subscriptionTier: 'free' });
     }
   }, [isSignedIn, user?.id]);
 
   // Route-based navigation functions
   const handleStartBuilding = () => {
     if (!isSignedIn) {
-      // Don't show alert, just open sign-in modal
-      return;
+      return; // SignInButton will handle this
     }
     
     startTransition(() => {
@@ -129,8 +190,7 @@ const TinkerlyPlatform = () => {
 
   const handleViewProjects = () => {
     if (!isSignedIn) {
-      // Don't show alert, just open sign-in modal
-      return;
+      return; // SignInButton will handle this
     }
     
     startTransition(() => {
@@ -142,16 +202,20 @@ const TinkerlyPlatform = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
       <AuthHeader />
       
-      {/* 🔍 DEBUG: Show debug info in development */}
+      {/* 🔧 ENHANCED: Debug info with more details */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-20 right-4 z-50 bg-black/80 text-white p-4 rounded-lg text-xs max-w-sm">
-          <h4 className="font-bold text-yellow-400 mb-2">🔍 Debug Info</h4>
+        <div className="fixed top-20 right-4 z-50 bg-black/90 text-white p-4 rounded-lg text-xs max-w-sm border border-emerald-500/30">
+          <h4 className="font-bold text-emerald-400 mb-2">🔍 Debug Info</h4>
           <div className="space-y-1">
-            <p>Auth: {isSignedIn ? '✅' : '❌'}</p>
-            <p>User ID: {user?.id || 'None'}</p>
-            <p>Email: {user?.emailAddresses[0]?.emailAddress || 'None'}</p>
+            <p>Auth: {isSignedIn ? '✅ Signed In' : '❌ Not Signed In'}</p>
+            <p>User ID: {user?.id ? `✅ ${user.id.slice(-8)}` : '❌ None'}</p>
+            <p>Email: {user?.emailAddresses[0]?.emailAddress || '❌ None'}</p>
+            <p>Sync: {syncAttempted ? '✅ Attempted' : '⏳ Pending'}</p>
+            <p>Loading: {isLoading ? '🔄 Yes' : '✅ No'}</p>
+            <p>Error: {syncError ? `❌ ${syncError.slice(0, 20)}...` : '✅ None'}</p>
             <p>Credits: {userCredits.creditsRemaining}</p>
             <p>Tier: {userCredits.subscriptionTier}</p>
+            <p>Can Analyze: {userCredits.hasCredits ? '✅' : '❌'}</p>
           </div>
         </div>
       )}
@@ -185,14 +249,15 @@ const TinkerlyPlatform = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            {/* Start Building Button - Updated to use SignInButton when not logged in */}
+            {/* Start Building Button - Updated with loading state */}
             {isSignedIn ? (
               <button
                 onClick={handleStartBuilding}
-                className="group bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 transform hover:scale-105 flex items-center"
+                disabled={isLoading}
+                className="group bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 transform hover:scale-105 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Brain className="w-5 h-5 mr-2" />
-                Start Building
+                {isLoading ? 'Loading...' : 'Start Building'}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
             ) : (
@@ -205,14 +270,15 @@ const TinkerlyPlatform = () => {
               </SignInButton>
             )}
             
-            {/* View Projects Button - Updated to use SignInButton when not logged in */}
+            {/* View Projects Button - Updated with loading state */}
             {isSignedIn ? (
               <button
                 onClick={handleViewProjects}
-                className="border border-gray-600 text-gray-300 hover:text-white hover:border-gray-500 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center"
+                disabled={isLoading}
+                className="border border-gray-600 text-gray-300 hover:text-white hover:border-gray-500 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Calculator className="w-5 h-5 mr-2" />
-                View Projects
+                {isLoading ? 'Loading...' : 'View Projects'}
               </button>
             ) : (
               <SignInButton mode="modal">
@@ -224,7 +290,7 @@ const TinkerlyPlatform = () => {
             )}
           </div>
 
-          {/* Trust indicators */}
+          {/* Trust indicators - Updated with loading state */}
           <div className="flex flex-wrap justify-center items-center gap-8 text-gray-400 text-sm">
             <div className="flex items-center">
               <Shield className="w-4 h-4 mr-2 text-emerald-400" />
@@ -236,7 +302,7 @@ const TinkerlyPlatform = () => {
             </div>
             <div className="flex items-center">
               <Heart className="w-4 h-4 mr-2 text-emerald-400" />
-              3 free analyses
+              {isLoading ? 'Loading...' : `${userCredits.creditsRemaining || 3} free analyses`}
             </div>
           </div>
         </div>
@@ -303,7 +369,7 @@ const TinkerlyPlatform = () => {
         </div>
       </div>
 
-      {/* CTA Section - Updated to use SignInButton */}
+      {/* CTA Section - Updated with loading state */}
       <div className="relative z-10 container mx-auto px-6 py-20">
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-12 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to build something amazing?</h2>
@@ -312,9 +378,10 @@ const TinkerlyPlatform = () => {
           {isSignedIn ? (
             <button
               onClick={handleStartBuilding}
-              className="bg-white text-emerald-600 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+              disabled={isLoading}
+              className="bg-white text-emerald-600 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Get Started - 3 Free Analyses ✨
+              {isLoading ? 'Loading...' : 'Get Started - 3 Free Analyses ✨'}
             </button>
           ) : (
             <SignInButton mode="modal">

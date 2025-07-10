@@ -258,229 +258,65 @@ textarea {
 }
 
 /* ========================================
-   CLERK MODAL FIXES - ADDED SAFELY
+   CLEAN CLERK MODAL STYLING - SIMPLIFIED
    ======================================== */
 
-/* Clerk CSS Custom Properties */
-.cl-modal {
-  --cl-color-primary: #10b981 !important;
-  --cl-color-primary-50: #ecfdf5 !important;
-  --cl-color-primary-100: #d1fae5 !important;
-  --cl-color-primary-200: #a7f3d0 !important;
-  --cl-color-primary-300: #6ee7b7 !important;
-  --cl-color-primary-400: #34d399 !important;
-  --cl-color-primary-500: #10b981 !important;
-  --cl-color-primary-600: #059669 !important;
-  --cl-color-primary-700: #047857 !important;
-  --cl-color-primary-800: #065f46 !important;
-  --cl-color-primary-900: #064e3b !important;
-}
-
-/* Modal and Card - High Contrast White Background */
-.cl-card,
-.cl-modalContent {
+/* Simple, effective Clerk overrides */
+.cl-card {
   background: #ffffff !important;
-  border: 2px solid #e5e7eb !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-  border-radius: 1rem !important;
+  border: 2px solid #d1d5db !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Header Text - Dark and Readable */
 .cl-headerTitle {
   color: #111827 !important;
   font-weight: 700 !important;
-  font-size: 1.75rem !important;
-  text-align: center !important;
 }
 
 .cl-headerSubtitle {
-  color: #374151 !important;
-  font-size: 1rem !important;
-  text-align: center !important;
-  margin-top: 0.5rem !important;
+  color: #6b7280 !important;
 }
 
-/* Form Labels - Dark and Bold */
 .cl-formFieldLabel {
-  color: #111827 !important;
+  color: #374151 !important;
   font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  margin-bottom: 0.5rem !important;
 }
 
-/* Input Fields - White Background, Dark Text */
 .cl-formFieldInput {
   background: #ffffff !important;
-  border: 2px solid #d1d5db !important;
+  border: 1px solid #d1d5db !important;
   color: #111827 !important;
-  font-size: 1rem !important;
-  padding: 0.875rem !important;
-  border-radius: 0.5rem !important;
-  width: 100% !important;
 }
 
 .cl-formFieldInput:focus {
   border-color: #10b981 !important;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-  outline: none !important;
 }
 
-.cl-formFieldInput::placeholder {
-  color: #6b7280 !important;
-  opacity: 0.8 !important;
-}
-
-/* Primary Button - Beautiful Emerald Gradient */
 .cl-formButtonPrimary {
-  background: linear-gradient(135deg, #10b981 0%, #0d9488 100%) !important;
+  background: #10b981 !important;
   color: #ffffff !important;
-  font-weight: 600 !important;
-  padding: 1rem 1.5rem !important;
-  border-radius: 0.75rem !important;
-  border: none !important;
-  font-size: 1rem !important;
-  transition: all 0.3s ease !important;
-  width: 100% !important;
-  cursor: pointer !important;
 }
 
 .cl-formButtonPrimary:hover {
-  background: linear-gradient(135deg, #059669 0%, #0f766e 100%) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.3) !important;
+  background: #059669 !important;
 }
 
-.cl-formButtonPrimary:active {
-  transform: translateY(0) !important;
-}
-
-.cl-formButtonPrimary:disabled {
-  background: #d1d5db !important;
-  color: #9ca3af !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Social Buttons - Clean and Readable */
 .cl-socialButtonsBlockButton {
   background: #ffffff !important;
-  border: 2px solid #e5e7eb !important;
+  border: 1px solid #d1d5db !important;
   color: #374151 !important;
-  font-weight: 500 !important;
-  padding: 0.875rem !important;
-  border-radius: 0.75rem !important;
-  transition: all 0.2s ease !important;
-  width: 100% !important;
-  margin-bottom: 0.75rem !important;
 }
 
 .cl-socialButtonsBlockButton:hover {
   border-color: #10b981 !important;
-  background: #f3f4f6 !important;
-  color: #111827 !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Divider - Visible */
-.cl-dividerText {
-  color: #6b7280 !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  background: #ffffff !important;
-  padding: 0 1rem !important;
-}
-
-.cl-dividerLine {
-  background: #d1d5db !important;
-  height: 1px !important;
-}
-
-/* Footer Links - Readable */
-.cl-footerActionText {
-  color: #6b7280 !important;
-  font-size: 0.875rem !important;
-  text-align: center !important;
+  background: #f9fafb !important;
 }
 
 .cl-footerActionLink {
   color: #10b981 !important;
-  font-weight: 600 !important;
-  text-decoration: none !important;
 }
 
 .cl-footerActionLink:hover {
   color: #059669 !important;
-  text-decoration: underline !important;
-}
-
-/* Error Messages - Visible Red */
-.cl-formFieldErrorText {
-  color: #dc2626 !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  margin-top: 0.25rem !important;
-}
-
-/* Modal Backdrop - Dark Overlay */
-.cl-modalBackdrop {
-  background: rgba(0, 0, 0, 0.8) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-/* Mobile Responsive Adjustments */
-@media (max-width: 640px) {
-  .cl-card {
-    margin: 1rem !important;
-    border-radius: 1rem !important;
-    max-width: calc(100vw - 2rem) !important;
-  }
-  
-  .cl-headerTitle {
-    font-size: 1.5rem !important;
-  }
-  
-  .cl-formButtonPrimary,
-  .cl-socialButtonsBlockButton {
-    padding: 1rem !important;
-    font-size: 1rem !important;
-  }
-}
-
-/* Force Override for Stubborn Elements */
-[data-clerk-theme] .cl-card,
-[data-clerk-theme] .cl-modalContent,
-[data-clerk-theme] .cl-internal-b3fm6y {
-  background: #ffffff !important;
-  color: #111827 !important;
-}
-
-[data-clerk-theme] .cl-headerTitle,
-[data-clerk-theme] .cl-headerSubtitle,
-[data-clerk-theme] .cl-formFieldLabel,
-[data-clerk-theme] .cl-footerActionText {
-  color: #111827 !important;
-  opacity: 1 !important;
-}
-
-[data-clerk-theme] .cl-formFieldInput {
-  background: #ffffff !important;
-  color: #111827 !important;
-  border-color: #d1d5db !important;
-  opacity: 1 !important;
-}
-
-/* Nuclear Option - Force Visibility on All Clerk Elements */
-.cl-card *,
-.cl-modalContent * {
-  opacity: 1 !important;
-}
-
-/* Clerk Branding Override */
-.cl-internal-b3fm6y {
-  background: transparent !important;
-  color: #6b7280 !important;
-  font-size: 0.75rem !important;
-  text-align: center !important;
-  margin-top: 1rem !important;
 }

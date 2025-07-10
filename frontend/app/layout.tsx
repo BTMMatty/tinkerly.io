@@ -32,21 +32,6 @@ export default function RootLayout({
           borderRadius: '0.75rem',
           spacingUnit: '1rem', // Better consistent spacing
         },
-        // 🎯 ADDED: Custom text to change "My Application" to "Tinkerly Dashboard"
-        localization: {
-          signIn: {
-            start: {
-              title: 'Sign in to Tinkerly Dashboard',
-              subtitle: 'Welcome back! Please sign in to continue',
-            },
-          },
-          signUp: {
-            start: {
-              title: 'Create your Tinkerly account',
-              subtitle: 'Join the magical world of automated development ✨',
-            },
-          },
-        },
         elements: {
           // 🔧 IMPROVED: Modal and card styling with better sizing
           modalContent: "bg-white shadow-2xl border border-gray-200 rounded-xl max-w-md w-full mx-4",

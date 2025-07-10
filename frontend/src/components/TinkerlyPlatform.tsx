@@ -24,38 +24,85 @@ const TinkerlyPlatform = () => {
     initializeSupabase();
   }, []);
 
-  // Sync user with Supabase when they sign in
+  // 🔍 ENHANCED: Sync user with Supabase when they sign in (WITH DEBUG)
   useEffect(() => {
     const syncUserProfile = async () => {
       if (isSignedIn && user?.id) {
         try {
-          console.log('👤 Syncing user with database...');
+          console.log('🔍 STARTING USER SYNC DEBUG');
+          console.log('👤 Clerk User Data:', {
+            id: user.id,
+            email: user.emailAddresses[0]?.emailAddress,
+            fullName: user.fullName,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            imageUrl: user.imageUrl,
+            emailAddresses: user.emailAddresses,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+          });
+          
+          console.log('🧚‍♀️ Calling userService.syncUser...');
           const { data: profile, error } = await userService.syncUser(user);
           
+          console.log('📊 SyncUser Result:', { profile, error });
+          
           if (error) {
-            console.error('Error syncing user:', error);
+            console.error('❌ SyncUser ERROR:', error);
+            // Try to understand the error better
+            if (error.message) console.error('💬 Error message:', error.message);
+            if (error.details) console.error('📋 Error details:', error.details);
+            if (error.hint) console.error('💡 Error hint:', error.hint);
+            if (error.code) console.error('🔢 Error code:', error.code);
+            
+            // Show user-friendly error
+            alert(`❌ Failed to sync user profile: ${error.message || 'Unknown error'}`);
           } else {
             console.log('✅ User synced successfully:', profile);
             
-            // Check user credits
+            // Now try to check analyses
+            console.log('🔄 Checking user credits/analyses...');
             const credits = await checkUserCredits(user.id);
             setUserCredits(credits);
-            console.log('💳 User credits:', credits);
+            console.log('💳 User credits result:', credits);
             
-            // Track user login
-            await analyticsService.trackEvent({
-              user_id: user.id,
-              event_type: 'user_login',
-              event_data: { timestamp: new Date().toISOString() }
-            });
+            // Track user login (non-blocking)
+            try {
+              await analyticsService.trackEvent({
+                user_id: user.id,
+                event_type: 'user_login',
+                event_data: { 
+                  timestamp: new Date().toISOString(),
+                  platform: 'web',
+                  userAgent: navigator.userAgent
+                }
+              });
+              console.log('📊 Analytics event tracked');
+            } catch (analyticsError) {
+              console.warn('⚠️ Analytics tracking failed (non-critical):', analyticsError);
+            }
           }
         } catch (error) {
-          console.error('Failed to sync user:', error);
+          console.error('💥 SYNC USER CATASTROPHIC FAILURE:', error);
+          console.error('📍 Error name:', error.name);
+          console.error('📝 Error message:', error.message);
+          console.error('🗂️ Error stack:', error.stack);
+          
+          // Show user-friendly error
+          alert(`💥 Critical error during user sync: ${error.message}`);
         }
+      } else {
+        console.log('⏸️ User sync skipped - not signed in or no user ID');
+        console.log('🔍 Debug state:', { isSignedIn, hasUserId: !!user?.id });
       }
     };
 
-    syncUserProfile();
+    if (isSignedIn && user?.id) {
+      console.log('🚀 Starting user sync for:', user.id);
+      syncUserProfile();
+    } else {
+      console.log('⏳ Waiting for user authentication...');
+    }
   }, [isSignedIn, user?.id]);
 
   // Route-based navigation functions
@@ -84,6 +131,20 @@ const TinkerlyPlatform = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
       <AuthHeader />
+      
+      {/* 🔍 DEBUG: Show debug info in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-20 right-4 z-50 bg-black/80 text-white p-4 rounded-lg text-xs max-w-sm">
+          <h4 className="font-bold text-yellow-400 mb-2">🔍 Debug Info</h4>
+          <div className="space-y-1">
+            <p>Auth: {isSignedIn ? '✅' : '❌'}</p>
+            <p>User ID: {user?.id || 'None'}</p>
+            <p>Email: {user?.emailAddresses[0]?.emailAddress || 'None'}</p>
+            <p>Credits: {userCredits.creditsRemaining}</p>
+            <p>Tier: {userCredits.subscriptionTier}</p>
+          </div>
+        </div>
+      )}
       
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

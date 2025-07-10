@@ -122,21 +122,46 @@ export const PIXIE_TIERS = {
   }
 };
 
-// User Service - Updated with Pixie support
+// User Service - ENHANCED with debug and RLS handling
 export const userService = {
   async syncUser(clerkUser: any): Promise<{ data: User | null; error: any }> {
     try {
-      console.log('🧚‍♀️ Syncing pixie user...');
+      console.log('🔍 STARTING USER SYNC DEBUG');
+      console.log('👤 Clerk User Data:', {
+        id: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+        fullName: clerkUser.fullName,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        imageUrl: clerkUser.imageUrl
+      });
       
-      // Try to get existing user
+      // Step 1: Test Supabase connection
+      console.log('🔌 Testing Supabase connection...');
+      const { data: testData, error: testError } = await supabase
+        .from('users')
+        .select('count')
+        .limit(1);
+      
+      if (testError) {
+        console.error('❌ Supabase connection failed:', testError);
+        return { data: null, error: testError };
+      }
+      console.log('✅ Supabase connection OK');
+      
+      // Step 2: Try to get existing user
+      console.log('🔍 Checking for existing user...');
       const { data: existingUser, error: fetchError } = await supabase
         .from('users')
         .select('*')
         .eq('id', clerkUser.id)
         .single();
 
-      if (existingUser) {
+      console.log('📊 Existing user query result:', { existingUser, fetchError });
+
+      if (existingUser && !fetchError) {
         // Update existing user - don't overwrite pixie tier data
+        console.log('👤 Found existing user, updating...');
         const { data, error } = await supabase
           .from('users')
           .update({
@@ -149,59 +174,139 @@ export const userService = {
           .select()
           .single();
 
-        return { data, error };
+        if (error) {
+          console.error('❌ Error updating existing user:', error);
+          return { data: null, error };
+        }
+
+        console.log('✅ Existing user updated successfully:', data);
+        return { data, error: null };
       } else {
         // Create new Fresh Pixie user
+        console.log('✨ Creating new Fresh Pixie user...');
+        
+        const billingDate = new Date().toISOString().split('T')[0];
+        const freshTier = PIXIE_TIERS.fresh;
+        
+        const newUserData = {
+          id: clerkUser.id,
+          email: clerkUser.emailAddresses[0]?.emailAddress,
+          full_name: clerkUser.fullName || '',
+          avatar_url: clerkUser.imageUrl || null,
+          
+          // NEW Pixie defaults
+          pixie_tier: 'fresh' as const,
+          analyses_used_this_month: 0,
+          analyses_limit: freshTier.analyses_per_month,
+          billing_cycle_date: billingDate,
+          
+          // OLD credit system (for backward compatibility)
+          subscription_tier: 'free' as const,
+          credits_remaining: 3,
+          
+          total_projects: 0
+        };
+        
+        console.log('📝 Inserting user with data:', newUserData);
+        
         const { data, error } = await supabase
           .from('users')
-          .insert({
-            id: clerkUser.id,
-            email: clerkUser.emailAddresses[0]?.emailAddress,
-            full_name: clerkUser.fullName || '',
-            avatar_url: clerkUser.imageUrl || null,
-            
-            // NEW Pixie defaults
-            pixie_tier: 'fresh',
-            analyses_used_this_month: 0,
-            analyses_limit: 3,
-            billing_cycle_date: new Date().toISOString().split('T')[0],
-            
-            // OLD credit system (for backward compatibility)
-            subscription_tier: 'free',
-            credits_remaining: 3,
-            
-            total_projects: 0
-          })
+          .insert(newUserData)
           .select()
           .single();
 
-        console.log('✨ New Fresh Pixie created!');
-        return { data, error };
+        if (error) {
+          console.error('❌ CRITICAL: User creation failed!', error);
+          console.error('Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          });
+          
+          // Check if it's an RLS policy error
+          if (error.message?.includes('RLS') || error.message?.includes('policy') || error.code === '42501') {
+            console.error('🛡️ RLS POLICY ERROR DETECTED!');
+            console.error('This suggests the RLS policies are blocking user creation.');
+            console.error('Run this SQL in Supabase to fix:');
+            console.error(`
+              DROP POLICY IF EXISTS "users_insert_own" ON public.users;
+              CREATE POLICY "allow_all_insert" ON public.users FOR INSERT WITH CHECK (true);
+            `);
+          }
+          
+          return { data: null, error };
+        }
+        
+        console.log('✨ New Fresh Pixie created successfully!', data);
+        
+        // Immediate verification
+        console.log('🔍 Verifying user was created...');
+        const { data: verifyUser, error: verifyError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', clerkUser.id)
+          .single();
+          
+        console.log('📊 Verification result:', { verifyUser, verifyError });
+        
+        if (verifyUser) {
+          console.log('✅ User verification successful!');
+          console.log('🧚‍♀️ Fresh Pixie Details:', {
+            pixie_tier: verifyUser.pixie_tier,
+            analyses_limit: verifyUser.analyses_limit,
+            analyses_used: verifyUser.analyses_used_this_month,
+            credits_remaining: verifyUser.credits_remaining
+          });
+        }
+        
+        return { data, error: null };
       }
     } catch (error) {
-      console.error('Error syncing user:', error);
+      console.error('💥 SYNC USER CATASTROPHIC FAILURE:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       return { data: null, error };
     }
   },
 
   async getUser(clerkUserId: string) {
-    return await supabase
-      .from('users')
-      .select('*')
-      .eq('id', clerkUserId)
-      .single();
+    try {
+      console.log('📖 Getting user:', clerkUserId);
+      const result = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', clerkUserId)
+        .single();
+      
+      console.log('📊 GetUser result:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ Error getting user:', error);
+      return { data: null, error };
+    }
   },
 
   async updateUser(clerkUserId: string, updates: Partial<User>) {
-    return await supabase
-      .from('users')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', clerkUserId)
-      .select()
-      .single();
+    try {
+      console.log('✏️ Updating user:', clerkUserId, 'with:', updates);
+      const result = await supabase
+        .from('users')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', clerkUserId)
+        .select()
+        .single();
+      
+      console.log('📊 UpdateUser result:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ Error updating user:', error);
+      return { data: null, error };
+    }
   },
 
   // NEW: Pixie tier management
@@ -218,85 +323,112 @@ export const userService = {
     });
   },
 
-  // NEW: Use an analysis
+  // NEW: Use an analysis (with enhanced logging)
   async useAnalysis(clerkUserId: string) {
-    const { data: user, error: fetchError } = await this.getUser(clerkUserId);
-    
-    if (!user || fetchError) {
-      return { data: null, error: fetchError || 'User not found' };
-    }
+    try {
+      console.log('🧠 Using analysis for user:', clerkUserId);
+      
+      const { data: user, error: fetchError } = await this.getUser(clerkUserId);
+      
+      if (!user || fetchError) {
+        console.error('❌ User not found for analysis:', fetchError);
+        return { data: null, error: fetchError || 'User not found' };
+      }
 
-    // Check if billing cycle should reset first
-    await this.checkAndResetBillingCycle(clerkUserId);
+      // Check if billing cycle should reset first
+      await this.checkAndResetBillingCycle(clerkUserId);
 
-    // Refresh user data after potential reset
-    const { data: refreshedUser } = await this.getUser(clerkUserId);
-    if (!refreshedUser) {
-      return { data: null, error: 'User not found after refresh' };
-    }
+      // Refresh user data after potential reset
+      const { data: refreshedUser } = await this.getUser(clerkUserId);
+      if (!refreshedUser) {
+        return { data: null, error: 'User not found after refresh' };
+      }
 
-    // Unlimited tier always allowed
-    if (refreshedUser.pixie_tier === 'unlimited') {
-      console.log('✨ Unlimited Pixie power activated!');
-      return { data: { canAnalyze: true, remaining: 999 }, error: null };
-    }
+      // Unlimited tier always allowed
+      if (refreshedUser.pixie_tier === 'unlimited') {
+        console.log('✨ Unlimited Pixie power activated!');
+        return { data: { canAnalyze: true, remaining: 999 }, error: null };
+      }
 
-    // Check if user has analyses remaining
-    const pixieTier = refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS;
-    const tierConfig = PIXIE_TIERS[pixieTier];
-    const remaining = tierConfig.analyses_per_month - refreshedUser.analyses_used_this_month;
-    
-    if (remaining <= 0) {
-      console.log(`🧚‍♀️ No analyses left for ${refreshedUser.pixie_tier} tier`);
+      // Check if user has analyses remaining
+      const pixieTier = refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS;
+      const tierConfig = PIXIE_TIERS[pixieTier];
+      const remaining = tierConfig.analyses_per_month - refreshedUser.analyses_used_this_month;
+      
+      console.log('📊 Analysis check:', {
+        tier: pixieTier,
+        limit: tierConfig.analyses_per_month,
+        used: refreshedUser.analyses_used_this_month,
+        remaining
+      });
+      
+      if (remaining <= 0) {
+        console.log(`🧚‍♀️ No analyses left for ${refreshedUser.pixie_tier} tier`);
+        return { 
+          data: { canAnalyze: false, remaining: 0 }, 
+          error: 'No analyses remaining this month. Upgrade your Pixie tier for more!' 
+        };
+      }
+
+      // Increment usage
+      const { data: updatedUser, error: updateError } = await this.updateUser(clerkUserId, {
+        analyses_used_this_month: refreshedUser.analyses_used_this_month + 1
+      });
+
+      if (updateError) {
+        return { data: null, error: updateError };
+      }
+
+      console.log(`✅ Analysis used. ${remaining - 1} remaining this month.`);
       return { 
-        data: { canAnalyze: false, remaining: 0 }, 
-        error: 'No analyses remaining this month. Upgrade your Pixie tier for more!' 
+        data: { 
+          canAnalyze: true, 
+          remaining: remaining - 1,
+          used: refreshedUser.analyses_used_this_month + 1
+        }, 
+        error: null 
       };
+    } catch (error) {
+      console.error('❌ Error using analysis:', error);
+      return { data: null, error: 'Failed to use analysis' };
     }
-
-    // Increment usage
-    const { data: updatedUser, error: updateError } = await this.updateUser(clerkUserId, {
-      analyses_used_this_month: refreshedUser.analyses_used_this_month + 1
-    });
-
-    if (updateError) {
-      return { data: null, error: updateError };
-    }
-
-    console.log(`✅ Analysis used. ${remaining - 1} remaining this month.`);
-    return { 
-      data: { 
-        canAnalyze: true, 
-        remaining: remaining - 1,
-        used: refreshedUser.analyses_used_this_month + 1
-      }, 
-      error: null 
-    };
   },
 
-  // NEW: Check and reset billing cycle
+  // NEW: Check and reset billing cycle (enhanced)
   async checkAndResetBillingCycle(clerkUserId: string) {
-    const { data: user } = await this.getUser(clerkUserId);
-    if (!user) return;
+    try {
+      const { data: user } = await this.getUser(clerkUserId);
+      if (!user) return;
 
-    const today = new Date();
-    const billingDate = new Date(user.billing_cycle_date);
-    
-    // Check if it's been at least a month
-    const daysSinceBilling = Math.floor((today.getTime() - billingDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysSinceBilling >= 30) {
-      console.log('🔄 Resetting monthly analyses for user');
-      await this.updateUser(clerkUserId, {
-        analyses_used_this_month: 0,
-        billing_cycle_date: today.toISOString().split('T')[0]
+      const today = new Date();
+      const billingDate = new Date(user.billing_cycle_date);
+      
+      // Check if it's been at least a month
+      const daysSinceBilling = Math.floor((today.getTime() - billingDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      console.log('📅 Billing cycle check:', {
+        today: today.toISOString().split('T')[0],
+        billingDate: user.billing_cycle_date,
+        daysSince: daysSinceBilling
       });
+      
+      if (daysSinceBilling >= 30) {
+        console.log('🔄 Resetting monthly analyses for user');
+        await this.updateUser(clerkUserId, {
+          analyses_used_this_month: 0,
+          billing_cycle_date: today.toISOString().split('T')[0]
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error checking billing cycle:', error);
     }
   },
 
   // DEPRECATED but kept for backward compatibility
   async decrementCredits(clerkUserId: string) {
-    console.warn('⚠️ decrementCredits is deprecated. Use useAnalysis() instead.');
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ decrementCredits is deprecated. Use useAnalysis() instead.');
+    }
     const { data: user } = await this.getUser(clerkUserId);
     if (user && user.credits_remaining > 0) {
       return await this.updateUser(clerkUserId, {
@@ -308,7 +440,9 @@ export const userService = {
 
   // DEPRECATED but kept for backward compatibility
   async addCredits(clerkUserId: string, creditsToAdd: number) {
-    console.warn('⚠️ addCredits is deprecated. Use upgradePixieTier() instead.');
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ addCredits is deprecated. Use upgradePixieTier() instead.');
+    }
     const { data: user } = await this.getUser(clerkUserId);
     if (user) {
       return await this.updateUser(clerkUserId, {
@@ -380,14 +514,19 @@ export const analyticsService = {
     event_type: string;
     event_data?: any;
   }) {
-    return await supabase
-      .from('usage_analytics')
-      .insert({
-        user_id: eventData.user_id,
-        project_id: eventData.project_id || null,
-        event_type: eventData.event_type,
-        event_data: eventData.event_data || {}
-      });
+    try {
+      return await supabase
+        .from('usage_analytics')
+        .insert({
+          user_id: eventData.user_id,
+          project_id: eventData.project_id || null,
+          event_type: eventData.event_type,
+          event_data: eventData.event_data || {}
+        });
+    } catch (error) {
+      console.warn('⚠️ Analytics tracking failed (non-critical):', error);
+      return { data: null, error };
+    }
   },
 
   async getUserAnalytics(userId: string, limit = 50) {
@@ -419,11 +558,15 @@ export const assetsService = {
   }
 };
 
-// Test connection - UNCHANGED
+// Test connection - ENHANCED with debug
 export const testConnection = async () => {
   try {
+    console.log('🔌 Testing Supabase connection...');
     const { data, error } = await supabase.from('users').select('count').limit(1);
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Supabase connection test failed:', error);
+      throw error;
+    }
     console.log('✅ Supabase connection successful');
     return true;
   } catch (error) {
@@ -432,11 +575,57 @@ export const testConnection = async () => {
   }
 };
 
-// NEW: Check user analyses (replaces checkUserCredits)
+// NEW: Check user analyses (enhanced with debug)
 export const checkUserAnalyses = async (clerkUserId: string) => {
-  const { data: user, error } = await userService.getUser(clerkUserId);
-  
-  if (!user || error) {
+  try {
+    console.log('🔍 Checking user analyses for:', clerkUserId);
+    
+    const { data: user, error } = await userService.getUser(clerkUserId);
+    
+    if (!user || error) {
+      console.warn('⚠️ User not found, returning defaults');
+      return {
+        canAnalyze: false,
+        remaining: 0,
+        pixieTier: 'fresh' as 'fresh' | 'pro' | 'elite' | 'unlimited',
+        used: 0,
+        limit: 3
+      };
+    }
+
+    // Check for billing cycle reset
+    await userService.checkAndResetBillingCycle(clerkUserId);
+
+    // Get fresh user data after potential reset
+    const { data: refreshedUser } = await userService.getUser(clerkUserId);
+    if (!refreshedUser) {
+      console.warn('⚠️ User not found after refresh, returning defaults');
+      return {
+        canAnalyze: false,
+        remaining: 0,
+        pixieTier: 'fresh' as 'fresh' | 'pro' | 'elite' | 'unlimited',
+        used: 0,
+        limit: 3
+      };
+    }
+
+    const pixieTier = refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS;
+    const tierConfig = PIXIE_TIERS[pixieTier];
+    const isUnlimited = refreshedUser.pixie_tier === 'unlimited';
+    const remaining = isUnlimited ? 999 : tierConfig.analyses_per_month - refreshedUser.analyses_used_this_month;
+
+    const result = {
+      canAnalyze: isUnlimited || remaining > 0,
+      remaining: Math.max(0, remaining),
+      pixieTier: refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS,
+      used: refreshedUser.analyses_used_this_month,
+      limit: tierConfig.analyses_per_month
+    };
+    
+    console.log('📊 User analyses result:', result);
+    return result;
+  } catch (error) {
+    console.error('❌ Error checking user analyses:', error);
     return {
       canAnalyze: false,
       remaining: 0,
@@ -445,39 +634,13 @@ export const checkUserAnalyses = async (clerkUserId: string) => {
       limit: 3
     };
   }
-
-  // Check for billing cycle reset
-  await userService.checkAndResetBillingCycle(clerkUserId);
-
-  // Get fresh user data after potential reset
-  const { data: refreshedUser } = await userService.getUser(clerkUserId);
-  if (!refreshedUser) {
-    return {
-      canAnalyze: false,
-      remaining: 0,
-      pixieTier: 'fresh' as 'fresh' | 'pro' | 'elite' | 'unlimited',
-      used: 0,
-      limit: 3
-    };
-  }
-
-  const pixieTier = refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS;
-  const tierConfig = PIXIE_TIERS[pixieTier];
-  const isUnlimited = refreshedUser.pixie_tier === 'unlimited';
-  const remaining = isUnlimited ? 999 : tierConfig.analyses_per_month - refreshedUser.analyses_used_this_month;
-
-  return {
-    canAnalyze: isUnlimited || remaining > 0,
-    remaining: Math.max(0, remaining),
-    pixieTier: refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS,
-    used: refreshedUser.analyses_used_this_month,
-    limit: tierConfig.analyses_per_month
-  };
 };
 
 // DEPRECATED: Keep for backward compatibility
 export const checkUserCredits = async (clerkUserId: string) => {
-  console.warn('⚠️ checkUserCredits is deprecated. Use checkUserAnalyses() instead.');
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('⚠️ checkUserCredits is deprecated. Use checkUserAnalyses() instead.');
+  }
   const analyses = await checkUserAnalyses(clerkUserId);
   
   // Map to old format for backward compatibility

@@ -7,7 +7,7 @@ import CookieConsent from '@/components/CookieConsent';
 import TinkerlyChat from '@/components/TinkerlyChat';
 
 export const metadata = {
-  title: 'Tinker.io - Your Developer Studio',
+  title: 'Tinkerly.io - Your Developer Studio',
   description: 'Professional developer services with a magical touch',
 };
 

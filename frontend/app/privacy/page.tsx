@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
                 Introduction
               </h2>
               <p className="text-emerald-700">
-                Tinker.io ("we," "us," "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information in accordance with the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act/California Privacy Rights Act (CCPA/CPRA).
+                Tinkerly.io ("we," "us," "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information in accordance with the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act/California Privacy Rights Act (CCPA/CPRA).
               </p>
             </div>
 

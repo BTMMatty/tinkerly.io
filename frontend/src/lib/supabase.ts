@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -264,9 +265,17 @@ export const userService = {
       }
     } catch (error) {
       console.error('💥 SYNC USER CATASTROPHIC FAILURE:', error);
-      console.error('Error name:', error.name);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
+      
+      // FIXED: Proper TypeScript error handling
+      if (error instanceof Error) {
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else {
+        console.error('Unknown error type:', typeof error);
+        console.error('Error details:', error);
+      }
+      
       return { data: null, error };
     }
   },

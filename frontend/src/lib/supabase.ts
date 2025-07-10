@@ -242,7 +242,8 @@ export const userService = {
     }
 
     // Check if user has analyses remaining
-    const tierConfig = PIXIE_TIERS[refreshedUser.pixie_tier];
+    const pixieTier = refreshedUser.pixie_tier as keyof typeof PIXIE_TIERS;
+    const tierConfig = PIXIE_TIERS[pixieTier];
     const remaining = tierConfig.analyses_per_month - refreshedUser.analyses_used_this_month;
     
     if (remaining <= 0) {

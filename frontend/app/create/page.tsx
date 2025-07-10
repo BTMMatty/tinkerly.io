@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { Zap, Brain, ArrowRight, Sparkles, CheckCircle, DollarSign, Clock, Code, Lightbulb } from 'lucide-react';
+import { Zap, Brain, ArrowRight, Sparkles, CheckCircle, DollarSign, Clock, Code, Lightbulb, Wand2, Crown, Star } from 'lucide-react';
 import NavigationHeader from '@/components/NavigationHeader';
 import Footer from '@/components/Footer';
 import { StableProjectForm } from '@/components/StableProjectForm';
+// 🧚‍♀️ NEW IMPORTS
+import { checkUserAnalyses, userService, PIXIE_TIERS } from '@/lib/supabase';
 
 interface ProjectFormData {
   title: string;
@@ -17,7 +19,6 @@ interface ProjectFormData {
   complexity: string;
 }
 
-// 🔧 FIXED: Add proper TypeScript interface for analysis results
 interface AnalysisResult {
   complexity: string;
   complexity_score: number;
@@ -47,7 +48,6 @@ interface AnalysisResult {
     impact: string;
   }>;
   whyRecommended: string;
-  // Legacy support for old format
   pricing?: {
     recommended: string;
   };
@@ -58,12 +58,15 @@ export default function CreateProjectPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  // 🔧 FIXED: Proper TypeScript typing for analysis results
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult | null>(null);
-  const [userCredits, setUserCredits] = useState({ 
-    hasCredits: true, 
-    creditsRemaining: 3, 
-    subscriptionTier: 'free' 
+  
+  // 🧚‍♀️ UPDATED: Replace credits with analyses
+  const [userAnalyses, setUserAnalyses] = useState({ 
+    canAnalyze: true, 
+    remaining: 3, 
+    pixieTier: 'fresh' as 'fresh' | 'pro' | 'elite' | 'unlimited',
+    used: 0,
+    limit: 3
   });
   
   // Project form state
@@ -76,20 +79,34 @@ export default function CreateProjectPage() {
     complexity: ''
   });
 
-  // ✅ FIXED: Simple user check without infinite loops
+  // 🧚‍♀️ UPDATED: Check analyses instead of credits
   useEffect(() => {
     if (!isSignedIn) {
       router.push('/');
       return;
     }
     
-    if (user?.id) {
-      setUserCredits({
-        hasCredits: true,
-        creditsRemaining: 3,
-        subscriptionTier: 'free'
-      });
-    }
+    const loadAnalyses = async () => {
+      if (user?.id) {
+        try {
+          const analyses = await checkUserAnalyses(user.id);
+          setUserAnalyses(analyses);
+          console.log('🧚‍♀️ Pixie analyses loaded:', analyses);
+        } catch (error) {
+          console.error('Error loading analyses:', error);
+          // Set defaults on error
+          setUserAnalyses({
+            canAnalyze: true,
+            remaining: 3,
+            pixieTier: 'fresh',
+            used: 0,
+            limit: 3
+          });
+        }
+      }
+    };
+    
+    loadAnalyses();
   }, [isSignedIn, user?.id, router]);
 
   // Stable update function that won't cause re-renders
@@ -115,7 +132,6 @@ export default function CreateProjectPage() {
     }
 
     try {
-      // 🔧 FIXED: Safe property access with proper typing
       const totalCost = analysisResults.total_cost || 
         (analysisResults.pricing?.recommended) || 
         'TBD';
@@ -155,6 +171,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
     }
   };
 
+  // 🧚‍♀️ UPDATED: Use analysis instead of credits
   const analyzeProject = async () => {
     if (!projectData.title || !projectData.description || !projectData.category || !projectData.requirements) {
       alert('Please fill in all required fields before analysis');
@@ -166,12 +183,48 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
       return;
     }
 
+    // Check if user has analyses remaining
+    if (!userAnalyses.canAnalyze && userAnalyses.pixieTier !== 'unlimited') {
+      const nextTier = userAnalyses.pixieTier === 'fresh' ? 'Pro Pixies' : 
+                       userAnalyses.pixieTier === 'pro' ? 'Elite Pixies' : 
+                       'Pixies Unlimited';
+      
+      alert(`🧚‍♀️ Oh no! You've used all ${userAnalyses.limit} analyses this month. 
+
+Your Pixie powers need recharging! ✨
+
+Upgrade to ${nextTier} for more monthly analyses, or wait for your monthly reset.`);
+      
+      router.push('/pricing');
+      return;
+    }
+
     setIsAnalyzing(true);
     
     try {
+      // 🧚‍♀️ Use an analysis
+      if (user?.id) {
+        const { data: useResult, error: useError } = await userService.useAnalysis(user.id);
+        
+        if (useError || !useResult?.canAnalyze) {
+          console.error('Failed to use analysis:', useError);
+          alert('Unable to use analysis. Please try again.');
+          setIsAnalyzing(false);
+          return;
+        }
+        
+        console.log(`✨ Using 1 analysis. ${useResult.remaining} remaining this month.`);
+        
+        // Update local state
+        setUserAnalyses(prev => ({
+          ...prev,
+          remaining: useResult.remaining,
+          used: (useResult.used || prev.used + 1)
+        }));
+      }
+      
       console.log('🧠 Running AI analysis...');
       
-      // 🔧 FIXED: Use proper API call with error handling
       try {
         const response = await fetch('/api/analyze-project', {
           method: 'POST',
@@ -192,19 +245,18 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
         
         console.log('✅ Analysis complete!', analysisResult);
         
-        // Store analysis results to show the beautiful display
         setAnalysisResults(analysisResult);
-        setCurrentStep(3); // Move to analysis results step
+        setCurrentStep(3);
         
       } catch (apiError) {
         console.error('API Analysis error:', apiError);
-        throw apiError; // Re-throw to trigger fallback
+        throw apiError;
       }
       
     } catch (error) {
       console.error('Analysis error:', error);
       
-      // 🔧 FALLBACK: Mock analysis for demo purposes
+      // Fallback mock analysis
       console.log('🔄 Using fallback mock analysis for demo...');
       
       const mockAnalysis: AnalysisResult = {
@@ -254,9 +306,8 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
         whyRecommended: "This approach balances modern technology with proven reliability, ensuring fast development without sacrificing quality."
       };
       
-      // Store mock analysis results to show the beautiful display
       setAnalysisResults(mockAnalysis);
-      setCurrentStep(3); // Move to analysis results step
+      setCurrentStep(3);
     } finally {
       setIsAnalyzing(false);
     }
@@ -293,7 +344,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
     );
   }
 
-  // Helper function to safely format numbers
+  // Helper functions
   const formatCurrency = (value: any): string => {
     if (typeof value === 'number') {
       return '$' + value.toLocaleString();
@@ -304,11 +355,13 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
     return value || 'TBD';
   };
 
-  const safeGet = (obj: any, path: string, defaultValue: any = 'N/A'): any => {
-    try {
-      return path.split('.').reduce((current, key) => current?.[key], obj) || defaultValue;
-    } catch {
-      return defaultValue;
+  // 🧚‍♀️ NEW: Get Pixie tier icon
+  const getPixieIcon = () => {
+    switch(userAnalyses.pixieTier) {
+      case 'unlimited': return <Crown className="w-4 h-4 text-purple-600" />;
+      case 'elite': return <Star className="w-4 h-4 text-purple-500" />;
+      case 'pro': return <Sparkles className="w-4 h-4 text-emerald-600" />;
+      default: return <Wand2 className="w-4 h-4 text-emerald-500" />;
     }
   };
 
@@ -333,12 +386,42 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
             Transform your idea into a detailed project plan in minutes.
           </p>
 
-          {/* Credits Display */}
-          <div className="inline-flex items-center bg-white border border-emerald-200 rounded-full px-6 py-2 mb-8">
-            <Zap className="w-4 h-4 mr-2 text-emerald-500" />
-            <span className="text-gray-700 font-medium">
-              ∞ Unlimited analyses (Demo Mode)
-            </span>
+          {/* 🧚‍♀️ UPDATED: Analyses Display */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {/* Pixie Tier Badge */}
+            <div className={`inline-flex items-center rounded-full px-6 py-2 border-2 ${
+              userAnalyses.pixieTier === 'unlimited' ? 'bg-gradient-to-r from-purple-100 to-emerald-100 border-purple-300' :
+              userAnalyses.pixieTier === 'elite' ? 'bg-purple-50 border-purple-300' :
+              userAnalyses.pixieTier === 'pro' ? 'bg-emerald-50 border-emerald-300' :
+              'bg-white border-emerald-200'
+            }`}>
+              {getPixieIcon()}
+              <span className={`font-semibold ml-2 ${
+                userAnalyses.pixieTier === 'unlimited' ? 'text-purple-700' :
+                userAnalyses.pixieTier === 'elite' ? 'text-purple-600' :
+                userAnalyses.pixieTier === 'pro' ? 'text-emerald-700' :
+                'text-gray-700'
+              }`}>
+                {PIXIE_TIERS[userAnalyses.pixieTier].name}
+              </span>
+            </div>
+
+            {/* Analyses Remaining */}
+            {userAnalyses.pixieTier !== 'unlimited' ? (
+              <div className="inline-flex items-center bg-white border border-emerald-200 rounded-full px-6 py-2">
+                <Brain className="w-4 h-4 mr-2 text-emerald-500" />
+                <span className="text-gray-700 font-medium">
+                  {userAnalyses.remaining} of {userAnalyses.limit} analyses left this month
+                </span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center bg-gradient-to-r from-purple-100 to-emerald-100 border border-purple-300 rounded-full px-6 py-2">
+                <Sparkles className="w-4 h-4 mr-2 text-purple-600 animate-pulse" />
+                <span className="text-purple-700 font-medium">
+                  ∞ Unlimited Pixie Power! 🧚‍♀️
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -407,13 +490,18 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
                 <button
                   type="button"
                   onClick={analyzeProject}
-                  disabled={isAnalyzing || !canAnalyze()}
+                  disabled={isAnalyzing || !canAnalyze() || (!userAnalyses.canAnalyze && userAnalyses.pixieTier !== 'unlimited')}
                   className="px-8 py-3 bg-white text-emerald-600 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center font-semibold"
                 >
                   {isAnalyzing ? (
                     <>
                       <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin mr-2"></div>
                       Analyzing...
+                    </>
+                  ) : !userAnalyses.canAnalyze && userAnalyses.pixieTier !== 'unlimited' ? (
+                    <>
+                      <Crown className="w-4 h-4 mr-2" />
+                      Upgrade for More Analyses
                     </>
                   ) : (
                     <>
@@ -426,7 +514,7 @@ Tink will review the AI analysis and contact you within 24 hours to finalize det
             </div>
           </div>
         ) : (
-          /* AI Analysis Results - FIXED WITH PROPER TYPING */
+          /* AI Analysis Results */
           analysisResults && (
             <div className="bg-white rounded-xl shadow-lg border border-emerald-100 p-6">
               <div className="flex items-center mb-6">

@@ -8,8 +8,10 @@ import {
   Sparkles, Brain, Zap, Clock, DollarSign, TrendingUp, 
   Plus, Code, Users, CreditCard, ArrowRight, Loader,
   CheckCircle, AlertCircle, BarChart3, Calendar, Star,
-  GitBranch, Target, Rocket, Gift, Trophy
+  GitBranch, Target, Rocket, Gift, Trophy, Wand2, Crown
 } from 'lucide-react';
+// 🧚‍♀️ NEW IMPORTS
+import { checkUserAnalyses, PIXIE_TIERS } from '@/lib/supabase';
 
 // Add this interface to define the Project type
 interface Project {
@@ -29,35 +31,57 @@ interface Project {
   };
 }
 
+// 🧚‍♀️ NEW: Add Pixie tier type
+type PixieTier = 'fresh' | 'pro' | 'elite' | 'unlimited';
+
 export default function DashboardPage() {
   const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState<Project[]>([]); // Add type here
+  const [projects, setProjects] = useState<Project[]>([]);
+  
+  // 🧚‍♀️ UPDATED: Add pixie tier to stats
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,
     totalSaved: 0,
-    creditsRemaining: 3,
+    analysesRemaining: 3,
+    analysesLimit: 3,
+    analysesUsed: 0,
+    pixieTier: 'fresh' as PixieTier,
     monthlyProgress: 0
   });
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push('/sign-in');
-    } else if (isSignedIn) {
+    } else if (isSignedIn && user?.id) {
       loadDashboardData();
     }
-  }, [isSignedIn, isLoaded, router]);
+  }, [isSignedIn, isLoaded, router, user?.id]);
 
   const loadDashboardData = async () => {
     try {
-      // Load user projects from API
-      const response = await fetch('/api/user/projects');
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(data.projects || []);
-        setStats(data.stats || stats);
+      // 🧚‍♀️ Load analyses data
+      if (user?.id) {
+        const analyses = await checkUserAnalyses(user.id);
+        
+        // Load user projects from API
+        const response = await fetch('/api/user/projects');
+        if (response.ok) {
+          const data = await response.json();
+          setProjects(data.projects || []);
+          
+          // 🧚‍♀️ Update stats with new Pixie data
+          setStats({
+            ...data.stats,
+            analysesRemaining: analyses.remaining,
+            analysesLimit: analyses.limit,
+            analysesUsed: analyses.used,
+            pixieTier: analyses.pixieTier,
+            monthlyProgress: Math.round((analyses.used / analyses.limit) * 100)
+          });
+        }
       }
     } catch (error) {
       console.error('Error loading dashboard:', error);
@@ -66,6 +90,52 @@ export default function DashboardPage() {
     }
   };
 
+  // 🧚‍♀️ NEW: Get tier color scheme
+  const getTierColors = (tier: PixieTier) => {
+    switch(tier) {
+      case 'unlimited':
+        return {
+          gradient: 'from-purple-500 to-pink-500',
+          bg: 'bg-purple-100',
+          text: 'text-purple-800',
+          border: 'border-purple-300'
+        };
+      case 'elite':
+        return {
+          gradient: 'from-purple-400 to-indigo-500',
+          bg: 'bg-purple-50',
+          text: 'text-purple-700',
+          border: 'border-purple-200'
+        };
+      case 'pro':
+        return {
+          gradient: 'from-emerald-500 to-teal-600',
+          bg: 'bg-emerald-100',
+          text: 'text-emerald-800',
+          border: 'border-emerald-300'
+        };
+      default:
+        return {
+          gradient: 'from-gray-400 to-gray-500',
+          bg: 'bg-gray-100',
+          text: 'text-gray-700',
+          border: 'border-gray-300'
+        };
+    }
+  };
+
+  // 🧚‍♀️ NEW: Get tier icon
+  const getTierIcon = (tier: PixieTier) => {
+    switch(tier) {
+      case 'unlimited': return <Crown className="w-4 h-4" />;
+      case 'elite': return <Star className="w-4 h-4" />;
+      case 'pro': return <Sparkles className="w-4 h-4" />;
+      default: return <Wand2 className="w-4 h-4" />;
+    }
+  };
+
+  const tierColors = getTierColors(stats.pixieTier);
+
   if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
@@ -73,7 +143,7 @@ export default function DashboardPage() {
           <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Sparkles className="w-8 h-8 text-white animate-spin" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Loading your magic...</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Loading your pixie magic... 🧚‍♀️</h1>
         </div>
       </div>
     );
@@ -106,12 +176,12 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Stats Cards */}
+        {/* 🧚‍♀️ UPDATED Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           {[
             { 
               icon: Brain, 
-              label: 'AI Analyses', 
+              label: 'Total Analyses', 
               value: stats.totalProjects, 
               color: 'from-purple-500 to-pink-500',
               trend: '+12%' 
@@ -131,11 +201,11 @@ export default function DashboardPage() {
               trend: '+18%' 
             },
             { 
-              icon: Zap, 
-              label: 'Credits Left', 
-              value: stats.creditsRemaining, 
-              color: 'from-yellow-500 to-orange-500',
-              trend: '3/month' 
+              icon: Brain, 
+              label: 'Analyses Left', 
+              value: stats.pixieTier === 'unlimited' ? '∞' : stats.analysesRemaining, 
+              color: tierColors.gradient,
+              trend: stats.pixieTier === 'unlimited' ? 'Unlimited!' : `${stats.analysesRemaining}/${stats.analysesLimit}` 
             },
             { 
               icon: Trophy, 
@@ -161,7 +231,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Profile & Actions */}
+          {/* 🧚‍♀️ UPDATED Left Column - Profile & Actions */}
           <div className="space-y-6">
             {/* Enhanced Profile Card */}
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6 animate-slide-right">
@@ -170,37 +240,46 @@ export default function DashboardPage() {
                   <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                     {user?.firstName?.[0] || 'T'}
                   </div>
-                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <Star className="w-4 h-4 text-white" />
+                  <div className={`absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br ${tierColors.gradient} rounded-full flex items-center justify-center`}>
+                    {getTierIcon(stats.pixieTier)}
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">{user?.fullName}</h3>
                 <p className="text-gray-600 text-sm mt-1">{user?.emailAddresses?.[0]?.emailAddress}</p>
                 <div className="flex items-center justify-center gap-2 mt-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
-                    <Zap className="w-3 h-3 mr-1" />
-                    {stats.creditsRemaining} Credits
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                    Free Tier
+                  {/* 🧚‍♀️ Pixie Tier Badge */}
+                  <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r ${tierColors.gradient} text-white shadow-lg`}>
+                    {getTierIcon(stats.pixieTier)}
+                    <span className="ml-1">{PIXIE_TIERS[stats.pixieTier].name}</span>
                   </span>
                 </div>
+                
+                {/* 🧚‍♀️ Analyses Usage */}
+                {stats.pixieTier !== 'unlimited' && (
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-600 mb-1">
+                      {stats.analysesRemaining} of {stats.analysesLimit} analyses remaining
+                    </p>
+                  </div>
+                )}
               </div>
 
-              {/* Progress Bar */}
+              {/* 🧚‍♀️ UPDATED Progress Bar */}
               <div className="mt-6">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Monthly Progress</span>
-                  <span className="text-emerald-600 font-medium">{stats.monthlyProgress}%</span>
+                  <span className="text-gray-600">Monthly Usage</span>
+                  <span className={`font-medium ${tierColors.text}`}>
+                    {stats.pixieTier === 'unlimited' ? '∞' : `${stats.monthlyProgress}%`}
+                  </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-1000"
-                       style={{ width: `${stats.monthlyProgress}%` }}></div>
+                  <div className={`h-full bg-gradient-to-r ${tierColors.gradient} rounded-full transition-all duration-1000`}
+                       style={{ width: stats.pixieTier === 'unlimited' ? '100%' : `${stats.monthlyProgress}%` }}></div>
                 </div>
               </div>
             </div>
 
-            {/* Quick Actions */}
+            {/* 🧚‍♀️ UPDATED Quick Actions */}
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6 animate-slide-right" style={{ animationDelay: '100ms' }}>
               <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
                 <Rocket className="w-5 h-5 mr-2 text-emerald-500" />
@@ -208,7 +287,9 @@ export default function DashboardPage() {
               </h3>
               <div className="space-y-3">
                 <Link href="/create" 
-                      className="group flex items-center justify-between p-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all">
+                      className={`group flex items-center justify-between p-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all ${
+                        stats.analysesRemaining === 0 && stats.pixieTier !== 'unlimited' ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}>
                   <div className="flex items-center">
                     <Plus className="w-5 h-5 mr-3" />
                     <span className="font-medium">New AI Analysis</span>
@@ -216,16 +297,36 @@ export default function DashboardPage() {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 
-                <Link href="/pricing" 
-                      className="group flex items-center justify-between p-4 bg-white border border-emerald-200 rounded-xl hover:shadow-lg transition-all">
-                  <div className="flex items-center">
-                    <CreditCard className="w-5 h-5 mr-3 text-emerald-600" />
-                    <span className="font-medium text-gray-900">Get More Credits</span>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                {/* 🧚‍♀️ Show upgrade button if not unlimited */}
+                {stats.pixieTier !== 'unlimited' && (
+                  <Link href="/pricing" 
+                        className="group flex items-center justify-between p-4 bg-white border border-emerald-200 rounded-xl hover:shadow-lg transition-all">
+                    <div className="flex items-center">
+                      <Crown className="w-5 h-5 mr-3 text-purple-600" />
+                      <span className="font-medium text-gray-900">Upgrade Pixie Powers</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-purple-600 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                )}
               </div>
             </div>
+
+            {/* 🧚‍♀️ NEW: Upgrade prompt if out of analyses */}
+            {stats.analysesRemaining === 0 && stats.pixieTier !== 'unlimited' && (
+              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-xl p-6 text-white animate-slide-right" style={{ animationDelay: '200ms' }}>
+                <div className="flex items-center mb-3">
+                  <Sparkles className="w-6 h-6 mr-2" />
+                  <h3 className="text-lg font-bold">Pixie Power Depleted!</h3>
+                </div>
+                <p className="text-purple-100 mb-4">
+                  You've used all {stats.analysesLimit} analyses this month. Upgrade to keep the magic flowing! ✨
+                </p>
+                <Link href="/pricing" 
+                      className="block w-full text-center bg-white text-purple-600 font-bold py-3 rounded-xl hover:bg-purple-50 transition-all">
+                  Upgrade Now
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Middle Column - Recent Projects */}
@@ -250,10 +351,12 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">No projects yet!</h3>
                 <p className="text-gray-600 mb-6 max-w-sm mx-auto">
-                  Start your first AI-powered project analysis and see the magic happen ✨
+                  Start your first AI-powered project analysis and see the pixie magic happen 🧚‍♀️
                 </p>
                 <Link href="/create" 
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all">
+                      className={`inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all ${
+                        stats.analysesRemaining === 0 && stats.pixieTier !== 'unlimited' ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}>
                   <Plus className="w-5 h-5 mr-2" />
                   Create Your First Project
                 </Link>
@@ -304,25 +407,28 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* Insights Card */}
-            <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-xl p-6 text-white animate-slide-up" style={{ animationDelay: '300ms' }}>
+            {/* 🧚‍♀️ UPDATED Insights Card */}
+            <div className={`bg-gradient-to-br ${tierColors.gradient} rounded-2xl shadow-xl p-6 text-white animate-slide-up`} style={{ animationDelay: '300ms' }}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold flex items-center">
                   <BarChart3 className="w-5 h-5 mr-2" />
-                  AI Insights
+                  Pixie Insights ✨
                 </h3>
                 <Gift className="w-5 h-5 animate-bounce" />
               </div>
-              <p className="text-purple-100 mb-4">
-                Based on your project history, you save an average of <span className="font-bold">47%</span> in development time using Tinkerly.io!
+              <p className="text-white/90 mb-4">
+                {stats.pixieTier === 'unlimited' ? 
+                  `With unlimited power, you're unstoppable! You've completed ${stats.totalProjects} amazing projects.` :
+                  `You've used ${stats.analysesUsed} of ${stats.analysesLimit} analyses this month. Keep creating magic!`
+                }
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
-                  <p className="text-xs text-purple-100 mb-1">Avg. Project Cost</p>
+                  <p className="text-xs text-white/80 mb-1">Avg. Project Cost</p>
                   <p className="text-xl font-bold">$12,500</p>
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
-                  <p className="text-xs text-purple-100 mb-1">Time Saved</p>
+                  <p className="text-xs text-white/80 mb-1">Time Saved</p>
                   <p className="text-xl font-bold">3.5 weeks</p>
                 </div>
               </div>

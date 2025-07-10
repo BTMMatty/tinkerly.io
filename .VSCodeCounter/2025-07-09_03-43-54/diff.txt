@@ -1,0 +1,154 @@
+Date : 2025-07-09 03:43:54
+Directory : /Users/matty_btm/Desktop/tink-io-platform
+Total : 71 files,  5825 codes, 246 comments, 700 blanks, all 6771 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript JSX     |         37 |      3,042 |         68 |        266 |      3,376 |
+| TypeScript         |          9 |      1,630 |        120 |        262 |      2,012 |
+| HTML               |          3 |        780 |         30 |        115 |        925 |
+| PostCSS            |          2 |        198 |         17 |         35 |        250 |
+| JavaScript         |         10 |         85 |         11 |         14 |        110 |
+| JSON               |          6 |         64 |          0 |          4 |         68 |
+| JSON with Comments |          1 |         19 |          0 |          0 |         19 |
+| Markdown           |          3 |          7 |          0 |          4 |         11 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                 | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                    |         71 |      5,825 |        246 |        700 |      6,771 |
+| . (Files)                                                                                            |          4 |        -64 |          0 |         -8 |        -72 |
+| frontend                                                                                             |         64 |      5,564 |        225 |        661 |      6,450 |
+| frontend (Files)                                                                                     |          7 |        222 |         13 |         23 |        258 |
+| frontend/api                                                                                         |          1 |          0 |          0 |          1 |          1 |
+| frontend/api/analyze-project                                                                         |          1 |          0 |          0 |          1 |          1 |
+| frontend/app                                                                                         |         23 |      5,702 |        236 |        624 |      6,562 |
+| frontend/app (Files)                                                                                 |          8 |        926 |         34 |        131 |      1,091 |
+| frontend/app/api                                                                                     |          3 |        716 |         44 |        101 |        861 |
+| frontend/app/api/analyze-project                                                                     |          1 |        533 |         31 |         75 |        639 |
+| frontend/app/api/create-subscription                                                                 |          1 |        104 |          6 |         17 |        127 |
+| frontend/app/api/user                                                                                |          1 |         79 |          7 |          9 |         95 |
+| frontend/app/api/user/projects                                                                       |          1 |         79 |          7 |          9 |         95 |
+| frontend/app/blog                                                                                    |          3 |      1,406 |         62 |        145 |      1,613 |
+| frontend/app/blog (Files)                                                                            |          1 |        344 |         12 |         37 |        393 |
+| frontend/app/blog/[slug]                                                                             |          1 |        420 |         20 |         52 |        492 |
+| frontend/app/blog/admin                                                                              |          1 |        642 |         30 |         56 |        728 |
+| frontend/app/create                                                                                  |          1 |        517 |         30 |         59 |        606 |
+| frontend/app/dashboard                                                                               |          1 |        336 |         13 |         18 |        367 |
+| frontend/app/press                                                                                   |          1 |        305 |         10 |         23 |        338 |
+| frontend/app/pricing                                                                                 |          1 |        362 |         10 |         28 |        400 |
+| frontend/app/privacy                                                                                 |          1 |        250 |          5 |         24 |        279 |
+| frontend/app/sign-in                                                                                 |          1 |         11 |          0 |          2 |         13 |
+| frontend/app/sign-in/[[...sign-in]]                                                                  |          1 |         11 |          0 |          2 |         13 |
+| frontend/app/sign-up                                                                                 |          1 |         11 |          0 |          2 |         13 |
+| frontend/app/sign-up/[[...sign-up]]                                                                  |          1 |         11 |          0 |          2 |         13 |
+| frontend/app/story                                                                                   |          1 |        350 |         14 |         37 |        401 |
+| frontend/app/terms                                                                                   |          1 |        512 |         14 |         54 |        580 |
+| frontend/components                                                                                  |          2 |        214 |         11 |         23 |        248 |
+| frontend/frontend                                                                                    |          1 |          0 |          0 |          1 |          1 |
+| frontend/public                                                                                      |          1 |         20 |          0 |          1 |         21 |
+| frontend/src                                                                                         |         29 |       -594 |        -35 |        -12 |       -641 |
+| frontend/src (Files)                                                                                 |          1 |         -8 |          0 |         -2 |        -10 |
+| frontend/src/app                                                                                     |         14 |     -1,030 |        -44 |        -83 |     -1,157 |
+| frontend/src/app (Files)                                                                             |          3 |        -64 |         -4 |         -8 |        -76 |
+| frontend/src/app/api                                                                                 |          4 |        392 |         24 |         69 |        485 |
+| frontend/src/app/api/analyze-project                                                                 |          1 |         -7 |         -3 |         -2 |        -12 |
+| frontend/src/app/api/stripe                                                                          |          3 |        399 |         27 |         71 |        497 |
+| frontend/src/app/api/stripe/create-credit-session                                                    |          1 |         50 |          0 |          5 |         55 |
+| frontend/src/app/api/stripe/create-subscription                                                      |          1 |        110 |         11 |         16 |        137 |
+| frontend/src/app/api/stripe/webhooks                                                                 |          1 |        239 |         16 |         50 |        305 |
+| frontend/src/app/create                                                                              |          1 |       -505 |        -43 |        -57 |       -605 |
+| frontend/src/app/dashboard                                                                           |          1 |        -14 |          0 |         -4 |        -18 |
+| frontend/src/app/pricing                                                                             |          1 |       -308 |         -8 |        -26 |       -342 |
+| frontend/src/app/privacy                                                                             |          1 |       -211 |         -4 |        -24 |       -239 |
+| frontend/src/app/sign-in                                                                             |          1 |        -49 |          0 |         -4 |        -53 |
+| frontend/src/app/sign-in/[[...sign-in]]                                                              |          1 |        -49 |          0 |         -4 |        -53 |
+| frontend/src/app/sign-up                                                                             |          1 |        -51 |          0 |         -4 |        -55 |
+| frontend/src/app/sign-up/[[...sign-up]]                                                              |          1 |        -51 |          0 |         -4 |        -55 |
+| frontend/src/app/terms                                                                               |          1 |       -220 |         -9 |        -25 |       -254 |
+| frontend/src/components                                                                              |         11 |       -154 |        -41 |        -31 |       -226 |
+| frontend/src/lib                                                                                     |          3 |        598 |         50 |        104 |        752 |
+| tinkerly-coming-soon                                                                                 |          3 |        325 |         21 |         47 |        393 |
++------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                             | language           | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/matty_btm/Desktop/tink-io-platform/CLAUDE.md                                                  | Markdown           |         28 |          0 |          8 |         36 |
+| /Users/matty_btm/Desktop/tink-io-platform/README.md                                                  | Markdown           |        -97 |          0 |        -17 |       -114 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/CLAUDE.md                                         | Markdown           |         76 |          0 |         13 |         89 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/api/analyze-project/route.js                      | JavaScript         |          0 |          0 |          1 |          1 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/api/analyze-project/route.ts                  | TypeScript         |        533 |         31 |         75 |        639 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/api/create-subscription/route.js              | JavaScript         |        104 |          6 |         17 |        127 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/api/user/projects/route.ts                    | TypeScript         |         79 |          7 |          9 |         95 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/blog/[slug]/page.tsx                          | TypeScript JSX     |        420 |         20 |         52 |        492 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/blog/admin/page.tsx                           | TypeScript JSX     |        642 |         30 |         56 |        728 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/blog/page.tsx                                 | TypeScript JSX     |        344 |         12 |         37 |        393 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/create/page.tsx                               | TypeScript JSX     |        517 |         30 |         59 |        606 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/dashboard/page.tsx                            | TypeScript JSX     |        336 |         13 |         18 |        367 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/error.tsx                                     | TypeScript JSX     |         22 |          0 |          2 |         24 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/globals.css                                   | PostCSS            |        205 |         17 |         36 |        258 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/hype_ending.html                              | HTML               |        322 |          0 |         51 |        373 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/layout-with-cookies.tsx                       | TypeScript JSX     |         24 |          0 |          3 |         27 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/layout.tsx                                    | TypeScript JSX     |         33 |          4 |          3 |         40 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/not-found.tsx                                 | TypeScript JSX     |          0 |          0 |          1 |          1 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/page.tsx                                      | TypeScript JSX     |        158 |          4 |         16 |        178 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/press/page.tsx                                | TypeScript JSX     |        305 |         10 |         23 |        338 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/pricing/page.tsx                              | TypeScript JSX     |        362 |         10 |         28 |        400 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/privacy/page.tsx                              | TypeScript JSX     |        250 |          5 |         24 |        279 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/sign-in/[[...sign-in]]/page.tsx               | TypeScript JSX     |         11 |          0 |          2 |         13 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/sign-up/[[...sign-up]]/page.tsx               | TypeScript JSX     |         11 |          0 |          2 |         13 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/story/page.tsx                                | TypeScript JSX     |        350 |         14 |         37 |        401 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/terms/page.tsx                                | TypeScript JSX     |        512 |         14 |         54 |        580 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/app/tinkerly-logo.html                            | HTML               |        162 |          9 |         19 |        190 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/components/StableProjectForm.tsx                  | TypeScript JSX     |        187 |          9 |         18 |        214 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/components/TinkerlyAuth.tsx                       | TypeScript JSX     |         27 |          2 |          5 |         34 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/frontend/postcss.config.mjs                       | JavaScript         |          0 |          0 |          1 |          1 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/middleware.ts                                     | TypeScript         |         21 |          5 |          3 |         29 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/next.config.js                                    | JavaScript         |          4 |          2 |          1 |          7 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/package.json                                      | JSON               |         10 |          0 |          0 |         10 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/postcss.config.js                                 | JavaScript         |          1 |          0 |          1 |          2 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/public/site.webmanifest                           | JSON               |         20 |          0 |          1 |         21 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/analyze-project/route.js              | JavaScript         |         -7 |         -3 |         -2 |        -12 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/stripe/create-credit-session/route.ts | TypeScript         |         50 |          0 |          5 |         55 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/stripe/create-subscription/route.ts   | TypeScript         |        110 |         11 |         16 |        137 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/stripe/webhooks/route.ts              | TypeScript         |        239 |         16 |         50 |        305 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/create/page.tsx                           | TypeScript JSX     |       -505 |        -43 |        -57 |       -605 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/dashboard/page.tsx                        | TypeScript JSX     |        -14 |          0 |         -4 |        -18 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/globals.css                               | PostCSS            |         -7 |          0 |         -1 |         -8 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/layout.tsx                                | TypeScript JSX     |        -27 |          0 |         -2 |        -29 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/page.tsx                                  | TypeScript JSX     |        -30 |         -4 |         -5 |        -39 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/pricing/page.tsx                          | TypeScript JSX     |       -308 |         -8 |        -26 |       -342 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/privacy/page.tsx                          | TypeScript JSX     |       -211 |         -4 |        -24 |       -239 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/sign-in/[[...sign-in]]/page.js            | JavaScript         |        -49 |          0 |         -4 |        -53 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/sign-up/[[...sign-up]]/page.js            | JavaScript         |        -51 |          0 |         -4 |        -55 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/terms/page.tsx                            | TypeScript JSX     |       -220 |         -9 |        -25 |       -254 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/AnalysisResults.tsx                | TypeScript JSX     |        293 |          8 |         27 |        328 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/CookieConsent.tsx                  | TypeScript JSX     |         29 |         -1 |          0 |         28 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/DeveloperStudioDashboard.tsx       | TypeScript JSX     |       -759 |        -57 |        -83 |       -899 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/Footer.tsx                         | TypeScript JSX     |         83 |          3 |          3 |         89 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/NavigationHeader.tsx               | TypeScript JSX     |          0 |          0 |          1 |          1 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/ProjectSubmissionFixed.tsx         | TypeScript JSX     |         90 |         -1 |          3 |         92 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/StableProjectForm.tsx              | TypeScript JSX     |         11 |          4 |          2 |         17 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/StripeProvider.tsx                 | TypeScript JSX     |         15 |          0 |          4 |         19 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/SubscriptionButton.tsx             | TypeScript JSX     |         84 |          3 |         12 |         99 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/TinkerlyPlatform.tsx               | TypeScript JSX     |        221 |         16 |         27 |        264 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/TinkioPlatform.tsx                 | TypeScript JSX     |       -221 |        -16 |        -27 |       -264 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/lib/blog-cms.ts                               | TypeScript         |        486 |         43 |         95 |        624 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/lib/stripe.ts                                 | TypeScript         |         97 |          7 |          8 |        112 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/lib/supabase.ts                               | TypeScript         |         15 |          0 |          1 |         16 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/src/middleware.js                                 | JavaScript         |         -8 |          0 |         -2 |        -10 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/tailwind.config.js                                | JavaScript         |         91 |          6 |          5 |        102 |
+| /Users/matty_btm/Desktop/tink-io-platform/frontend/tsconfig.json                                     | JSON with Comments |         19 |          0 |          0 |         19 |
+| /Users/matty_btm/Desktop/tink-io-platform/package.json                                               | JSON               |          2 |          0 |          0 |          2 |
+| /Users/matty_btm/Desktop/tink-io-platform/tinkerly-coming-soon/index.html                            | HTML               |        296 |         21 |         45 |        362 |
+| /Users/matty_btm/Desktop/tink-io-platform/tinkerly-coming-soon/package.json                          | JSON               |          9 |          0 |          1 |         10 |
+| /Users/matty_btm/Desktop/tink-io-platform/tinkerly-coming-soon/site.webmanifest                      | JSON               |         20 |          0 |          1 |         21 |
+| /Users/matty_btm/Desktop/tink-io-platform/vercel.json                                                | JSON               |          3 |          0 |          1 |          4 |
+| Total                                                                                                |                    |      5,825 |        246 |        700 |      6,771 |
++------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

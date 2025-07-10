@@ -1,0 +1,73 @@
+"filename", "language", "Markdown", "JSON", "JSON with Comments", "HTML", "TypeScript JSX", "JavaScript", "TypeScript", "PostCSS", "comment", "blank", "total"
+"/Users/matty_btm/Desktop/tink-io-platform/CLAUDE.md", "Markdown", 28, 0, 0, 0, 0, 0, 0, 0, 0, 8, 36
+"/Users/matty_btm/Desktop/tink-io-platform/README.md", "Markdown", -97, 0, 0, 0, 0, 0, 0, 0, 0, -17, -114
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/CLAUDE.md", "Markdown", 76, 0, 0, 0, 0, 0, 0, 0, 0, 13, 89
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/api/analyze-project/route.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/api/analyze-project/route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 533, 0, 31, 75, 639
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/api/create-subscription/route.js", "JavaScript", 0, 0, 0, 0, 0, 104, 0, 0, 6, 17, 127
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/api/user/projects/route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 79, 0, 7, 9, 95
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/blog/[slug]/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 420, 0, 0, 0, 20, 52, 492
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/blog/admin/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 642, 0, 0, 0, 30, 56, 728
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/blog/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 344, 0, 0, 0, 12, 37, 393
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/create/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 517, 0, 0, 0, 30, 59, 606
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/dashboard/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 336, 0, 0, 0, 13, 18, 367
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/error.tsx", "TypeScript JSX", 0, 0, 0, 0, 22, 0, 0, 0, 0, 2, 24
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 205, 17, 36, 258
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/hype_ending.html", "HTML", 0, 0, 0, 322, 0, 0, 0, 0, 0, 51, 373
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/layout-with-cookies.tsx", "TypeScript JSX", 0, 0, 0, 0, 24, 0, 0, 0, 0, 3, 27
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 33, 0, 0, 0, 4, 3, 40
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/not-found.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 158, 0, 0, 0, 4, 16, 178
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/press/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 305, 0, 0, 0, 10, 23, 338
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/pricing/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 362, 0, 0, 0, 10, 28, 400
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/privacy/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 250, 0, 0, 0, 5, 24, 279
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/sign-in/[[...sign-in]]/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 11, 0, 0, 0, 0, 2, 13
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/sign-up/[[...sign-up]]/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 11, 0, 0, 0, 0, 2, 13
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/story/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 350, 0, 0, 0, 14, 37, 401
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/terms/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 512, 0, 0, 0, 14, 54, 580
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/app/tinkerly-logo.html", "HTML", 0, 0, 0, 162, 0, 0, 0, 0, 9, 19, 190
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/components/StableProjectForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 187, 0, 0, 0, 9, 18, 214
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/components/TinkerlyAuth.tsx", "TypeScript JSX", 0, 0, 0, 0, 27, 0, 0, 0, 2, 5, 34
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/frontend/postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/middleware.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 21, 0, 5, 3, 29
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/next.config.js", "JavaScript", 0, 0, 0, 0, 0, 4, 0, 0, 2, 1, 7
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/package.json", "JSON", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 10
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/postcss.config.js", "JavaScript", 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 2
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/public/site.webmanifest", "JSON", 0, 20, 0, 0, 0, 0, 0, 0, 0, 1, 21
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/analyze-project/route.js", "JavaScript", 0, 0, 0, 0, 0, -7, 0, 0, -3, -2, -12
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/stripe/create-credit-session/route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 50, 0, 0, 5, 55
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/stripe/create-subscription/route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 110, 0, 11, 16, 137
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/api/stripe/webhooks/route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 239, 0, 16, 50, 305
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/create/page.tsx", "TypeScript JSX", 0, 0, 0, 0, -505, 0, 0, 0, -43, -57, -605
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/dashboard/page.tsx", "TypeScript JSX", 0, 0, 0, 0, -14, 0, 0, 0, 0, -4, -18
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, -7, 0, -1, -8
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, -27, 0, 0, 0, 0, -2, -29
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/page.tsx", "TypeScript JSX", 0, 0, 0, 0, -30, 0, 0, 0, -4, -5, -39
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/pricing/page.tsx", "TypeScript JSX", 0, 0, 0, 0, -308, 0, 0, 0, -8, -26, -342
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/privacy/page.tsx", "TypeScript JSX", 0, 0, 0, 0, -211, 0, 0, 0, -4, -24, -239
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/sign-in/[[...sign-in]]/page.js", "JavaScript", 0, 0, 0, 0, 0, -49, 0, 0, 0, -4, -53
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/sign-up/[[...sign-up]]/page.js", "JavaScript", 0, 0, 0, 0, 0, -51, 0, 0, 0, -4, -55
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/app/terms/page.tsx", "TypeScript JSX", 0, 0, 0, 0, -220, 0, 0, 0, -9, -25, -254
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/AnalysisResults.tsx", "TypeScript JSX", 0, 0, 0, 0, 293, 0, 0, 0, 8, 27, 328
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/CookieConsent.tsx", "TypeScript JSX", 0, 0, 0, 0, 29, 0, 0, 0, -1, 0, 28
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/DeveloperStudioDashboard.tsx", "TypeScript JSX", 0, 0, 0, 0, -759, 0, 0, 0, -57, -83, -899
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/Footer.tsx", "TypeScript JSX", 0, 0, 0, 0, 83, 0, 0, 0, 3, 3, 89
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/NavigationHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/ProjectSubmissionFixed.tsx", "TypeScript JSX", 0, 0, 0, 0, 90, 0, 0, 0, -1, 3, 92
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/StableProjectForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 11, 0, 0, 0, 4, 2, 17
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/StripeProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 15, 0, 0, 0, 0, 4, 19
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/SubscriptionButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 84, 0, 0, 0, 3, 12, 99
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/TinkerlyPlatform.tsx", "TypeScript JSX", 0, 0, 0, 0, 221, 0, 0, 0, 16, 27, 264
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/components/TinkioPlatform.tsx", "TypeScript JSX", 0, 0, 0, 0, -221, 0, 0, 0, -16, -27, -264
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/lib/blog-cms.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 486, 0, 43, 95, 624
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/lib/stripe.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 97, 0, 7, 8, 112
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/lib/supabase.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 15, 0, 0, 1, 16
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/src/middleware.js", "JavaScript", 0, 0, 0, 0, 0, -8, 0, 0, 0, -2, -10
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/tailwind.config.js", "JavaScript", 0, 0, 0, 0, 0, 91, 0, 0, 6, 5, 102
+"/Users/matty_btm/Desktop/tink-io-platform/frontend/tsconfig.json", "JSON with Comments", 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 19
+"/Users/matty_btm/Desktop/tink-io-platform/package.json", "JSON", 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2
+"/Users/matty_btm/Desktop/tink-io-platform/tinkerly-coming-soon/index.html", "HTML", 0, 0, 0, 296, 0, 0, 0, 0, 21, 45, 362
+"/Users/matty_btm/Desktop/tink-io-platform/tinkerly-coming-soon/package.json", "JSON", 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"/Users/matty_btm/Desktop/tink-io-platform/tinkerly-coming-soon/site.webmanifest", "JSON", 0, 20, 0, 0, 0, 0, 0, 0, 0, 1, 21
+"/Users/matty_btm/Desktop/tink-io-platform/vercel.json", "JSON", 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"Total", "-", 7, 64, 19, 780, 3042, 85, 1630, 198, 246, 700, 6771

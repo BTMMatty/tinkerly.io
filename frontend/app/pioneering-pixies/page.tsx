@@ -107,7 +107,7 @@ export default function PioneeringPixiesPage() {
             <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-emerald-400 to-teal-500 p-1">
               <div className="w-full h-full rounded-full bg-white p-1">
                 <img 
-                  src="https://i.imgur.com/1MrWIAv.jpg"
+                  src="https://imgur.com/DuZyuHn"
                   alt="Matty - daft_pixie"
                   className="w-full h-full rounded-full object-cover"
                 />
@@ -228,8 +228,6 @@ export default function PioneeringPixiesPage() {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

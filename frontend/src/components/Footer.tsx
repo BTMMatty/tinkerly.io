@@ -53,6 +53,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/pioneering-pixies" className="text-gray-300 hover:text-emerald-300 transition-colors duration-200">
+                  🧚‍♀️ Pioneering Pixies
+                </Link>
+              </li>
+              <li>
                 <a 
                   href="https://soon.tinkerly.io" 
                   className="text-gray-300 hover:text-emerald-300 transition-colors duration-200 flex items-center"

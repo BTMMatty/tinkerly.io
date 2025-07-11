@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Send, Loader, CheckCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import NavigationHeader from '@/components/NavigationHeader';
 import Footer from '@/components/Footer';
 
 export default function PioneeringPixiesPage() {
@@ -20,7 +19,6 @@ export default function PioneeringPixiesPage() {
     anythingElse: ''
   });
 
-  // 🚨 REPLACE THIS WITH YOUR ACTUAL GOOGLE WEB APP URL
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTAgI3-ROVA8w1QncHg1F8tRGbrI44LuLYxGTa1yNVkBdvzjOVn4ToxloOVCbFwOgA/exec';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +38,6 @@ export default function PioneeringPixiesPage() {
         })
       });
 
-      // With no-cors, we assume success
       setIsSubmitted(true);
       setFormData({
         fullName: '',
@@ -67,7 +64,22 @@ export default function PioneeringPixiesPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-        <NavigationHeader />
+        {/* Simple Header for Public Pages */}
+        <header className="bg-white shadow-sm border-b border-emerald-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <Link href="/" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  Tinkerly.io
+                </div>
+              </Link>
+            </div>
+          </div>
+        </header>
+
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <div className="bg-white rounded-2xl shadow-xl p-12">
             <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -79,9 +91,9 @@ export default function PioneeringPixiesPage() {
             <p className="text-lg text-gray-600 mb-8">
               Your submission has been received. We're excited to learn about your amazing week!
             </p>
-            <Link href="/dashboard">
+            <Link href="/">
               <button className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
-                Back to Dashboard
+                Back to Home
               </button>
             </Link>
           </div>
@@ -93,7 +105,21 @@ export default function PioneeringPixiesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-      <NavigationHeader />
+      {/* Simple Header for Public Pages */}
+      <header className="bg-white shadow-sm border-b border-emerald-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                Tinkerly.io
+              </div>
+            </Link>
+          </div>
+        </div>
+      </header>
       
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Link href="/" className="inline-flex items-center text-emerald-600 hover:text-emerald-700 mb-8">
